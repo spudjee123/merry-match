@@ -1,6 +1,7 @@
 import React from "react";
 import drag from "../assets/icons/drag.png"
 
+
 const AdminAddPackagePage = () => {
   return (
     <section className="w-[90%] h-20 px-[60px] py-4 bg-white border-b border-gray-300 justify-start item-end inline-flex flex-col">

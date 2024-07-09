@@ -5,6 +5,7 @@ import basic from "../assets/icons/basic.png"
 import platinum from "../assets/icons/platinum.png"
 import premium from "../assets/icons/premium.png"
 import drag from "../assets/icons/drag.png"
+import search from "../assets/icons/search.png"
 
 const AdminPageList = () => {
   return (
@@ -16,8 +17,8 @@ const AdminPageList = () => {
         Merry Package
       </div>
       <div className="justify-start items-start gap-4 flex">
-        <div className="h-12 px-4 py-3 bg-white rounded-lg border border-gray-300 justify-start items-center gap-2.5 flex">
-          <div className="w-6 h-6 pl-[2.40px] pr-[2.38px] pt-[2.40px] pb-[2.38px] justify-center items-center flex" />
+        <div className="h-12  bg-white rounded-lg border border-gray-300 justify-start items-center gap-2.5 flex">
+          <div><img className="relative left-1" src={search} alt="" /></div>
           <div className=" w-[320px] grow shrink basis-0 text-slate-400 text-base font-normal  leading-normal">
             Search...
           </div>
