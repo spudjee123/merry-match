@@ -4,8 +4,16 @@ export default {
   theme: {
     extend: {
       colors: {
+        "color-red-utility": "#AF2758",
+        "color-gray-200": "#F1F2F6",
         "color-gray-400": "#D6D9E4",
+        "color-gray-700": "#646D89",
+        "color-gray-800": "#424C6B",
         "color-gray-900": "#2A2E3F",
+        "color-purple-100": "#F4EBF2",
+        "color-purple-500": "#A62D82",
+        "color-purple-600": "#7D2262",
+        "color-beige-700": "#7B4429",
       },
     },
   },
