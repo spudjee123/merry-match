@@ -5,6 +5,9 @@ export default {
     extend: {
       colors: {
         "color-red-utility": "#AF2758",
+        "color-red-100": "#FFE1EA",
+        "color-red-500": "#C70039",
+        "color-red-600": "#95002B",
         "color-gray-200": "#F1F2F6",
         "color-gray-400": "#D6D9E4",
         "color-gray-700": "#646D89",
