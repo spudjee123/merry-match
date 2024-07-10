@@ -10,13 +10,7 @@ function EditProfileForm() {
   const locationDB = countryDB.data.map((item) => item.country_name);
   const sexDB = ["male", "female", "other"];
   const raceDB = ["Asian", "Black", "White", "Middle east"];
-  const [images, setImages] = useState({
-    image1: "",
-    image2: "",
-    image3: "",
-    image4: "",
-    image5: "",
-  });
+  const [images, setImages] = useState(["", "", "", "", ""]);
 
   console.log(images);
   useEffect(() => {
@@ -40,7 +34,10 @@ function EditProfileForm() {
               PROFILE
             </h1>
             <p className=" text-color-purple-500 text-[32px] leading-10 font-bold lg:text-[46px] lg:font-extrabold lg:leading-[57.5px]">
-              Let’s make profile to let others know you
+              Let’s make profile
+            </p>
+            <p className=" text-color-purple-500 text-[32px] leading-10 font-bold lg:text-[46px] lg:font-extrabold lg:leading-[57.5px]">
+              to let others know you
             </p>
           </article>
         </section>
@@ -219,29 +216,32 @@ function EditProfileForm() {
           </div>
         </section>
         <section>
-          <h3 className=" text-color-purple-500 text-2xl leading-[30px] font-bold">
-            Profile pictures
-          </h3>
-          <p className=" text-color-gray-800 leading-6">
-            Upload at least 2 photos
-          </p>
+          <article className=" flex flex-col gap-1 mb-6">
+            <h3 className=" text-color-purple-500 text-2xl leading-[30px] font-bold">
+              Profile pictures
+            </h3>
+            <p className=" text-color-gray-800 leading-6">
+              Upload at least 2 photos
+            </p>
+          </article>
           <div className=" flex flex-wrap gap-2 lg:gap-6 lg:justify-center">
-            {Object.keys(images).map((item, index) => (
+            {images.map((item, index) => (
               <div
                 key={index}
                 className=" w-[167px] h-[167px] bg-color-gray-200 rounded-2xl"
               >
-                {images[item] ? (
+                {item ? (
                   <div className="relative w-full h-full">
                     <img
-                      src={URL.createObjectURL(images[item])}
+                      src={URL.createObjectURL(item)}
                       className=" w-[167px] h-[167px] rounded-2xl object-cover"
                     />
                     <button
                       type="button"
                       onClick={() => {
-                        const newImages = { ...images };
-                        newImages[item] = "";
+                        const newImages = [...images];
+                        newImages.splice(index, 1);
+                        newImages.push("");
                         setImages(newImages);
                       }}
                       className="absolute top-[-4px] right-[-4px] bg-color-red-utility w-6 h-6 rounded-full text-white"
@@ -258,8 +258,8 @@ function EditProfileForm() {
                     <input
                       type="file"
                       onChange={(event) => {
-                        const newImages = { ...images };
-                        newImages[item] = event.target.files[0];
+                        const newImages = [...images];
+                        newImages[index] = event.target.files[0];
                         setImages(newImages);
                       }}
                       className=" w-full h-full opacity-0"
@@ -269,6 +269,28 @@ function EditProfileForm() {
               </div>
             ))}
           </div>
+        </section>
+        <section className=" flex justify-center gap-4 lg:hidden">
+          <button
+            type="button"
+            className=" h-12 px-6 py-3 bg-color-red-100 text-color-red-600 font-bold leading-6 text-center rounded-[99px]"
+          >
+            Preview Profile
+          </button>
+          <button
+            type="submit"
+            className=" h-12 px-6 py-3 bg-color-red-500 text-white font-bold leading-6 text-center rounded-[99px]"
+          >
+            Update Profile
+          </button>
+        </section>
+        <section className=" flex justify-center lg:justify-end">
+          <button
+            type="button"
+            className=" text-color-gray-700 font-bold leading-6"
+          >
+            delete account
+          </button>
         </section>
       </form>
     </>
