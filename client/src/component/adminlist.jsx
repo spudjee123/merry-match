@@ -130,7 +130,7 @@ const AdminPageList = () => {
             </div>
             <div className=" p-4 lg:p-6 flex flex-col gap-6">
               <p className=" text-color-gray-700 leading-6">
-                Do you sure to delete account?
+                Do you sure to delete this package?
               </p>
               <div className=" flex flex-col lg:flex-row gap-4">
                 <button className=" bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary">
@@ -138,7 +138,7 @@ const AdminPageList = () => {
                 </button>
                 <form method="dialog">
                   <button className=" bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary">
-                    No, I don’t
+                    No, I don’t want
                   </button>
                 </form>
               </div>
