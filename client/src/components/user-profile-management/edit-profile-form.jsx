@@ -45,6 +45,7 @@ function EditProfileForm() {
           <div className=" hidden lg:flex justify-end items-end gap-4">
             <button
               type="button"
+              id="preview-btn"
               className=" h-12 px-6 py-3 bg-color-red-100 text-color-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
               onClick={() => document.getElementById("preview").showModal()}
             >
@@ -52,6 +53,7 @@ function EditProfileForm() {
             </button>
             <button
               type="submit"
+              id="update-btn"
               className=" h-12 px-6 py-3 bg-color-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary"
             >
               Update Profile
@@ -205,6 +207,7 @@ function EditProfileForm() {
                       <p>{item}</p>
                       <button
                         type="button"
+                        id={"delete-hobby-btn " + index}
                         onClick={() => {
                           setHobbiesList(hobbiesList.toSpliced(index, 1));
                         }}
@@ -272,6 +275,7 @@ function EditProfileForm() {
                     />
                     <button
                       type="button"
+                      id={"remove-image-btn " + index}
                       onClick={() => {
                         const newImages = [...images];
                         newImages.splice(index, 1);
@@ -307,12 +311,14 @@ function EditProfileForm() {
         <section className=" flex justify-center gap-4 lg:hidden">
           <button
             type="button"
+            id="preview-btn"
             className=" h-12 px-6 py-3 bg-color-red-100 text-color-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
           >
             Preview Profile
           </button>
           <button
             type="submit"
+            id="update-btn"
             className=" h-12 px-6 py-3 bg-color-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary"
           >
             Update Profile
@@ -321,6 +327,7 @@ function EditProfileForm() {
         <section className=" flex justify-center lg:justify-end">
           <button
             type="button"
+            id="delete-profile-btn"
             className=" text-color-gray-700 font-bold leading-6"
             onClick={() => document.getElementById("delete").showModal()}
           >
@@ -335,7 +342,10 @@ function EditProfileForm() {
               </h3>
 
               <form method="dialog">
-                <button className="btn btn-sm btn-square btn-ghost">
+                <button
+                  className="btn btn-sm btn-square btn-ghost"
+                  id="exit-delete-btn"
+                >
                   <img src={exit_icon} width={9.94} height={9.7} />
                 </button>
               </form>
@@ -345,11 +355,17 @@ function EditProfileForm() {
                 Do you sure to delete account?
               </p>
               <div className=" flex flex-col lg:flex-row gap-4">
-                <button className=" bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary">
+                <button
+                  id="confirm-delete-btn"
+                  className=" bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary"
+                >
                   Yes, I want to delete
                 </button>
                 <form method="dialog">
-                  <button className=" bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary">
+                  <button
+                    id="denied-delete-btn"
+                    className=" bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
+                  >
                     No, I don’t
                   </button>
                 </form>
@@ -361,15 +377,20 @@ function EditProfileForm() {
         <dialog id="preview" className="modal">
           <div className="modal-box px-16 py-20 shadow-primary">
             <form method="dialog">
-              <button className="btn btn-lg btn-square btn-ghost absolute top-0 right-0">
+              <button
+                id="exit-preview-btn"
+                className="btn btn-lg btn-square btn-ghost absolute top-0 right-0"
+              >
                 <img src={exit_icon} width={16} height={16} />
               </button>
             </form>
             <div className=" flex justify-between">
               <div></div>
-              <div className=" flex flex-col items-end">
+              <div className=" flex flex-col items-end text-color-gray-900">
                 <article>
-                  <h1>{"John Snow"}</h1>
+                  <h1 className=" text-5xl leading-[57.5px]">
+                    {"John Snow"} <span>{26}</span>
+                  </h1>
                   <div>
                     <img />
                     <p>{"Bangkok, Thailand"}</p>
