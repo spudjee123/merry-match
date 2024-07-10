@@ -8,14 +8,9 @@ import MatchingPage from "./components/MatchingPage";
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Nav />} />
-
-          {/* <Route path="/page" element={<Page />} /> */}
-          <MatchingPage />
-        </Routes>
-      </BrowserRouter>
+      <MatchingPage />
     </>
   );
 }
+
+export default App
