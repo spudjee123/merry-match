@@ -1,6 +1,6 @@
 import "./App.css";
 import Nav from "./nav";
-import LandingPage from "./components/LandingPage";
+import LandingPage from "./components/landing-page.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
