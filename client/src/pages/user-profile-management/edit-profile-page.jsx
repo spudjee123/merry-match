@@ -5,7 +5,7 @@ function EditProfilePage() {
   return (
     <>
       <Nav />
-      <section className="px-4 py-10 lg:px-60 lg:pt-20 lg:pb-14">
+      <section className="bg-main text-black">
         <EditProfileForm />
       </section>
     </>
