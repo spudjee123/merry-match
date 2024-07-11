@@ -1,13 +1,10 @@
 import "./App.css";
 import Nav from "./nav";
-
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  useParams,
-  
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
+import Footer from "./components/Footer";
+import Login from "./components/Login";
+import MatchingPage from "./components/MatchingPage";
+import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import PackageListPage from "./component/packagelist";
 import AddPackagePage from "./component/addpackage";
 import EditPackage from "./component/editpackage";
@@ -29,4 +26,4 @@ function App() {
   );
 }
 
-export default App;
+export default App
