@@ -43,7 +43,7 @@ app.post("/admin/create", async (req, res) => {
 
   try {
     await connectionPool.query(
-      `insert into admin (packages_name,merry_limit,icons,detail,created_at,updated_at) values ($1,$2,$3,$4,$5,$6)`,
+      `insert into packages (packages_name,merry_limit,icons,detail,created_at,updated_at) values ($1,$2,$3,$4,$5,$6)`,
       [
         newPackages.packages_name,
         newPackages.merry_limit,
@@ -70,7 +70,7 @@ app.post("/admin/create", async (req, res) => {
 app.get("/admin/get", async (req, res) => {
   let result;
   try {
-    result = await connectionPool.query(`select*from admin`);
+    result = await connectionPool.query(`select*from packages`);
     return res.status(200).json({ data: result.rows });
   } catch {
     return res.status(500).json({
@@ -97,7 +97,7 @@ app.put("/admin/edit/:package_id", async (req, res) => {
 
   try {
     const resultPackages = await connectionPool.query(
-      `select*from admin where package_id=$1`,
+      `select*from packages where package_id=$1`,
       [packagesId]
     );
 
@@ -142,7 +142,7 @@ app.put("/admin/edit/:package_id", async (req, res) => {
 app.delete("/admin/delete/:package_id", async (req, res) => {
   const packagesId = req.params.package_id;
   try {
-    await connectionPool.query(`delete from admin where package_id=$1`, [
+    await connectionPool.query(`delete from packages where package_id=$1`, [
       packagesId,
     ]);
 
