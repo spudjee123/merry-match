@@ -571,10 +571,10 @@ function EditProfileForm() {
                     ? URL.createObjectURL(images[isSecondImage ? 1 : 0])
                     : ""
                 }
-                className=" w-[478px] h-[478px] object-cover rounded-[32px]"
+                className=" w-[478px] h-[478px] object-cover rounded-b-[32px]"
                 alt={"preview photo " + isSecondImage ? "1" : "0"}
               />
-              <button className=" absolute w-12 h-12 top-2 left-2 shadow-primary">
+              <button className=" absolute w-12 h-12 flex justify-center items-center rounded-full top-2 left-2 shadow-primary">
                 <img
                   src={preview_exit_icon}
                   width={16}
