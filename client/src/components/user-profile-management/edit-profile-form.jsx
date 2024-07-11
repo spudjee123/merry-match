@@ -437,7 +437,9 @@ function EditProfileForm() {
                       className=" w-[478px] h-[478px] object-cover rounded-[32px]"
                       alt={"preview photo " + isSecondImage ? "1" : "0"}
                     />
-                    <div className=" flex justify-center absolute bottom-[-30px] left-[167px]">
+                  </div>
+                  <div className=" h-12 flex justify-between items-center text-gray-700 relative ">
+                    <div className=" flex justify-center absolute top-[-30px] w-full gap-6 z-10">
                       <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl">
                         <img
                           src={reject_icon}
@@ -446,7 +448,7 @@ function EditProfileForm() {
                           className=" mx-auto"
                         />
                       </button>
-                      <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl ml-6">
+                      <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl">
                         <img
                           src={love_icon}
                           width={50}
@@ -455,8 +457,6 @@ function EditProfileForm() {
                         />
                       </button>
                     </div>
-                  </div>
-                  <div className=" h-12 flex justify-between items-center text-gray-700 ">
                     <p className=" w-[72px] flex justify-center items-center">
                       {isSecondImage ? "2" : "1"}
                       <span className=" text-gray-600">/2</span>
@@ -469,7 +469,7 @@ function EditProfileForm() {
                           event.preventDefault();
                           setIsSecondImage(false);
                         }}
-                        className=" w-12 h-12 rounded-xl flex justify-center items-center"
+                        className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
                           src={back_icon}
@@ -485,7 +485,7 @@ function EditProfileForm() {
                           event.preventDefault();
                           setIsSecondImage(true);
                         }}
-                        className=" w-12 h-12 rounded-xl flex justify-center items-center"
+                        className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
                           src={next_icon}
@@ -564,17 +564,17 @@ function EditProfileForm() {
       ) : (
         <section>
           <div className="  ">
-            <div className=" h-[478px] relative">
+            <div className="relative">
               <img
                 src={
                   images[0] && images[1]
                     ? URL.createObjectURL(images[isSecondImage ? 1 : 0])
                     : ""
                 }
-                className=" w-[478px] h-[478px] object-cover rounded-b-[32px]"
+                className=" w-full aspect-[26/21] object-cover rounded-b-[32px]"
                 alt={"preview photo " + isSecondImage ? "1" : "0"}
               />
-              <button className=" absolute w-12 h-12 flex justify-center items-center rounded-full top-2 left-2 shadow-primary">
+              <button className=" bg-dark absolute w-12 h-12 flex justify-center items-center rounded-full top-2 left-2 shadow-primary">
                 <img
                   src={preview_exit_icon}
                   width={16}
@@ -587,7 +587,9 @@ function EditProfileForm() {
                   className=" shadow-2xl"
                 />
               </button>
-              <div className=" flex justify-center absolute bottom-[-30px] left-[167px]">
+            </div>
+            <div className=" h-12 flex justify-between items-center relative text-gray-700 ">
+              <div className=" flex justify-center absolute top-[-30px] w-full gap-6 z-10">
                 <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl">
                   <img
                     src={reject_icon}
@@ -596,7 +598,7 @@ function EditProfileForm() {
                     className=" mx-auto"
                   />
                 </button>
-                <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl ml-6">
+                <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl">
                   <img
                     src={love_icon}
                     width={50}
@@ -605,13 +607,11 @@ function EditProfileForm() {
                   />
                 </button>
               </div>
-            </div>
-            <div className=" h-12 flex justify-between items-center text-gray-700 ">
-              <p className=" w-[72px] flex justify-center items-center">
+              <p className=" w-[72px] flex justify-center items-center z-20">
                 {isSecondImage ? "2" : "1"}
                 <span className=" text-gray-600">/2</span>
               </p>
-              <div className=" flex">
+              <div className=" flex z-20">
                 <button
                   type="button"
                   id="back-preview-image-btn"
@@ -647,8 +647,8 @@ function EditProfileForm() {
               </div>
             </div>
           </div>
-          <div className=" w-[478px] flex flex-col gap-10 items-end text-gray-900 leading-6">
-            <article className=" w-[418px]">
+          <div className="flex flex-col px-4 py-6 gap-6 items-center text-gray-900 leading-6">
+            <article className=" w-full">
               <h1 className=" text-[46px] leading-[57.5px] font-extrabold mb-2">
                 {"John Snow"} <span className=" text-gray-700">{26}</span>
               </h1>
@@ -665,31 +665,23 @@ function EditProfileForm() {
               </div>
             </article>
 
-            <section className=" grid grid-cols-2 w-[418px] leading-6 py-2 gap-y-4">
+            <section className=" grid grid-cols-2 w-full py-2 gap-y-4">
               <p className=" flex items-center">Sexual identities</p>
-              <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                {"Male"}
-              </p>
+              <p className=" font-semibold text-gray-700">{"Male"}</p>
               <p className=" flex items-center">Sexual preferences</p>
-              <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                {"Female"}
-              </p>
+              <p className=" font-semibold text-gray-700">{"Female"}</p>
               <p className=" flex items-center">Racial preferences</p>
-              <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                {"Asian"}
-              </p>
+              <p className=" font-semibold text-gray-700">{"Asian"}</p>
               <p className=" flex items-center">Meeting interests</p>
-              <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                {"Friends"}
-              </p>
+              <p className=" font-semibold text-gray-700">{"Friends"}</p>
             </section>
 
-            <article className=" w-[418px] ">
+            <article className=" w-full ">
               <h2 className=" mb-4 text-2xl font-bold lead-[30px]">About me</h2>
               <p>{"I know nothing...but you"}</p>
             </article>
 
-            <article className=" w-[418px]">
+            <article className=" w-full">
               <h2 className=" mb-6 text-2xl font-bold lead-[30px]">
                 Hobbies and Interests
               </h2>
