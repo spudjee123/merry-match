@@ -1,14 +1,14 @@
-import landingpage1 from "../assets/images/landingpage1.png";
-import landingpage2 from "../assets/images/landingpage2.png";
-import landingpage3 from "../assets/images/landingpage3.png";
-import landingpage4 from "../assets/images/landingpage4.png";
-import landingpage5 from "../assets/images/landingpage5.png";
-import landingpage6 from "../assets/images/landingpage6.png";
-import landingpage7 from "../assets/images/landingpage7.png";
-import landingpage8 from "../assets/images/landingpage8.png";
-import landingpage9 from "../assets/images/landingpage9.png";
-import landingpage10 from "../assets/images/landingpage10.png";
-import landingpage11 from "../assets/images/landingpage11.png";
+import female1 from "../assets/images/female1.png";
+import female2 from "../assets/images/female2.png";
+import content from "../assets/images/content.png";
+import containerhorizon from "../assets/images/containerhorizon.png";
+import heart from "../assets/images/heart.png";
+import emojismile from "../assets/images/emojismile.png";
+import emojisunglasses from "../assets/images/emojisunglasses.png";
+import emojiwowstar from "../assets/images/emojiwowstar.png";
+import emojiparty from "../assets/images/emojiparty.png";
+import emojilove from "../assets/images/emojilove.png";
+import containervertical from "../assets/images/containervertical.png";
 
 export function LandingPage() {
   return (
@@ -22,10 +22,10 @@ export function LandingPage() {
           <div className="w-2 h-2 bg-yellow-900 rounded-full absolute right-[250px] top-[481px]" />
           <div className="w-2 h-2 bg-rose-400 rounded-full absolute left-[127px] top-[75px]   " />
           <div className="w-7 h-7 absolute right-[150px] top-[410px]">
-            <img className="w-full h-full" src={landingpage5} />
+            <img className="w-full h-full" src={emojismile} />
           </div>
           <div className="w-7 h-7 absolute right-[550px] top-[100px]">
-            <img className="w-full h-full" src={landingpage6} />
+            <img className="w-full h-full" src={heart} />
           </div>
         </div>
 
@@ -33,7 +33,7 @@ export function LandingPage() {
         <div className="absolute right-[300px] top-[-144px] w-[357px] h-[500px]">
           <img
             className="absolute left-[200px] top-0 w-[286px] h-[500px] max-lg:left-[250px] max-lg:top-[80px] max-lg:w-[190px] max-lg:h-[300px]"
-            src={landingpage1}
+            src={female1}
           />
           <div className="absolute left-[209px] top-[398px] w-[148px] h-[41px]">
             <div className="absolute left-[320px] top-[40px] w-[148px] h-[41px] bg-[#64001D] rounded-tl-3xl rounded-bl-3xl rounded-br-3xl rotate-180 origin-top-left max-lg:left-[280px] max-lg:top-[-50px]" />
@@ -47,7 +47,7 @@ export function LandingPage() {
         <div className="absolute left-[160px] top-[258px] w-[357px] h-[500px]">
           <img
             className="absolute left-[-50px] w-[500px] h-[500px] max-lg:left-[40px] max-lg:top-[430px] max-lg:w-[270px] max-lg:h-[350px] z-10"
-            src={landingpage2}
+            src={female2}
           />
         </div>
 
@@ -89,7 +89,7 @@ export function LandingPage() {
           </p>
         </div>
         <div className="absolute right-[100px] top-[275px] max-lg:left-[10px] max-lg:top-[900px] max-lg:w-[500px] max-lg:h-[500px]">
-          <img className="max-lg:w-[350px]" src={landingpage3} />
+          <img className="max-lg:w-[350px]" src={content} />
         </div>
       </div>
 
@@ -100,10 +100,10 @@ export function LandingPage() {
         </h2>
         <div className="lg:w-screen flex flex-wrap justify-center gap-6 mt-12 max-lg:flex-col">
           {[
-            { img: landingpage7, title: "Upload your cool picture" },
-            { img: landingpage8, title: "Explore and find the one you like" },
-            { img: landingpage9, title: "Click ‘Merry’ to get to know!" },
-            { img: landingpage10, title: "Start chatting and relationship" },
+            { img: emojisunglasses, title: "Upload your cool picture" },
+            { img: emojiwowstar, title: "Explore and find the one you like" },
+            { img: emojiparty, title: "Click ‘Merry’ to get to know!" },
+            { img: emojilove, title: "Start chatting and relationship" },
           ].map((item, index) => (
             <div
               key={index}
@@ -128,8 +128,8 @@ export function LandingPage() {
       {/* Section 4 */}
       <div className=" bg-[#160404] max-lg:relative max-lg:h-[500px] max-lg:top-[1200px]">
         <div className="relative flex justify-center items-center">
-          <img className="max-lg:hidden" src={landingpage4} />
-          <img className="w-full h-full lg:hidden" src={landingpage11} />
+          <img className="max-lg:hidden" src={containerhorizon} />
+          <img className="w-full h-full lg:hidden" src={containervertical} />
           <div className="absolute lg:mb-[100px] text-center text-white text-[46px] font-extrabold leading-[57.50px] font-['Nunito'] max-lg:left-0 max-lg:top-[120px]">
             Let’s start <br className="xl:hidden" /> finding <br /> and matching
             someone new
