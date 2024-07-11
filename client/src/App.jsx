@@ -8,6 +8,7 @@ import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import PackageListPage from "./component/packagelist";
 import AddPackagePage from "./component/addpackage";
 import EditPackage from "./component/editpackage";
+import EditProfilePage from "./pages/user-profile-management/edit-profile-page.jsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/package/add" element={<AddPackagePage />} />
           <Route path="/package/view" element={<PackageListPage />} />
           <Route path="/package/edit" element={<EditPackage />} />
+          <Route path="/user/:userId/edit" element={<EditProfilePage />} />
 
           {/* <Route path="/page" element={<Page />} /> */}
         </Routes>
@@ -26,4 +28,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
