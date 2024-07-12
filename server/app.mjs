@@ -3,6 +3,7 @@ import connectionPool from "./src/utils/db.mjs";
 import registerRouter from "../server/src/routes/register.mjs";
 import profileRouter from "../server/src/routes/profile.mjs";
 import loginRouter from '../server/src/routes/login.mjs'
+import supabase from "./lib/supabase.js";
 
 const app = express();
 const port = 4001;
@@ -72,16 +73,20 @@ app.post("/admin/create", async (req, res) => {
 
 //admin can read
 app.get("/admin/get", async (req, res) => {
-  let result;
-  try {
-    result = await connectionPool.query(`select*from packages`);
-    return res.status(200).json({ data: result.rows });
-  } catch {
-    return res.status(500).json({
-      message:
-        "The server has encountered a situation it does not know how to handle.",
-    });
-  }
+  // let result;
+  // try {
+  //   result = await connectionPool.query(`select*from packages`);
+  //   return res.status(200).json({ data: result.rows });
+  // } catch {
+  //   return res.status(500).json({
+  //     message:
+  //       "The server has encountered a situation it does not know how to handle.",
+  //   });
+  // }
+
+  //ดึงข้อมูลจาก supabase เพื่อดู
+  let { data: packages, error } = await supabase.from("packages").select("*");
+  return res.status(200).json({ packages });
 });
 
 //admin can update
@@ -112,7 +117,7 @@ app.put("/admin/edit/:package_id", async (req, res) => {
     }
 
     await connectionPool.query(
-      `update admin set packages_name =$2,
+      `update packages set packages_name =$2,
       merry_limit=$3,
       icons=$4,
       detail=$5,

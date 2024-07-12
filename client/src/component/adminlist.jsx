@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import edit from "../assets/icons/edit.png"
 import bin from "../assets/icons/bin.png"
 import basic from "../assets/icons/basic.png"
@@ -8,7 +8,7 @@ import drag from "../assets/icons/drag.png"
 import search from "../assets/icons/search.png"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios"
 
 const AdminPageList = () => {
   const [packages, setPackages] = useState([
@@ -17,6 +17,15 @@ const AdminPageList = () => {
     { id: 3, name: 'Premium', merryLimit: '70 Merry', createdDate: '12/02/2022 10:30PM', updatedDate: '12/02/2022 10:30PM', icon: premium },
   ]);
   const [searchTerm, setSearchTerm] = useState('');
+
+
+
+  async function getData() {
+    let result = await axios.get("/admin/get")
+    console.log(result);
+    setPackages(result.data)
+  }
+
 
   const handleDelete = (id) => {
     setPackages(packages.filter(pkg => pkg.id !== id));
@@ -38,6 +47,10 @@ const AdminPageList = () => {
     navigate('/package/edit')
   }
 
+
+useEffect(() => {
+  getData()
+},[])
 
   return (
     <section className="w-[90%] h-20 px-[60px] py-4 bg-white border-b border-gray-300 justify-start item-end inline-flex flex-col">
