@@ -23,6 +23,7 @@ function App() {
           <Route path="/package/edit" element={<EditPackage />} />
           <Route path="/user/:userId/edit" element={<EditProfilePage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<Login />} />
 
           {/* <Route path="/page" element={<Page />} /> */}
         </Routes>

@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
 import * as countryDB from "../../assets/test-data/Countrydata.json";
-import exit_icon from "../../assets/icons/cancel-icon.png";
-import back_icon from "../../assets/icons/back-vector-icon.png";
-import next_icon from "../../assets/icons/next-vector-icon.png";
-import location_icon from "../../assets/icons/location-icon.png";
-import reject_icon from "../../assets/icons/reject-icon.png";
-import love_icon from "../../assets/icons/love-icon.png";
-import preview_exit_icon from "../../assets/icons/preview-exit-icon.png";
 
 function RegisterForm() {
   const [hobbiesList, setHobbiesList] = useState([]);
@@ -29,8 +22,24 @@ function RegisterForm() {
   ];
   const [images, setImages] = useState(["", "", "", "", ""]);
   const [step, setStep] = useState(1);
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    dateOfBirth: "",
+    location: "",
+    city: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    sexIden: "",
+    sexPrefer: "",
+    racePrefer: "",
+    meeting: "",
+    hobbiesList: [],
+    images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
+  });
 
-  console.log(images);
+  console.log(userInfo);
   useEffect(() => {
     setCityList(
       countryDB.data
@@ -39,7 +48,7 @@ function RegisterForm() {
     );
   }, [location]);
   const inputClassName =
-    "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-white";
+    "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-white placeholder:text-gray-600";
   const formGroupClassName = "flex flex-col gap-1 w-full";
   const formGroupRowClassName =
     "flex flex-col-reverse gap-6 lg:flex-row-reverse lg:gap-6";
@@ -48,7 +57,7 @@ function RegisterForm() {
     <>
       <form className="">
         <section className="gap-10 lg:gap-20 flex flex-col px-4 py-10 lg:px-60 lg:pt-20 lg:pb-[60px] min-h-[calc(100vh-164px)] lg:min-h-[calc(100vh-200px)]">
-          <section className=" flex justify-between">
+          <section className=" flex flex-col max-lg:gap-[37px] lg:flex-row lg:justify-between">
             <article>
               <h1 className=" text-sm font-semibold leading-[21px] text-beige-700 mb-2">
                 REGISTER
@@ -60,46 +69,99 @@ function RegisterForm() {
                 matching
               </p>
             </article>
-            <div className=" hidden lg:flex justify-end items-end gap-4">
-              <button
-                type="button"
-                id="preview-btn"
-                className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
-                onClick={(event) => {
-                  event.preventDefault();
-                  setStep(1);
-                }}
-              >
-                1
-              </button>
-              <button
-                type="button"
-                id="preview-btn"
-                className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
-                onClick={(event) => {
-                  event.preventDefault();
-                  setStep(2);
-                }}
-              >
-                2
-              </button>
-              <button
-                type="button"
-                id="preview-btn"
-                className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
-                onClick={(event) => {
-                  event.preventDefault();
-                  setStep(3);
-                }}
-              >
-                3
-              </button>
+            <div className="flex lg:justify-end lg:items-end">
+              <div className=" flex gap-2 lg:gap-4 item-center">
+                <button
+                  type="button"
+                  id="register-step-1-btn"
+                  className={` rounded-2xl border-2 border-gray-300 p-2 text-purple-500 font-extrabold flex gap-2 ${
+                    step === 1 ? " sm:pr-8 text-nowrap " : " "
+                  }`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setStep(1);
+                  }}
+                >
+                  <p
+                    className={` w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center ${
+                      step === 1 ? "" : " text-gray-600"
+                    }`}
+                  >
+                    1
+                  </p>
+
+                  {step === 1 ? (
+                    <div className=" text-start">
+                      <p className=" text-gray-700 text-xs leading-[18px] font-medium">
+                        Step {step}/3
+                      </p>
+                      <p>Basic Information</p>
+                    </div>
+                  ) : null}
+                </button>
+                <button
+                  type="button"
+                  id="register-step-2-btn"
+                  className={` rounded-2xl border-2 border-gray-300 p-2 text-purple-500 font-extrabold flex gap-2 ${
+                    step === 2 ? " sm:pr-8 text-nowrap " : " "
+                  }`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setStep(2);
+                  }}
+                >
+                  <p
+                    className={` w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center ${
+                      step === 2 ? " " : " text-gray-600"
+                    }`}
+                  >
+                    2
+                  </p>
+
+                  {step === 2 ? (
+                    <div className=" text-start">
+                      <p className=" text-gray-700 text-xs leading-[18px] font-medium">
+                        Step {step}/3
+                      </p>
+                      <p>Identities and Interests</p>
+                    </div>
+                  ) : null}
+                </button>
+                <button
+                  type="button"
+                  id="register-step-3-btn"
+                  className={` rounded-2xl border-2 border-gray-300 p-2 text-purple-500 font-extrabold flex gap-2 ${
+                    step === 3 ? " sm:pr-8 text-nowrap " : " "
+                  }`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setStep(3);
+                  }}
+                >
+                  <p
+                    className={` w-10 h-10 bg-gray-200 rounded-xl flex items-center justify-center ${
+                      step === 3 ? " " : " text-gray-600 "
+                    }`}
+                  >
+                    3
+                  </p>
+
+                  {step === 3 ? (
+                    <div className=" text-start">
+                      <p className=" text-gray-700 text-xs leading-[18px] font-medium">
+                        Step {step}/3
+                      </p>
+                      <p>Upload Photos</p>
+                    </div>
+                  ) : null}
+                </button>
+              </div>
             </div>
           </section>
 
           {step === 1 ? (
             <section>
-              <h2 className="mb-6 font-bold text-2xl leading-[30px] text-gray-900">
+              <h2 className="mb-6 font-bold text-2xl leading-[30px] text-purple-500">
                 Basic Information
               </h2>
               <div className="flex flex-col gap-6 leading-6 lg:gap-10 ">
@@ -108,8 +170,15 @@ function RegisterForm() {
                     <label htmlFor="dateOfBirth">Date of birth</label>
                     <input
                       id="dateOfBirth"
-                      className="h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900"
+                      className="h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900 placeholder:text-gray-600"
                       type="date"
+                      value={userInfo.dateOfBirth}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          dateOfBirth: event.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -121,6 +190,10 @@ function RegisterForm() {
                       className={inputClassName}
                       type="text"
                       maxLength="50"
+                      value={userInfo.name}
+                      onChange={(event) =>
+                        setUserInfo({ ...userInfo, name: event.target.value })
+                      }
                       required
                     />
                   </div>
@@ -129,8 +202,15 @@ function RegisterForm() {
                 <div className={formGroupRowClassName}>
                   <div className={formGroupClassName}>
                     <label htmlFor="city">City</label>
-                    <select id="city" className={inputClassName}>
-                      <option selected>select one</option>
+                    <select
+                      id="city"
+                      className={inputClassName}
+                      value={userInfo.city}
+                      defaultValue={"select one"}
+                      onChange={(event) =>
+                        setUserInfo({ ...userInfo, city: event.target.value })
+                      }
+                    >
                       {cityList.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -142,11 +222,15 @@ function RegisterForm() {
                     <select
                       id="location"
                       className={inputClassName}
+                      value={userInfo.location}
                       onChange={(event) => {
                         setLocation(event.target.value);
+                        setUserInfo({
+                          ...userInfo,
+                          location: event.target.value,
+                        });
                       }}
                     >
-                      <option selected>select one</option>
                       {locationDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -156,16 +240,12 @@ function RegisterForm() {
 
                 <div className={formGroupRowClassName}>
                   <div className={formGroupClassName}>
-                    <label htmlFor="email" className="text-gray-600">
-                      Email
-                    </label>
+                    <label htmlFor="email">Email</label>
                     <input
                       id="email"
-                      className={
-                        "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-gray-200"
-                      }
+                      className={inputClassName}
                       type="email"
-                      disabled
+                      placeholder="name@website.com"
                     />
                   </div>
 
@@ -176,6 +256,7 @@ function RegisterForm() {
                       className={inputClassName}
                       type="text"
                       maxLength="6"
+                      placeholder="At least 6 characters"
                       required
                     />
                   </div>
@@ -189,6 +270,7 @@ function RegisterForm() {
                       className={inputClassName}
                       type="password"
                       maxLength="8"
+                      placeholder="At least 8 characters"
                       required
                     />
                   </div>
@@ -197,8 +279,10 @@ function RegisterForm() {
                     <input
                       id="password"
                       className={inputClassName}
+                      value={userInfo.password}
                       type="password"
                       maxLength="8"
+                      placeholder="At least 8 characters"
                       required
                     />
                   </div>
@@ -207,7 +291,7 @@ function RegisterForm() {
             </section>
           ) : step === 2 ? (
             <section>
-              <h2 className="mb-6 font-bold text-2xl leading-[30px] text-gray-900">
+              <h2 className="mb-6 font-bold text-2xl leading-[30px] text-purple-500">
                 Identities and Interests
               </h2>
               <div className={formClassName}>
@@ -362,7 +446,36 @@ function RegisterForm() {
             </section>
           )}
         </section>
-        <footer className=" h-28 bg-red-utility"></footer>
+        <footer className=" h-28 bg-white px-4 lg:px-40 py-8 flex justify-between items-center border-t-2 border-gray-300">
+          <p className=" w-6 lg:w-[72px] h-12 text-gray-700 px-0 lg:px-6 py-3">
+            {step}
+            <span className=" text-gray-600">/3</span>
+          </p>
+          <div className=" w-[220px] lg:w-[207px] h-12 flex items-center gap-6   ">
+            <button
+              type="button"
+              className={`${step === 1 ? "text-gray-500" : "text-red-500"}`}
+              disabled={step === 1}
+              onClick={(event) => {
+                event.preventDefault();
+                setStep(step - 1);
+              }}
+            >
+              &larr; back
+            </button>
+            <button
+              className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
+              type={step === 3 ? "submit" : "button"}
+              onClick={(event) => {
+                step === 3
+                  ? setStep(3)
+                  : (event.preventDefault(), setStep(step + 1));
+              }}
+            >
+              {step === 3 ? "Confirm" : "Next Step"}
+            </button>
+          </div>
+        </footer>
       </form>
     </>
   );
