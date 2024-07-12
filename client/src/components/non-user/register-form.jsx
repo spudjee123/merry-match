@@ -55,7 +55,7 @@ function RegisterForm() {
   const formClassName = "flex flex-col gap-6 leading-6 lg:gap-10 ";
   return (
     <>
-      <form className="">
+      <form className="" onSubmit="">
         <section className="gap-10 lg:gap-20 flex flex-col px-4 py-10 lg:px-60 lg:pt-20 lg:pb-[60px] min-h-[calc(100vh-164px)] lg:min-h-[calc(100vh-200px)]">
           <section className=" flex flex-col max-lg:gap-[37px] lg:flex-row lg:justify-between">
             <article>
@@ -206,7 +206,6 @@ function RegisterForm() {
                       id="city"
                       className={inputClassName}
                       value={userInfo.city}
-                      defaultValue={"select one"}
                       onChange={(event) =>
                         setUserInfo({ ...userInfo, city: event.target.value })
                       }
@@ -246,6 +245,10 @@ function RegisterForm() {
                       className={inputClassName}
                       type="email"
                       placeholder="name@website.com"
+                      value={userInfo.email}
+                      onChange={(event) =>
+                        setUserInfo({ ...userInfo, email: event.target.value })
+                      }
                     />
                   </div>
 
@@ -255,8 +258,15 @@ function RegisterForm() {
                       id="username"
                       className={inputClassName}
                       type="text"
-                      maxLength="6"
+                      minLength="6"
                       placeholder="At least 6 characters"
+                      value={userInfo.username}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          username: event.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -269,8 +279,15 @@ function RegisterForm() {
                       id="confirmed-password"
                       className={inputClassName}
                       type="password"
-                      maxLength="8"
+                      minLength="8"
                       placeholder="At least 8 characters"
+                      value={userInfo.confirmPassword}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          confirmPassword: event.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -280,8 +297,14 @@ function RegisterForm() {
                       id="password"
                       className={inputClassName}
                       value={userInfo.password}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          password: event.target.value,
+                        })
+                      }
                       type="password"
-                      maxLength="8"
+                      minLength="8"
                       placeholder="At least 8 characters"
                       required
                     />
@@ -298,8 +321,17 @@ function RegisterForm() {
                 <div className={formGroupRowClassName}>
                   <div className={formGroupClassName}>
                     <label htmlFor="sexPrefer">Sexual preferences:</label>
-                    <select id="sexPrefer" className={inputClassName}>
-                      <option selected>select one</option>
+                    <select
+                      id="sexPrefer"
+                      value={userInfo.sexPrefer}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          sexPrefer: event.target.value,
+                        })
+                      }
+                      className={inputClassName}
+                    >
                       {sexDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -308,8 +340,17 @@ function RegisterForm() {
 
                   <div className={formGroupClassName}>
                     <label htmlFor="sexIden">Sexual identities:</label>
-                    <select id="sexIden" className={inputClassName}>
-                      <option selected>select one</option>
+                    <select
+                      id="sexIden"
+                      value={userInfo.sexIden}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          sexIden: event.target.value,
+                        })
+                      }
+                      className={inputClassName}
+                    >
                       {sexDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -320,8 +361,17 @@ function RegisterForm() {
                 <div className={formGroupRowClassName}>
                   <div className={formGroupClassName}>
                     <label htmlFor="meeting">Meeting interest:</label>
-                    <select id="meeting" className={inputClassName}>
-                      <option selected>select one</option>
+                    <select
+                      id="meeting"
+                      value={userInfo.meeting}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          meeting: event.target.value,
+                        })
+                      }
+                      className={inputClassName}
+                    >
                       {meetingDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -330,8 +380,17 @@ function RegisterForm() {
 
                   <div className={formGroupClassName}>
                     <label htmlFor="racePrefer">Racial preferences:</label>
-                    <select id="racePrefer" className={inputClassName}>
-                      <option selected>select one</option>
+                    <select
+                      id="racePrefer"
+                      value={userInfo.racePrefer}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          racePrefer: event.target.value,
+                        })
+                      }
+                      className={inputClassName}
+                    >
                       {raceDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -370,11 +429,17 @@ function RegisterForm() {
                       type="text"
                       value={hobby}
                       className="grow px-2 bg-white"
-                      onChange={(event) => setHobby(event.target.value)}
+                      onChange={(event) => {
+                        setHobby(event.target.value);
+                      }}
                       onKeyDown={(event) => {
                         if (event.key === "Enter") {
                           event.preventDefault();
                           setHobbiesList([...hobbiesList, hobby]);
+                          setUserInfo({
+                            ...userInfo,
+                            hobbiesList: hobbiesList,
+                          });
                           setHobby("");
                         }
                       }}
