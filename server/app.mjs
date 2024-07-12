@@ -19,6 +19,9 @@ app.get("/test", (req, res) => {
 app.get("/users", async (req, res) => {
   let result;
   try {
+    const auth = req.headers['authorization']
+    console.log('authorization',auth)
+    
     result = await connectionPool.query(`select * from users`);
   } catch (error) {
     return res.status(500).json({

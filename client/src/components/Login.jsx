@@ -1,9 +1,17 @@
 import React from "react";
 import ImgLogin from "../assets/images/loginpage.png";
 import ImgCercle from "../assets/images/cercleloginpage.png";
+import Nav  from "../nav";
 
 const Login = () => {
+  const login = ()=>{
+    const emailOrUsername = document.querySelector('input[name=email]').value
+    const password = document.querySelector('input[name=password]').value
+    console.log(emailOrUsername,password)
+  }
   return (
+    <div>
+      <Nav />
     <section className="bg-white h-screen w-screen relative">
       <img
         src={ImgCercle}
@@ -33,6 +41,7 @@ const Login = () => {
               Username or Email
             </h4>
             <input
+            name="email"
               type="text"
               placeholder="Enter Username or Email"
               className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
@@ -41,13 +50,14 @@ const Login = () => {
               Password
             </h4>
             <input
+            name="password"
               type="text"
               placeholder="Enter password"
               className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
             />
           </div>
           <div className="lg:flex lg:justify-center mt-[30px]">
-            <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto">
+            <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto" onClick={login}>
               Log in
             </button>
           </div>
@@ -62,6 +72,7 @@ const Login = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 

@@ -51,7 +51,7 @@ function Nav() {
               className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-22 p-2 shadow"
             >
               <li>
-                <Link>Login</Link>
+                <Link >Login</Link>
               </li>
             </ul>
           </div>
@@ -75,7 +75,7 @@ function Nav() {
               {" "}
               How to Merry
             </Link>
-            <Link to="/" className="content-center">
+            <Link to="/login" className="content-center">
               {" "}
               <button className="lg:w-[139px] lg:h-[52px] lg:text-[18px] rounded-[99px] bg-red-500 text-white content-center md:w-[112px] md:h-[48px]">
                 Login

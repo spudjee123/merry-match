@@ -9,10 +9,12 @@ import emojiwowstar from "../assets/images/emojiwowstar.png";
 import emojiparty from "../assets/images/emojiparty.png";
 import emojilove from "../assets/images/emojilove.png";
 import containervertical from "../assets/images/containervertical.png";
+import Nav from "../nav";
 
 export function LandingPage() {
   return (
     <div className="bg-[#160404] lg:h-[2700px] max-lg:h-[4000px]">
+      <Nav />
       {/* Section 1 */}
       <div className="relative flex flex-col items-center">
         {/* Background Circles and Images */}
