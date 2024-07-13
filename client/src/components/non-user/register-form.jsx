@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import * as countryDB from "../../assets/test-data/Countrydata.json";
+import useRegister from '../hooks/hooks'
+import { useNavigate } from "react-router-dom";
 
 function RegisterForm() {
   const [hobbiesList, setHobbiesList] = useState([]);
@@ -16,7 +18,7 @@ function RegisterForm() {
     "long term fish and chip",
     "friend with buffet",
     "one night swensen",
-    "only fries",
+    "only friends",
     "24-7 eleven",
     "keep donut",
   ];
@@ -36,8 +38,13 @@ function RegisterForm() {
     racePrefer: "",
     meeting: "",
     hobbiesList: [],
-    images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
+    images: ["", "", "", "", ""],
   });
+  const { createId, isError, isLoading } = useRegister();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await createId(userInfo);
+  };
 
   console.log(userInfo);
   useEffect(() => {
@@ -53,9 +60,10 @@ function RegisterForm() {
   const formGroupRowClassName =
     "flex flex-col-reverse gap-6 lg:flex-row-reverse lg:gap-6";
   const formClassName = "flex flex-col gap-6 leading-6 lg:gap-10 ";
+
   return (
     <>
-      <form className="" onSubmit="">
+      <form className="" onSubmit={handleSubmit}>
         <section className="gap-10 lg:gap-20 flex flex-col px-4 py-10 lg:px-60 lg:pt-20 lg:pb-[60px] min-h-[calc(100vh-164px)] lg:min-h-[calc(100vh-200px)]">
           <section className=" flex flex-col max-lg:gap-[37px] lg:flex-row lg:justify-between">
             <article>

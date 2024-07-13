@@ -10,6 +10,7 @@ import AddPackagePage from "./component/addpackage";
 import EditPackage from "./component/editpackage";
 import EditProfilePage from "./pages/user-profile-management/edit-profile-page.jsx";
 import RegisterPage from "./pages/non-user/register-page.jsx";
+import NavUser from "./navUser.jsx";
 
 function App() {
   return (
@@ -24,8 +25,7 @@ function App() {
           <Route path="/user/:userId/edit" element={<EditProfilePage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<Login />} />
-
-          {/* <Route path="/page" element={<Page />} /> */}
+          <Route path="/page" element={<NavUser />} />
         </Routes>
       </BrowserRouter>
     </>

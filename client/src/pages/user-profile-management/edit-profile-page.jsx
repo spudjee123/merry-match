@@ -1,11 +1,11 @@
 import EditProfileForm from "../../components/user-profile-management/edit-profile-form.jsx";
-import Nav from "../../nav.jsx";
 import Footer from "../../components/Footer.jsx";
+import NavUser from "../../navUser.jsx";
 
 function EditProfilePage() {
   return (
     <>
-      <Nav />
+      <NavUser />
       <section className="bg-main text-black">
         <EditProfileForm />
       </section>
