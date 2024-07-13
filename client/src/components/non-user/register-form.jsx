@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import * as countryDB from "../../assets/test-data/Countrydata.json";
 import useRegister from '../hooks/hooks'
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function RegisterForm() {
   const [hobbiesList, setHobbiesList] = useState([]);
@@ -40,10 +41,11 @@ function RegisterForm() {
     hobbiesList: [],
     images: ["", "", "", "", ""],
   });
-  const { createId, isError, isLoading } = useRegister();
+  // const { createId, isError, isLoading } = useRegister();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await createId(userInfo);
+    const result = await axios.post("http://localhost:4001/register",userInfo)
+    console.log(result)
   };
 
   console.log(userInfo);

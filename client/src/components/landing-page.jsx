@@ -9,11 +9,12 @@ import emojiwowstar from "../assets/images/emojiwowstar.png";
 import emojiparty from "../assets/images/emojiparty.png";
 import emojilove from "../assets/images/emojilove.png";
 import containervertical from "../assets/images/containervertical.png";
-import Nav from "../nav";
+import Nav from "../pages/non-user/nav";
+
 
 export function LandingPage() {
   return (
-    <div className="bg-[#160404] lg:h-[2700px] max-lg:h-[4000px]">
+    <div className="bg-[#160404] lg:h-[2700px] max-lg:h-[4000px] pt-[180px]">
       <Nav />
       {/* Section 1 */}
       <div className="relative flex flex-col items-center">
@@ -70,7 +71,7 @@ export function LandingPage() {
       </div>
 
       {/* Section 2 */}
-      <div className="relative flex flex-col items-center bg-[#160404] w-screen h-screen top-[100px] lg max-lg:top-[100px]">
+      <section id="section-two" className="relative flex flex-col items-center bg-[#160404] w-screen h-screen top-[100px] lg max-lg:top-[100px]">
         <div className="absolute left-[100px] top-[300px] w-[500px] max-lg:left-[30px] max-lg:top-[400px] max-lg:w-[330px]">
           <h2 className="text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
             Why Merry <br className="lg:hidden" /> Match?
@@ -93,10 +94,10 @@ export function LandingPage() {
         <div className="absolute right-[100px] top-[275px] max-lg:left-[10px] max-lg:top-[900px] max-lg:w-[500px] max-lg:h-[500px]">
           <img className="max-lg:w-[350px]" src={content} />
         </div>
-      </div>
+      </section>
 
       {/* Section 3 */}
-      <div className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[-100px] max-lg:h-screen max-lg:top-[500px]">
+      <section id="section-three" className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[-100px] max-lg:h-screen max-lg:top-[500px]">
         <h2 className="w-[300px] text-center text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
           How to Merry
         </h2>
@@ -125,10 +126,10 @@ export function LandingPage() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Section 4 */}
-      <div className=" bg-[#160404] max-lg:relative max-lg:h-[500px] max-lg:top-[1200px]">
+      <section className=" bg-[#160404] max-lg:relative max-lg:h-[500px] max-lg:top-[1200px]">
         <div className="relative flex justify-center items-center">
           <img className="max-lg:hidden" src={containerhorizon} />
           <img className="w-full h-full lg:hidden" src={containervertical} />
@@ -140,7 +141,7 @@ export function LandingPage() {
             Start Matching!
           </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

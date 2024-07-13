@@ -1,7 +1,8 @@
 import React from "react";
 import ImgLogin from "../assets/images/loginpage.png";
 import ImgCercle from "../assets/images/cercleloginpage.png";
-import Nav from "../nav";
+import Nav from "../pages/non-user/nav";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -60,7 +61,7 @@ const Login = () => {
               <h4 className="text-[16px] text-black mt-[40px] text-center">
                 Don't have account?
                 <span className="cursor-pointer text-[#C70039] font-bold">
-                  Register
+                   <Link to={'/register'}>Register</Link>
                 </span>
               </h4>
             </div>

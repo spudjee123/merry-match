@@ -12,6 +12,7 @@ app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
 app.use("/login", loginRouter);
 
+
 app.get("/test", (req, res) => {
   return res.json("Server API is working 🚀");
 });

@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "./assets/images/logo.png";
-import bell from "./assets/images/bell.png";
-import hamburger from "./assets/images/hamburger.png";
-import Frame from "./assets/images/Frame.png";
-import star from './assets/images/star.png'
+import logo from "../non-user/logo.png";
+import bell from "../non-user/bell.png";
+import hamburger from "../non-user/hamburger.png";
+import Frame from "../non-user/Frame.png";
+import star from '../non-user/star.png'
 
 function NavUser() {
   return (

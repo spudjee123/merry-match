@@ -1,12 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "./assets/images/logo.png";
-import bell from "./assets/images/bell.png";
-import hamburger from "./assets/images/hamburger.png";
+import logo from "../non-user/logo.png";
+import bell from "../non-user/bell.png";
+import hamburger from "../non-user/hamburger.png";
 
-function NavUser() {
+
+function Nav() {
   return (
-    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] ">
+    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 ">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
         <a>
           <img
@@ -31,10 +32,10 @@ function NavUser() {
               className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow "
             >
               <li>
-                <Link>Start Matching!</Link>
+                 <Link>Why Merry Match?</Link>
               </li>
               <li>
-                <Link>Merry Membership</Link>
+                <Link >How to Merry</Link>
               </li>
             </ul>
           </div>
@@ -62,18 +63,18 @@ function NavUser() {
         <div className="flex flex-rows flex-wrap w-full justify-between place-content-center">
           <div className="hidden md:flex space-x-6 content-start gap-6 ">
             <Link
-              to="/"
+              to="/#section-two"
               className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
             >
               {" "}
-              Start Matching!
+              Why Merry Match?
             </Link>
             <Link
               to="/"
               className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
             >
               {" "}
-              Merry Membership
+              How to Merry
             </Link>
             <Link to="/login" className="content-center">
               {" "}
@@ -88,4 +89,4 @@ function NavUser() {
   );
 }
 
-export default NavUser;
+export default Nav;

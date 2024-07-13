@@ -1,5 +1,5 @@
 import "./App.css";
-import Nav from "./nav";
+import Nav from "./pages/non-user/nav.jsx";
 import LandingPage from "./components/landing-page.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
@@ -10,15 +10,14 @@ import AddPackagePage from "./component/addpackage";
 import EditPackage from "./component/editpackage";
 import EditProfilePage from "./pages/user-profile-management/edit-profile-page.jsx";
 import RegisterPage from "./pages/non-user/register-page.jsx";
-import NavUser from "./navUser.jsx";
+import NavUser from "./pages/user-profile-management/navUser.jsx";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Nav />} />
-          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/package/add" element={<AddPackagePage />} />
           <Route path="/package/view" element={<PackageListPage />} />
           <Route path="/package/edit" element={<EditPackage />} />

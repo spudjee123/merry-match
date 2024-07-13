@@ -1,8 +1,21 @@
-import { Router } from "express";
+import { application, Router } from "express";
 import connectionPool from "../utils/db.mjs";
 import bcrypt from "bcrypt"
+import cors from 'cors'
+import supabase from "../apps/lib/supabase.js";
+import express from 'express'
 
+const app = express()
 const registerRouter = Router();
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200 // 
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
 
 registerRouter.post("/", async (req, res) => {
   const inputData = { ...req.body };
