@@ -1,14 +1,12 @@
-import React from "react";
-import edit from "../assets/icons/edit.png"
-import bin from "../assets/icons/bin.png"
-import basic from "../assets/icons/basic.png"
-import platinum from "../assets/icons/platinum.png"
-import premium from "../assets/icons/premium.png"
-import drag from "../assets/icons/drag.png"
-import search from "../assets/icons/search.png"
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import edit from "../assets/icons/edit.png";
+import bin from "../assets/icons/bin.png";
+import basic from "../assets/icons/basic.png";
+import platinum from "../assets/icons/platinum.png";
+import premium from "../assets/icons/premium.png";
+import drag from "../assets/icons/drag.png";
+import search from "../assets/icons/search.png";
 
 const AdminPageList = () => {
   const [packages, setPackages] = useState([
@@ -17,27 +15,32 @@ const AdminPageList = () => {
     { id: 3, name: 'Premium', merryLimit: '70 Merry', createdDate: '12/02/2022 10:30PM', updatedDate: '12/02/2022 10:30PM', icon: premium },
   ]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [deletePackageId, setDeletePackageId] = useState(null);
 
-  const handleDelete = (id) => {
-    setPackages(packages.filter(pkg => pkg.id !== id));
-    document.getElementById("delete").showModal()
-  };
-
-  const filteredPackages = packages.filter(pkg => 
-    pkg.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/package/add')
-  }
+    navigate('/package/add');
+  };
 
   const handleClickEdit = () => {
-    navigate('/package/edit')
-  }
+    navigate('/package/edit');
+  };
 
+  const handleDelete = (id) => {
+    setDeletePackageId(id);
+    document.getElementById("delete").showModal();
+  };
+
+  const confirmDelete = () => {
+    setPackages(packages.filter(pkg => pkg.id !== deletePackageId));
+    document.getElementById("delete").close();
+    setDeletePackageId(null);
+  };
+
+  const filteredPackages = packages.filter(pkg =>
+    pkg.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <section className="w-[90%] h-20 px-[60px] py-4 bg-white border-b border-gray-300 justify-start item-end inline-flex flex-col">
@@ -116,40 +119,39 @@ const AdminPageList = () => {
       </div>
 
       <dialog id="delete" className="modal rounded-2xl lg:rounded-3xl p-0">
-          <div className="modal-box p-0 shadow-primary">
-            <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
-              <h3 className=" text-xl leading-6 font-semibold">
-                Delete Confirmation
-              </h3>
-
+        <div className="modal-box p-0 shadow-primary">
+          <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
+            <h3 className="text-xl leading-6 font-semibold">
+              Delete Confirmation
+            </h3>
+            <form method="dialog">
+              <button className="btn btn-sm btn-square btn-ghost">
+                X
+              </button>
+            </form>
+          </div>
+          <div className="p-4 lg:p-6 flex flex-col gap-6">
+            <p className="text-color-gray-700 leading-6">
+              Are you sure you want to delete this package?
+            </p>
+            <div className="flex flex-col lg:flex-row gap-4">
+              <button
+                className="bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary"
+                onClick={confirmDelete}
+              >
+                Yes, I want to delete
+              </button>
               <form method="dialog">
-                <button className="btn btn-sm btn-square btn-ghost">
-                  X
+                <button className="bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary">
+                  No, I don’t want
                 </button>
               </form>
             </div>
-            <div className=" p-4 lg:p-6 flex flex-col gap-6">
-              <p className=" text-color-gray-700 leading-6">
-                Do you sure to delete this package?
-              </p>
-              <div className=" flex flex-col lg:flex-row gap-4">
-                <button className=" bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary">
-                  Yes, I want to delete
-                </button>
-                <form method="dialog">
-                  <button className=" bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary">
-                    No, I don’t want
-                  </button>
-                </form>
-              </div>
-            </div>
           </div>
-        </dialog>
+        </div>
+      </dialog>
     </section>
-
-
   );
 };
-
 
 export default AdminPageList;
