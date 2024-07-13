@@ -10,21 +10,22 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
 
-const AdminPageList = () => {
-  const [packages, setPackages] = useState([
-    { id: 1, name: 'Basic', merryLimit: '25 Merry', createdDate: '12/02/2022 10:30PM', updatedDate: '12/02/2022 10:30PM', icon: basic },
-    { id: 2, name: 'Platinum', merryLimit: '45 Merry', createdDate: '12/02/2022 10:30PM', updatedDate: '12/02/2022 10:30PM', icon: platinum },
-    { id: 3, name: 'Premium', merryLimit: '70 Merry', createdDate: '12/02/2022 10:30PM', updatedDate: '12/02/2022 10:30PM', icon: premium },
-  ]);
-  const [searchTerm, setSearchTerm] = useState('');
+// const AdminPageList = () => {
+//   const [packages, setPackages] = useState();
+//   const [searchTerm, setSearchTerm] = useState('');
+
+  const AdminPageList = () => {
+    const [packages, setPackages] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
 
 
   async function getData() {
-    let result = await axios.get("/admin/get")
+    let result = await axios.get("http://localhost:4001/admin/get")
     console.log(result);
-    setPackages(result.data)
+    setPackages(result.data.packages);
   }
+
 
 
   const handleDelete = (id) => {
@@ -33,7 +34,7 @@ const AdminPageList = () => {
   };
 
   const filteredPackages = packages.filter(pkg => 
-    pkg.name.toLowerCase().includes(searchTerm.toLowerCase())
+    pkg.packages_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
 
@@ -43,8 +44,8 @@ const AdminPageList = () => {
     navigate('/package/add')
   }
 
-  const handleClickEdit = () => {
-    navigate('/package/edit')
+  const handleClickEdit = (id) => {
+    navigate(`/package/edit/${id}`)
   }
 
 
@@ -92,36 +93,36 @@ useEffect(() => {
         </table>
 
         {filteredPackages.map((pkg) => (
-          <div className="h-[88px] justify-start items-start flex" key={pkg.id}>
+          <div className="h-[88px] justify-start items-start flex" key={pkg.package_id}>
             <div className="self-stretch px-[11px] py-1 justify-center items-center flex">
               <img src={drag} alt="" />
             </div>
             <div className="h-[88px] justify-center items-center gap-2.5 flex">
-              <div className="text-justify text-black text-base font-normal leading-normal mr-[90px] ml-1">{pkg.id}</div>
+              <div className="text-justify text-black text-base font-normal leading-normal mr-[90px] ml-1">{pkg.package_id}</div>
             </div>
             <div className="w-20 h-[88px] px-4 py-8 justify-start items-center gap-2.5 flex mr-[100px]">
               <div className="w-8 h-8 px-[3.20px] py-[4.80px] justify-center items-center flex">
-                <img src={pkg.icon} alt="" />
+                <img src={pkg.icons} alt="" />
               </div>
             </div>
             <div className="h-[88px] w-[70px] px-4 py-8 justify-start items-center gap-2.5 flex mr-[180px]">
-              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.name}</div>
+              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.packages_name}</div>
             </div>
             <div className="h-[88px] px-4 py-8 justify-start items-center gap-2.5 flex mr-[100px]">
-              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.merryLimit}</div>
+              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.merry_limit}</div>
             </div>
             <div className="h-[88px] px-4 py-8 justify-start items-center gap-2.5 flex mr-[50px]">
-              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.createdDate}</div>
+              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.created_at}</div>
             </div>
             <div className="grow shrink basis-0 h-[88px] px-4 py-8 justify-start items-center flex">
-              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.updatedDate}</div>
+              <div className="text-justify text-black text-base font-normal leading-normal">{pkg.updated_at}</div>
             </div>
             <div className="w-[120px] h-[88px] pl-[27px] pr-7 justify-center items-start flex">
               <div className="grow shrink basis-0 self-stretch px-[3px] py-[1.50px] justify-center items-center inline-flex">
-                <button><img src={bin} alt="" onClick={() => handleDelete(pkg.id)} /></button>
+                <button><img src={bin} alt="" onClick={() => handleDelete(pkg.package_id)} /></button>
               </div>
               <div className="grow shrink basis-0 self-stretch px-[3px] py-[1.50px] justify-center items-center inline-flex ml-2">
-                <button onClick={handleClickEdit} ><img src={edit} alt="" /></button>
+                <button onClick={() => handleClickEdit(pkg.package_id)} ><img src={edit} alt="" /></button>
               </div>
             </div>
           </div>
