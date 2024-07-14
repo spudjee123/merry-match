@@ -1,57 +1,58 @@
-import { useEffect } from "react";
-import edit from "../assets/icons/edit.png"
-import bin from "../assets/icons/bin.png"
-import basic from "../assets/icons/basic.png"
-import platinum from "../assets/icons/platinum.png"
-import premium from "../assets/icons/premium.png"
-import drag from "../assets/icons/drag.png"
-import search from "../assets/icons/search.png"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"
+import axios from "axios";
+import edit from "../assets/icons/edit.png";
+import bin from "../assets/icons/bin.png";
+import drag from "../assets/icons/drag.png";
+import search from "../assets/icons/search.png";
 
-// const AdminPageList = () => {
-//   const [packages, setPackages] = useState();
-//   const [searchTerm, setSearchTerm] = useState('');
+const AdminPageList = () => {
+  const [packages, setPackages] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deletePackageId, setDeletePackageId] = useState(null);
 
-  const AdminPageList = () => {
-    const [packages, setPackages] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
+  const getData = async () => {
+    try {
+      const result = await axios.get("http://localhost:4001/admin/get");
+      setPackages(result.data.packages);
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    }
+  };
 
+  const handleDeleteClick = (id) => {
+    setDeletePackageId(id);
+    setIsDeleteDialogOpen(true);
+  };
 
-
-  async function getData() {
-    let result = await axios.get("http://localhost:4001/admin/get")
-    console.log(result);
-    setPackages(result.data.packages);
-  }
-
-
-
-  const handleDelete = (id) => {
-    setPackages(packages.filter(pkg => pkg.id !== id));
-    document.getElementById("delete").showModal()
+  const handleConfirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:4001/admin/delete/${deletePackageId}`);
+      setPackages(packages.filter(pkg => pkg.package_id !== deletePackageId));
+    } catch (error) {
+      console.error("Error deleting package:", error);
+    }
+    setIsDeleteDialogOpen(false);
   };
 
   const filteredPackages = packages.filter(pkg => 
     pkg.packages_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/package/add')
-  }
+    navigate('/package/add');
+  };
 
   const handleClickEdit = (id) => {
-    navigate(`/package/edit/${id}`)
-  }
+    navigate(`/package/edit/${id}`);
+  };
 
-
-useEffect(() => {
-  getData()
-},[])
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <section className="w-[90%] h-20 px-[60px] py-4 bg-white border-b border-gray-300 justify-start item-end inline-flex flex-col">
@@ -63,7 +64,7 @@ useEffect(() => {
           <div className="h-12 bg-white rounded-lg border border-gray-300 justify-start items-center gap-2.5 flex">
             <div><img className="relative left-1" src={search} alt="" /></div>
             <input
-              className="w-[320px] grow shrink basis-0 text-slate-400 text-base font-normal leading-normal h-10 bg-white "
+              className="w-[320px] grow shrink basis-0 text-slate-400 text-base font-normal leading-normal h-10 bg-white"
               type="text"
               placeholder="Search..."
               value={searchTerm}
@@ -119,51 +120,45 @@ useEffect(() => {
             </div>
             <div className="w-[120px] h-[88px] pl-[27px] pr-7 justify-center items-start flex">
               <div className="grow shrink basis-0 self-stretch px-[3px] py-[1.50px] justify-center items-center inline-flex">
-                <button><img src={bin} alt="" onClick={() => handleDelete(pkg.package_id)} /></button>
+                <button onClick={() => handleDeleteClick(pkg.package_id)}><img src={bin} alt="Delete" /></button>
               </div>
               <div className="grow shrink basis-0 self-stretch px-[3px] py-[1.50px] justify-center items-center inline-flex ml-2">
-                <button onClick={() => handleClickEdit(pkg.package_id)} ><img src={edit} alt="" /></button>
+                <button onClick={() => handleClickEdit(pkg.package_id)} ><img src={edit} alt="Edit" /></button>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <dialog id="delete" className="modal rounded-2xl lg:rounded-3xl p-0">
+      {isDeleteDialogOpen && (
+        <dialog id="delete" className="modal rounded-2xl lg:rounded-3xl p-0" open>
           <div className="modal-box p-0 shadow-primary">
             <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
               <h3 className=" text-xl leading-6 font-semibold">
                 Delete Confirmation
               </h3>
-
-              <form method="dialog">
-                <button className="btn btn-sm btn-square btn-ghost">
-                  X
-                </button>
-              </form>
+              <button className="btn btn-sm btn-square btn-ghost" onClick={() => setIsDeleteDialogOpen(false)}>
+                X
+              </button>
             </div>
-            <div className=" p-4 lg:p-6 flex flex-col gap-6">
-              <p className=" text-color-gray-700 leading-6">
+            <div className="p-4 lg:p-6 flex flex-col gap-6">
+              <p className="text-color-gray-700 leading-6">
                 Do you sure to delete this package?
               </p>
-              <div className=" flex flex-col lg:flex-row gap-4">
-                <button className=" bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary">
+              <div className="flex flex-col lg:flex-row gap-4">
+                <button onClick={handleConfirmDelete} className="bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary">
                   Yes, I want to delete
                 </button>
-                <form method="dialog">
-                  <button className=" bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary">
-                    No, I don’t want
-                  </button>
-                </form>
+                <button onClick={() => setIsDeleteDialogOpen(false)} className="bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary">
+                  No, I don’t want
+                </button>
               </div>
             </div>
           </div>
         </dialog>
+      )}
     </section>
-
-
   );
 };
-
 
 export default AdminPageList;
