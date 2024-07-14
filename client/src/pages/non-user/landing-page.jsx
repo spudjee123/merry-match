@@ -9,7 +9,7 @@ import emojiwowstar from "../assets/images/emojiwowstar.png";
 import emojiparty from "../assets/images/emojiparty.png";
 import emojilove from "../assets/images/emojilove.png";
 import containervertical from "../assets/images/containervertical.png";
-import Nav from "../pages/non-user/nav";
+import Nav from "./nav";
 
 export function LandingPage() {
   return (
@@ -145,4 +145,4 @@ export function LandingPage() {
   );
 }
 
-export default LandingPage;
+export default LandingPageLogin;

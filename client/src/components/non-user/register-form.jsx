@@ -3,6 +3,7 @@ import * as countryDB from "../../assets/test-data/Countrydata.json";
 import useRegister from '../hooks/hooks'
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function RegisterForm() {
   const [hobbiesList, setHobbiesList] = useState([]);
@@ -538,6 +539,7 @@ function RegisterForm() {
             >
               &larr; back
             </button>
+            <Link to={'/login'}>
             <button
               className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
               type={step === 3 ? "submit" : "button"}
@@ -549,6 +551,7 @@ function RegisterForm() {
             >
               {step === 3 ? "Confirm" : "Next Step"}
             </button>
+            </Link>
           </div>
         </footer>
       </form>

@@ -1,5 +1,4 @@
 import "./App.css";
-import Nav from "./pages/non-user/nav.jsx";
 import LandingPage from "./components/landing-page.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
@@ -11,6 +10,7 @@ import EditPackage from "./component/editpackage";
 import EditProfilePage from "./pages/user-profile-management/edit-profile-page.jsx";
 import RegisterPage from "./pages/non-user/register-page.jsx";
 import NavUser from "./pages/user-profile-management/navUser.jsx";
+import HomeUserLogin from "./pages/user-profile-management/home-login.jsx";
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/page" element={<NavUser />} />
+          <Route path="/home-login" element={<HomeUserLogin />} />
         </Routes>
       </BrowserRouter>
     </>

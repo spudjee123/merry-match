@@ -5,10 +5,15 @@ import bell from "../non-user/bell.png";
 import hamburger from "../non-user/hamburger.png";
 import Frame from "../non-user/Frame.png";
 import star from '../non-user/star.png'
+import like from '../user-profile-management/images/like.png'
+import Box from '../user-profile-management/images/Box.png'
+import Vector from '../user-profile-management/images/Vector.png'
+import Profile from '../user-profile-management/images/Profile.png'
+import exit from '../user-profile-management/images/exit.png'
 
 function NavUser() {
   return (
-    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] ">
+    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 ">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
         <a>
           <img
@@ -59,19 +64,19 @@ function NavUser() {
               More limit Merry!
               </a>
             </li>
-            <li>
-              <a>Profile</a>
+            <li id="list-profile">
+            <a href="/user/:userId/edit" id="list-profile">Profile</a>
             </li>
-            <li>
+            <li id="merry-list">
               <a>Merry list</a>
             </li>
-            <li>
+            <li id="list-membership">
               <a>Merry Membership</a>
             </li>
-            <li>
+            <li id="list-complint">
               <a>Compliant</a>
             </li>
-            <li>
+            <li id="logout">
               <a>Log out</a>
             </li>
           </ul>
@@ -141,24 +146,24 @@ function NavUser() {
           >
             <li>
               <a className="justify-between">
-              <span className="badge"><img src={star} alt="" /></span>
-              More limit Merry!
+              <span className="badge bg-gradient-to-r from-[#742138] to-[#A87ABF] border-none text-white h-[41px] w-[179px]"><img src={star} alt="" />More limit Merry!</span>
+              
               </a>
             </li>
-            <li>
-              <Link to="/user/:userId/edit"><a>Profile</a></Link>
+            <li id="list-1" >
+              <a href="/user/:userId/edit" id="list-profile"><img src={Profile} alt="profile" className="w-[16px]"/>Profile</a>
             </li>
             <li>
-              <a>Merry list</a>
+              <a><img src={like} alt="heart" className="w-[16px]" />Merry list</a>
             </li>
             <li>
-              <a>Merry Membership</a>
+              <a><img src={Box} alt="box" className="w-[16px]" />Merry Membership</a>
             </li>
             <li>
-              <a>Compliant</a>
+              <a><img src={Vector} alt="vector" className="w-[16px]" />Compliant</a>
             </li>
             <li>
-              <a>Log out</a>
+              <a href="/"><img src={exit} alt="logout" className="w-[16px]" />Log out</a>
             </li>
           </ul>
         </div>

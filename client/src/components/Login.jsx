@@ -53,9 +53,11 @@ const Login = () => {
               />
             </div>
             <div className="lg:flex lg:justify-center mt-[30px]">
+              <Link to='/home-login'>
               <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto">
                 Log in
               </button>
+              </Link>
             </div>
             <div>
               <h4 className="text-[16px] text-black mt-[40px] text-center">
