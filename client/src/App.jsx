@@ -20,7 +20,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/package/add" element={<AddPackagePage />} />
           <Route path="/package/view" element={<PackageListPage />} />
-          <Route path="/package/edit" element={<EditPackage />} />
+          <Route path="/package/edit/:package_id" element={<EditPackage />} />
           <Route path="/user/:userId/edit" element={<EditProfilePage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<Login />} />
