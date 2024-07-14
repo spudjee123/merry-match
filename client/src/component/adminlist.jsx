@@ -1,8 +1,5 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import edit from "../assets/icons/edit.png";
-import bin from "../assets/icons/bin.png";
+import React from "react";
 import basic from "../assets/icons/basic.png";
 import platinum from "../assets/icons/platinum.png";
 import premium from "../assets/icons/premium.png";
@@ -12,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import edit from "../assets/icons/edit.png";
 import bin from "../assets/icons/bin.png";
-
 import drag from "../assets/icons/drag.png";
 import search from "../assets/icons/search.png";
 
@@ -20,7 +16,7 @@ const AdminPageList = () => {
   const [packages, setPackages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const [deletePackageId, setDeletePackageId] = useState(null);
+  // const [deletePackageId, setDeletePackageId] = useState(null);
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deletePackageId, setDeletePackageId] = useState(null);
@@ -61,9 +57,9 @@ const AdminPageList = () => {
   };
 
 
-  const handleClickEdit = () => {
-    navigate('/package/edit');
-  };
+  // const handleClickEdit = () => {
+  //   navigate('/package/edit');
+  // };
 
   const handleDelete = (id) => {
     setDeletePackageId(id);
@@ -76,10 +72,7 @@ const AdminPageList = () => {
     setDeletePackageId(null);
   };
 
-  const filteredPackages = packages.filter(pkg =>
-    pkg.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+ 
   const handleClickEdit = (id) => {
     navigate(`/package/edit/${id}`);
   };
