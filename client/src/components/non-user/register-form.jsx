@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import * as countryDB from "../../assets/test-data/Countrydata.json";
-import useRegister from '../hooks/hooks'
+import useRegister from "../hooks/hooks";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -45,8 +45,8 @@ function RegisterForm() {
   // const { createId, isError, isLoading } = useRegister();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const result = await axios.post("http://localhost:4001/register",userInfo)
-    console.log(result)
+    const result = await axios.post("http://localhost:4001/register", userInfo);
+    console.log(result);
   };
 
   console.log(userInfo);
@@ -539,18 +539,18 @@ function RegisterForm() {
             >
               &larr; back
             </button>
-            <Link to={'/login'}>
-            <button
-              className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
-              type={step === 3 ? "submit" : "button"}
-              onClick={(event) => {
-                step === 3
-                  ? setStep(3)
-                  : (event.preventDefault(), setStep(step + 1));
-              }}
-            >
-              {step === 3 ? "Confirm" : "Next Step"}
-            </button>
+            <Link to={"/login"}>
+              <button
+                className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
+                type={step === 3 ? "submit" : "button"}
+                onClick={(event) => {
+                  step === 3
+                    ? setStep(3)
+                    : (event.preventDefault(), setStep(step + 1));
+                }}
+              >
+                {step === 3 ? "Confirm" : "Next Step"}
+              </button>
             </Link>
           </div>
         </footer>

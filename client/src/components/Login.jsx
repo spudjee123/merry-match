@@ -8,7 +8,7 @@ const Login = () => {
   return (
     <div>
       <Nav />
-      <section className="bg-white h-full w-full relative mt-[100px]">
+      <section className="bg-white h-screen w-full relative mt-[100px]">
         <img
           src={ImgCercle}
           alt="cercle"
@@ -53,17 +53,17 @@ const Login = () => {
               />
             </div>
             <div className="lg:flex lg:justify-center mt-[30px]">
-              <Link to='/home-login'>
-              <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto">
-                Log in
-              </button>
+              <Link to="/home-login">
+                <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto">
+                  Log in
+                </button>
               </Link>
             </div>
             <div>
               <h4 className="text-[16px] text-black mt-[40px] text-center">
                 Don't have account?
                 <span className="cursor-pointer text-[#C70039] font-bold">
-                   <Link to={'/register'}>Register</Link>
+                  <Link to={"/register"}>Register</Link>
                 </span>
               </h4>
             </div>
