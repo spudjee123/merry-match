@@ -8,7 +8,7 @@ const Login = () => {
   return (
     <div>
       <Nav />
-      <section className="bg-white h-screen w-screen relative">
+      <section className="bg-white h-full w-full relative mt-[100px]">
         <img
           src={ImgCercle}
           alt="cercle"

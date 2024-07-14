@@ -96,7 +96,7 @@ export function LandingPage() {
       </section>
 
       {/* Section 3 */}
-      <section id="section-three" className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[-100px] max-lg:h-screen max-lg:top-[500px]">
+      <section id="section-three" className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[100px] max-lg:h-screen max-lg:top-[500px]">
         <h2 className="w-[300px] text-center text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
           How to Merry
         </h2>

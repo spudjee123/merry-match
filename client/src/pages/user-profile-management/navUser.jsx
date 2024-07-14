@@ -153,16 +153,16 @@ function NavUser() {
             <li id="list-1" >
               <a href="/user/:userId/edit" id="list-profile"><img src={Profile} alt="profile" className="w-[16px]"/>Profile</a>
             </li>
-            <li>
+            <li id="list-2">
               <a><img src={like} alt="heart" className="w-[16px]" />Merry list</a>
             </li>
-            <li>
+            <li id="list-3">
               <a><img src={Box} alt="box" className="w-[16px]" />Merry Membership</a>
             </li>
-            <li>
+            <li id="list-4">
               <a><img src={Vector} alt="vector" className="w-[16px]" />Compliant</a>
             </li>
-            <li>
+            <li id="list-5">
               <a href="/"><img src={exit} alt="logout" className="w-[16px]" />Log out</a>
             </li>
           </ul>
