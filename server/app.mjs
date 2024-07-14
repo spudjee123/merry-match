@@ -12,6 +12,7 @@ app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
 app.use("/login", loginRouter);
 
+
 app.get("/test", (req, res) => {
   return res.json("Server API is working 🚀");
 });
@@ -19,6 +20,9 @@ app.get("/test", (req, res) => {
 app.get("/users", async (req, res) => {
   let result;
   try {
+    const auth = req.headers['authorization']
+    console.log('authorization',auth)
+    
     result = await connectionPool.query(`select * from users`);
   } catch (error) {
     return res.status(500).json({

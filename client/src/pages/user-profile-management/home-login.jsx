@@ -1,20 +1,20 @@
-import female1 from "../assets/images/female1.png";
-import female2 from "../assets/images/female2.png";
-import content from "../assets/images/content.png";
-import containerhorizon from "../assets/images/containerhorizon.png";
-import heart from "../assets/images/heart.png";
-import emojismile from "../assets/images/emojismile.png";
-import emojisunglasses from "../assets/images/emojisunglasses.png";
-import emojiwowstar from "../assets/images/emojiwowstar.png";
-import emojiparty from "../assets/images/emojiparty.png";
-import emojilove from "../assets/images/emojilove.png";
-import containervertical from "../assets/images/containervertical.png";
-import Nav from "../pages/non-user/nav";
+import female1 from "./images/female1.png";
+import female2 from "./images/female2.png";
+import content from "./images/content.png";
+import containerhorizon from "./images/containerhorizon.png";
+import heart from "./images/heart.png";
+import emojismile from "./images/emojismile.png";
+import emojisunglasses from "./images/emojisunglasses.png";
+import emojiwowstar from "./images/emojiwowstar.png";
+import emojiparty from "./images/emojiparty.png";
+import emojilove from "./images/emojilove.png";
+import containervertical from "./images/containervertical.png";
+import NavUser from "./navUser";
 
-export function LandingPage() {
+export function HomeUserLogin() {
   return (
     <div className="bg-[#160404] lg:h-[2700px] max-lg:h-[4000px] pt-[180px]">
-      <Nav />
+      <NavUser />
       {/* Section 1 */}
       <div className="relative flex flex-col items-center">
         {/* Background Circles and Images */}
@@ -96,7 +96,7 @@ export function LandingPage() {
       </section>
 
       {/* Section 3 */}
-      <section id="section-three" className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[100px] max-lg:h-screen max-lg:top-[500px]">
+      <section id="section-three" className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[-100px] max-lg:h-screen max-lg:top-[500px]">
         <h2 className="w-[300px] text-center text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
           How to Merry
         </h2>
@@ -145,4 +145,4 @@ export function LandingPage() {
   );
 }
 
-export default LandingPage;
+export default HomeUserLogin;
