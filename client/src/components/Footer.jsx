@@ -5,7 +5,7 @@ import IconTwit from "../assets/images/icontw.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-white w-screen h-screen">
+    <footer className="bg-[#F6F7FC] w-screen pb-[50px]">
       <div className="flex justify-center bg-[#F6F7FC] w-[100%] h-[40%] lg:items-center lg:h-[45%]">
         <div className="w-[327px] text-center lg:max-w-[1280px] lg:w-[1100px]">
           <div className="mt-[30px]">

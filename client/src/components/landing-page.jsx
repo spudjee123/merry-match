@@ -10,10 +10,11 @@ import emojiparty from "../assets/images/emojiparty.png";
 import emojilove from "../assets/images/emojilove.png";
 import containervertical from "../assets/images/containervertical.png";
 import Nav from "../pages/non-user/nav";
+import Footer from "../components/Footer";
 
 export function LandingPage() {
   return (
-    <div className="bg-[#160404] lg:h-[2700px] max-lg:h-[4000px] pt-[180px]">
+    <div className="bg-[#160404] lg:h-[2700px] max-lg:h-[4000px] pt-[180px] overflow-x-hidden">
       <Nav />
       {/* Section 1 */}
       <div className="relative flex flex-col items-center">
@@ -70,7 +71,10 @@ export function LandingPage() {
       </div>
 
       {/* Section 2 */}
-      <section id="section-two" className="relative flex flex-col items-center bg-[#160404] w-screen h-screen top-[100px] lg max-lg:top-[100px]">
+      <section
+        id="section-two"
+        className="relative flex flex-col items-center bg-[#160404] w-screen h-screen top-[100px] lg max-lg:top-[100px]"
+      >
         <div className="absolute left-[100px] top-[300px] w-[500px] max-lg:left-[30px] max-lg:top-[400px] max-lg:w-[330px]">
           <h2 className="text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
             Why Merry <br className="lg:hidden" /> Match?
@@ -96,7 +100,10 @@ export function LandingPage() {
       </section>
 
       {/* Section 3 */}
-      <section id="section-three" className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[100px] max-lg:h-screen max-lg:top-[500px]">
+      <section
+        id="section-three"
+        className="relative flex flex-col items-center bg-[#160404] px-40 pt-20 pb-[88px] top-[-100px] max-lg:top-[500px]"
+      >
         <h2 className="w-[300px] text-center text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
           How to Merry
         </h2>
@@ -128,7 +135,7 @@ export function LandingPage() {
       </section>
 
       {/* Section 4 */}
-      <section className=" bg-[#160404] max-lg:relative max-lg:h-[500px] max-lg:top-[1200px]">
+      <section className=" bg-[#160404] h-[500px] max-lg:relative max-lg:top-[500px]">
         <div className="relative flex justify-center items-center">
           <img className="max-lg:hidden" src={containerhorizon} />
           <img className="w-full h-full lg:hidden" src={containervertical} />
@@ -141,6 +148,10 @@ export function LandingPage() {
           </button>
         </div>
       </section>
+      {/* <div className="max-lg:absolute max-lg:top-[1200px]"> */}
+      <div className="max-lg:absolute max-lg:top-[3999px]">
+        <Footer />
+      </div>
     </div>
   );
 }
