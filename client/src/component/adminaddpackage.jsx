@@ -180,7 +180,7 @@ const AdminAddPackagePage = () => {
             </div>
           ))}
           <div className="px-[50px] flex-col justify-start items-start gap-2 flex mb-2 relative right-14">
-            <button
+            <button id="add-detail"
               className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 inline-flex"
               onClick={handleAddDetail}
             >
