@@ -19,6 +19,7 @@ const AdminPageList = () => {
 
   const navigate = useNavigate();
 
+  // ดึงข้อมูลจาก data base
   const getData = async () => {
     setLoading(true);
     setError(null);
@@ -33,11 +34,13 @@ const AdminPageList = () => {
     }
   };
 
-  const handleDeleteClick = (id) => {
+  // กดเพื่อลบ package
+   const handleDeleteClick = (id) => {
     setDeletePackageId(id);
     setIsDeleteDialogOpen(true);
   };
 
+  // ยืนยันการลบ package
   const handleConfirmDelete = async () => {
     try {
       await axios.delete(`http://localhost:4001/admin/delete/${deletePackageId}`);
@@ -49,14 +52,15 @@ const AdminPageList = () => {
     setIsDeleteDialogOpen(false);
   };
 
+  // เอาข้อมูลที่ดึงมาจาก data base ไป .map เพื่อไปแสดงผล
   const filteredPackages = packages.filter(pkg => 
     pkg.packages_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+// link ot addpackage page
   const handleAddClick = () => {
     navigate('/package/add');
   };
-
+// link ot addpackage edit page by
   const handleEditClick = (id) => {
     navigate(`/package/edit/${id}`);
   };

@@ -13,7 +13,7 @@ const AdminAddPackagePage = () => {
     icons: "",
     detail: "",
   });
-
+// การเพิ่มข้อมูลในช่อง input 
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -23,6 +23,7 @@ const AdminAddPackagePage = () => {
 
   const navigate = useNavigate();
 
+  // เมื่อadd เสร็จจะเพิ่มข้อมูลและกลับไปยังหน้าlist 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -31,21 +32,24 @@ const AdminAddPackagePage = () => {
         details,
       });
       console.log(res);
-      navigate("/package/view"); // Navigate to package/view after successful create
+      navigate("/package/view"); 
     } catch (error) {
       console.error("Error creating package:", error);
     }
   };
 
+  // กดปุ่ม + Add detail จะเพิ่มช่องให้เขียน detial เพิ่ม 
   const handleAddDetail = () => {
     setDetails([...details, ""]);
   };
 
+  // ลบ detail
   const handleDeleteDetail = (index) => {
     const newDetails = details.filter((_, i) => i !== index);
     setDetails(newDetails);
   };
 
+  // เก็บข้อมูลdetail เพื่อส่งต่อไปยัง data base
   const handleDetailChange = (index, value) => {
     const newDetails = [...details];
     newDetails[index] = value;
@@ -68,6 +72,7 @@ const AdminAddPackagePage = () => {
             Cancel
           </button>
           <button
+          id=""
             type="submit"
             onClick={handleSubmit}
             className="px-6 py-3 bg-rose-700 rounded-full shadow text-white font-bold"
