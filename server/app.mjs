@@ -5,6 +5,8 @@ import profileRouter from "../server/src/routes/profile.mjs";
 import loginRouter from "../server/src/routes/login.mjs";
 import supabase from "./lib/supabase.js";
 import cors from "cors";
+import cloudinary from "./src/utils/cloudinary.js";
+import fileUpload from "express-fileupload";
 
 const app = express();
 const port = 4001;
@@ -336,8 +338,50 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
 });
 
 
+//admin upload icon
+app.post('/admin/upload', async (req, res) => {
+  try {
+    const file = req.files.file;
 
+    if (!file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
 
+    const result = await cloudinary.uploader.upload(file.tempFilePath);
+
+    const imageUrl = result.secure_url;
+
+    const { data, error } = await supabase
+      .from('images')
+      .insert([{ url: imageUrl }]);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    res.status(200).json({ url: imageUrl });
+  } catch (error) {
+    console.error('Error uploading image to Cloudinary:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
+
+app.get('/get-image-urls', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('images')
+      .select('url');
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.status(200).json({ urls: data });
+  } catch (error) {
+    console.error('Error fetching image URLs:', error);
+    res.status(500).json({ error: 'Failed to fetch image URLs' });
+  }
+});
 
 
 app.listen(port, () => {

@@ -3,7 +3,6 @@ import React from "react";
 import basic from "../assets/icons/basic.png";
 import platinum from "../assets/icons/platinum.png";
 import premium from "../assets/icons/premium.png";
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

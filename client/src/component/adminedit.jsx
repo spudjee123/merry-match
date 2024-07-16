@@ -1,9 +1,8 @@
-import { useEffect } from "react";
-import drag from "../assets/icons/drag.png";
-import X from "../assets/icons/X.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import drag from "../assets/icons/drag.png";
+import X from "../assets/icons/X.png";
 
 const AdminEditPackagePage = () => {
   const [image, setImage] = useState(null);
@@ -18,31 +17,21 @@ const AdminEditPackagePage = () => {
     detail: "",
   });
 
-  // const [packageId, setPackageId] = useState({});
-
-  const params = useParams();
-
-  console.log(params);
+  const params = useParams();  
 
   useEffect(() => {
-    console.log("params:", params);
-
     const fetchPackage = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:4001/admin/get/${params.package_id}`
-        );
-
+        const res = await axios.get(`http://localhost:4001/admin/get/${params.package_id}`);
         const packageData = res.data.data;
 
         setInputs({
           packages_name: packageData.packages_name,
           merry_limit: packageData.merry_limit,
           icons: packageData.icons,
-          detail: Array.isArray(packageData.detail)
-            ? packageData.detail.join(", ")
-            : packageData.detail,
+          detail: Array.isArray(packageData.detail) ? packageData.detail.join(", ") : packageData.detail,
         });
+
         setPackageName(packageData.packages_name);
         setMerryLimit(packageData.merry_limit);
         setDetails(
@@ -50,6 +39,7 @@ const AdminEditPackagePage = () => {
             ? packageData.detail
             : packageData.detail.split(", ").map((item) => item.trim())
         );
+        setImageUrl(packageData.icons);
       } catch (error) {
         console.error("Error fetching package data:", error);
       }
@@ -62,8 +52,40 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
-  // console.log(inputs);
-  // console.log(params.package_id);
+
+  // useEffect(() => {
+  //   const fetchPackage = async () => {
+  //     try {
+  //       const res = await axios.get(`http://localhost:4001/admin/get/${params.package_id}`);
+  //       const packageData = res.data.data;
+  
+  //       setInputs({
+  //         packages_name: packageData.packages_name,
+  //         merry_limit: packageData.merry_limit,
+  //         icons: packageData.icons,
+  //         detail: Array.isArray(packageData.detail) ? packageData.detail.join(", ") : packageData.detail,
+  //       });
+  
+  //       setPackageName(packageData.packages_name);
+  //       setMerryLimit(packageData.merry_limit);
+  //       setDetails(
+  //         Array.isArray(packageData.detail)
+  //           ? packageData.detail
+  //           : packageData.detail.split(", ").map((item) => item.trim())
+  //       );
+  //       setImageUrl(packageData.icons);
+  //     } catch (error) {
+  //       console.error("Error fetching package data:", error);
+  //     }
+  //   };
+  
+  //   if (params.package_id) {
+  //     fetchPackage();
+  //   } else {
+  //     console.error("No package_id found in params");
+  //   }
+  // }, [params]);
+  
 
   const handleChange = (e) => {
     setInputs((prev) => ({
@@ -72,26 +94,36 @@ const AdminEditPackagePage = () => {
     }));
   };
 
-  // console.log(inputs);
-
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
 
-  //   console.log("Inputs:", inputs);
-  //   console.log("Package ID:", params.package_id);
+  //   const numericMerryLimit = parseInt(inputs.merry_limit, 10);
 
-  //   const res = await axios.put(
-  //     `http://localhost:4001/admin/edit/${params.package_id}`,
-  //     inputs
-  //   );
-  //   console.log(res);
-  //   console.log(params.package_id);
+  //   if (isNaN(numericMerryLimit)) {
+  //     console.error("Merry limit is not a valid number");
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
+  //       packages_name: inputs.packages_name,
+  //       merry_limit: numericMerryLimit,
+  //       icons: inputs.icons,
+  //       detail: inputs.detail,
+  //     });
+  //     console.log("Response:", res);
+  //   } catch (error) {
+  //     if (error.response) {
+  //       console.error("Error response data:", error.response.data);
+  //     } else {
+  //       console.error("Error updating package data:", error.message);
+  //     }
+  //   }
   // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-   
     const numericMerryLimit = parseInt(inputs.merry_limit, 10);
   
     if (isNaN(numericMerryLimit)) {
@@ -100,15 +132,25 @@ const AdminEditPackagePage = () => {
     }
   
     try {
-      const res = await axios.put(
-        `http://localhost:4001/admin/edit/${params.package_id}`,
-        {
-          packages_name: inputs.packages_name,
-          merry_limit: numericMerryLimit,
-          icons: inputs.icons,
-          detail: inputs.detail,
-        }
-      );
+      let imageUrlInSupabase = imageUrl; 
+      if (image) {
+        const formData = new FormData();
+        formData.append("file", image);
+  
+        const response = await axios.post("http://localhost:4001/admin/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        imageUrlInSupabase = response.data.url;  // รับ URL จากการอัปโหลด
+      }
+  
+      const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
+        packages_name: inputs.packages_name,
+        merry_limit: numericMerryLimit,
+        icons: imageUrlInSupabase,  // ใช้ URL จาก Supabase
+        detail: inputs.detail,
+      });
       console.log("Response:", res);
     } catch (error) {
       if (error.response) {
@@ -149,26 +191,19 @@ const AdminEditPackagePage = () => {
   };
 
   return (
-    <section className="w-[90%] h-20 px-[60px] py-4 bg-white border-b border-gray-300 justify-start item-end inline-flex flex-col  ">
+    <section className="w-[90%] h-20 px-[60px] py-4 bg-white border-b border-gray-300 justify-start item-end inline-flex flex-col">
       <div className="flex flex-row">
         <div className="grow shrink basis-0 text-slate-800 text-2xl font-bold">
           Edit Package
         </div>
         <div className="justify-start items-start gap-4 flex">
           <div className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 flex">
-            <button
-              className="text-center text-rose-800 text-base font-bold "
-              onClick={handleClick}
-            >
+            <button className="text-center text-rose-800 text-base font-bold" onClick={handleClick}>
               Cancel
             </button>
           </div>
           <div className="px-6 py-3 bg-rose-700 rounded-[99px] shadow justify-center items-center gap-2 flex">
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              className="text-center text-white text-base font-bold "
-            >
+            <button type="submit" onClick={handleSubmit} className="text-center text-white text-base font-bold">
               Edit
             </button>
           </div>
@@ -194,7 +229,7 @@ const AdminEditPackagePage = () => {
           </div>
 
           <div className="flex flex-col">
-            <p className="w-full text-[16px] text-black ">
+            <p className="w-full text-[16px] text-black">
               Merry limit <span className="text-red-600">*</span>
             </p>
             <input
@@ -215,17 +250,10 @@ const AdminEditPackagePage = () => {
             Icon <span className="text-red-600">*</span>
           </div>
           <div className="relative">
-            {image ? (
+            {imageUrl ? (
               <div className="relative w-[130px] h-[100px]">
-                <img
-                  className="w-[120px] h-[100px] rounded-[5px]"
-                  src={URL.createObjectURL(image)}
-                />
-                <button
-                  className="absolute top-[-20px] right-[-20px]"
-                  onClick={() => setImage(null)}
-                  type="button"
-                >
+                <img className="w-[120px] h-[100px] rounded-[5px]" src={imageUrl} alt="Package Icon" />
+                <button className="absolute top-[-20px] right-[-20px]" onClick={() => setImageUrl(null)} type="button">
                   <img src={X} alt="" />
                 </button>
               </div>
@@ -282,13 +310,8 @@ const AdminEditPackagePage = () => {
             </div>
           ))}
           <div className="px-[50px] flex-col justify-start items-start gap-2 flex mb-2 relative right-14">
-            <button
-              className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 inline-flex"
-              onClick={handleAddDetail}
-            >
-              <div className="text-center text-rose-800 text-base font-bold ">
-                + Add detail
-              </div>
+            <button className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 inline-flex" onClick={handleAddDetail}>
+              <div className="text-center text-rose-800 text-base font-bold">+ Add detail</div>
             </button>
           </div>
         </label>
