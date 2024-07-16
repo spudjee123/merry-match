@@ -1,9 +1,8 @@
-import { useEffect } from "react";
-import drag from "../assets/icons/drag.png";
-import X from "../assets/icons/X.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import drag from "../assets/icons/drag.png";
+import X from "../assets/icons/X.png";
 
 const AdminEditPackagePage = () => {
   const [image, setImage] = useState(null);
@@ -24,20 +23,16 @@ const AdminEditPackagePage = () => {
   useEffect(() => {
     const fetchPackage = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:4001/admin/get/${params.package_id}`
-        );
-
+        const res = await axios.get(`http://localhost:4001/admin/get/${params.package_id}`);
         const packageData = res.data.data;
 
         setInputs({
           packages_name: packageData.packages_name,
           merry_limit: packageData.merry_limit,
           icons: packageData.icons,
-          detail: Array.isArray(packageData.detail)
-            ? packageData.detail.join(", ")
-            : packageData.detail,
+          detail: Array.isArray(packageData.detail) ? packageData.detail.join(", ") : packageData.detail,
         });
+
         setPackageName(packageData.packages_name);
         setMerryLimit(packageData.merry_limit);
         setDetails(
@@ -45,6 +40,7 @@ const AdminEditPackagePage = () => {
             ? packageData.detail
             : packageData.detail.split(", ").map((item) => item.trim())
         );
+        setImageUrl(packageData.icons);
       } catch (error) {
         console.error("Error fetching package data:", error);
       }
@@ -58,6 +54,41 @@ const AdminEditPackagePage = () => {
   }, [params]);
 
   // แก้ไขข้อมูลในช่อง input 
+
+  // useEffect(() => {
+  //   const fetchPackage = async () => {
+  //     try {
+  //       const res = await axios.get(`http://localhost:4001/admin/get/${params.package_id}`);
+  //       const packageData = res.data.data;
+  
+  //       setInputs({
+  //         packages_name: packageData.packages_name,
+  //         merry_limit: packageData.merry_limit,
+  //         icons: packageData.icons,
+  //         detail: Array.isArray(packageData.detail) ? packageData.detail.join(", ") : packageData.detail,
+  //       });
+  
+  //       setPackageName(packageData.packages_name);
+  //       setMerryLimit(packageData.merry_limit);
+  //       setDetails(
+  //         Array.isArray(packageData.detail)
+  //           ? packageData.detail
+  //           : packageData.detail.split(", ").map((item) => item.trim())
+  //       );
+  //       setImageUrl(packageData.icons);
+  //     } catch (error) {
+  //       console.error("Error fetching package data:", error);
+  //     }
+  //   };
+  
+  //   if (params.package_id) {
+  //     fetchPackage();
+  //   } else {
+  //     console.error("No package_id found in params");
+  //   }
+  // }, [params]);
+  
+
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -69,6 +100,36 @@ const AdminEditPackagePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const numericMerryLimit = parseInt(inputs.merry_limit, 10);
+
+  //   if (isNaN(numericMerryLimit)) {
+  //     console.error("Merry limit is not a valid number");
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
+  //       packages_name: inputs.packages_name,
+  //       merry_limit: numericMerryLimit,
+  //       icons: inputs.icons,
+  //       detail: inputs.detail,
+  //     });
+  //     console.log("Response:", res);
+  //   } catch (error) {
+  //     if (error.response) {
+  //       console.error("Error response data:", error.response.data);
+  //     } else {
+  //       console.error("Error updating package data:", error.message);
+  //     }
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
     const numericMerryLimit = parseInt(inputs.merry_limit, 10);
 
     if (isNaN(numericMerryLimit)) {
@@ -77,15 +138,25 @@ const AdminEditPackagePage = () => {
     }
 
     try {
-      const res = await axios.put(
-        `http://localhost:4001/admin/edit/${params.package_id}`,
-        {
-          packages_name: inputs.packages_name,
-          merry_limit: numericMerryLimit,
-          icons: inputs.icons,
-          detail: inputs.detail,
-        }
-      );
+      let imageUrlInSupabase = imageUrl; 
+      if (image) {
+        const formData = new FormData();
+        formData.append("file", image);
+  
+        const response = await axios.post("http://localhost:4001/admin/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        imageUrlInSupabase = response.data.url;  // รับ URL จากการอัปโหลด
+      }
+  
+      const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
+        packages_name: inputs.packages_name,
+        merry_limit: numericMerryLimit,
+        icons: imageUrlInSupabase,  // ใช้ URL จาก Supabase
+        detail: inputs.detail,
+      });
       console.log("Response:", res);
       navigate("/package/view"); // Navigate to the package view page after successful edit
     } catch (error) {
@@ -266,6 +337,6 @@ const AdminEditPackagePage = () => {
       </footer>
     </section>
   );
-};
-
+}
+}
 export default AdminEditPackagePage;
