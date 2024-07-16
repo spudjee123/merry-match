@@ -1,22 +1,18 @@
-import React from "react";
-import drag from "../assets/icons/drag.png";
-import { useState } from "react";
-import X from "../assets/icons/X.png";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import drag from "../assets/icons/drag.png";
+import X from "../assets/icons/X.png";
 
 const AdminAddPackagePage = () => {
   const [image, setImage] = useState(null);
   const [details, setDetails] = useState([""]);
-
-  // const create = () => {
-    const [inputs,setInputs] = useState({
-      packages_name: "",
-      merry_limit:"",
-      icons:"",
-      detail:""
-    })
-  // }
+  const [inputs, setInputs] = useState({
+    packages_name: "",
+    merry_limit: "",
+    icons: "",
+    detail: "",
+  });
 
   const handleChange = (e) => {
     setInputs((prev) => ({
@@ -25,13 +21,21 @@ const AdminAddPackagePage = () => {
     }));
   };
 
-  // console.log(inputs);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const res = await axios.post("http://localhost:4001/admin/create", inputs)
-    console.log(res);
-  }
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:4001/admin/create", {
+        ...inputs,
+        details,
+      });
+      console.log(res);
+      navigate("/package/view"); // Navigate to package/view after successful create
+    } catch (error) {
+      console.error("Error creating package:", error);
+    }
+  };
 
   const handleAddDetail = () => {
     setDetails([...details, ""]);
@@ -48,87 +52,75 @@ const AdminAddPackagePage = () => {
     setDetails(newDetails);
   };
 
-  const navigate = useNavigate();
-
   const handleClick = () => {
     navigate("/package/view");
   };
 
   return (
-    <section className="w-[90%] h-20 px-[60px] py-4 bg-white border-b border-gray-300 justify-start item-end inline-flex flex-col">
-      <div className="flex flex-row">
-        <div className="grow shrink basis-0 text-slate-800 text-2xl font-bold ">
-          Add Package
-        </div>
-        <div className="justify-start items-start gap-4 flex">
-          <div className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 flex">
-            <button
-              className="text-center text-rose-800 text-base font-bold "
-              onClick={handleClick}
-            >
-              Cancel
-            </button>
-          </div>
-          <div className="px-6 py-3 bg-rose-700 rounded-[99px] shadow justify-center items-center gap-2 flex">
-            <button type="sumbit" onClick={handleSubmit} className="text-center text-white text-base font-bold ">
-              Create
-            </button>
-          </div>
+    <section className="w-full h-auto px-6 py-4 bg-white border-b border-gray-300 flex flex-col">
+      <div className="flex justify-between items-center">
+        <div className="text-slate-800 text-2xl font-bold">Add Package</div>
+        <div className="flex gap-4">
+          <button
+            className="px-6 py-3 bg-rose-100 rounded-full shadow text-rose-800 font-bold"
+            onClick={handleClick}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className="px-6 py-3 bg-rose-700 rounded-full shadow text-white font-bold"
+          >
+            Create
+          </button>
         </div>
       </div>
 
-      <div className=" flex rounded-2xl flex-col mt-[100px]">
-        <label className="grid grid-cols-2 gap-x-10">
+      <div className="mt-10 flex flex-col space-y-6">
+        <label className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
-            <p className=" w-full text-[16px] text-black">
-              Package Name <span className="text-red-600">*</span>
-            </p>
+            <p className="text-black">Package Name <span className="text-red-600">*</span></p>
             <input
               type="text"
-              placeholder=""
               name="packages_name"
-              className="input input-bordered bg-white w-full "
+              className="input input-bordered bg-white w-full"
               onChange={handleChange}
             />
           </div>
-
           <div className="flex flex-col">
-            <p className=" w-full text-[16px] text-black">
-              Merry limit <span className="text-red-600">*</span>
-            </p>
+            <p className="text-black">Merry limit <span className="text-red-600">*</span></p>
             <input
-              type="text"
-              placeholder=""
+              type="number"
               name="merry_limit"
               className="input input-bordered bg-white w-full"
               onChange={handleChange}
             />
           </div>
+          
         </label>
-        <label className="w-[150px] h-[120px]">
-          <div className="label-text relative  mt-10 bottom-2 text-[16px] text-black ">
-            Icon <span className="text-red-600">*</span>
-          </div>
-          <div className="relative ">
+
+        <label className="w-full md:w-1/3">
+          <div className="text-black">Icon <span className="text-red-600">*</span></div>
+          <div className="relative mt-2">
             {image ? (
               <div className="relative w-[130px] h-[100px]">
                 <img
                   className="w-[120px] h-[100px] rounded-[5px]"
                   src={URL.createObjectURL(image)}
+                  alt="Uploaded Icon"
                 />
                 <button
-                  className="absolute top-[-20px] right-[-20px] "
-                  onClick={() => {
-                    setImage(null);
-                  }}
+                  className="absolute top-[-20px] right-[-20px]"
+                  onClick={() => setImage(null)}
                   type="button"
                 >
-                  <img src={X} alt="" />
+                  <img src={X} alt="Delete Icon" />
                 </button>
               </div>
             ) : (
               <>
-                <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px] ">
+                <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px]">
                   <p>Upload Icon</p>
                 </div>
                 <input
@@ -136,7 +128,7 @@ const AdminAddPackagePage = () => {
                   className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
                   name="icons"
                   onChange={(event) => {
-                    handleChange(event)
+                    handleChange(event);
                     setImage(event.target.files[0]);
                   }}
                 />
@@ -145,37 +137,28 @@ const AdminAddPackagePage = () => {
           </div>
         </label>
 
-        <label className="form-control mt-12 w-full">
-          <h1 className="">Package Detail </h1>
+        <label className="form-control w-full">
+          <h1 className="text-black">Package Detail</h1>
           {details.map((detail, index) => (
-            <div key={index}>
-              <div className="label mt-5">
-                <p className="relative left-16">
-                  Detail <span className="text-red-600">*</span>
-                </p>
-              </div>
-              <div className="flex flex-row">
-                <img className="relative bottom-4" src={drag} alt="" />
+            <div key={index} className="flex flex-col mt-4">
+              <p className="relative left-4 text-black">
+                Detail <span className="text-red-600">*</span>
+              </p>
+              <div className="flex items-center">
+                <img className="mr-2" src={drag} alt="Drag Icon" />
                 <input
                   type="text"
                   value={detail}
-                  name="detail"
-                  onChange={(e) => {
-                    handleChange(e)
-                    handleDetailChange(index, e.target.value)
-                  }}
-                  // onChange={handleChange}
+                  name={`detail_${index}`}
+                  onChange={(e) => handleDetailChange(index, e.target.value)}
                   className="input input-bordered bg-white w-full"
                 />
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDeleteDetail(index);
-                  }}
+                <button
+                  className="ml-4 text-red-600"
+                  onClick={() => handleDeleteDetail(index)}
                 >
-                  <span className="ml-4">Delete</span>
-                </a>
+                  Delete
+                </button>
               </div>
             </div>
           ))}
