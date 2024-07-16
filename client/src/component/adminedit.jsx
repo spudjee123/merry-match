@@ -135,6 +135,7 @@ const AdminEditPackagePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+  
     const numericMerryLimit = parseInt(inputs.merry_limit, 10);
 
     if (isNaN(numericMerryLimit)) {
@@ -148,6 +149,7 @@ const AdminEditPackagePage = () => {
         const formData = new FormData();
         formData.append("file", image);
 
+  
         const response = await axios.post("http://localhost:4001/admin/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -156,11 +158,13 @@ const AdminEditPackagePage = () => {
         imageUrlInSupabase = response.data.url;  // รับ URL จากการอัปโหลด
       }
 
+  
       const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
         packages_name: inputs.packages_name,
         merry_limit: numericMerryLimit,
         icons: imageUrlInSupabase,  // ใช้ URL จาก Supabase
         detail: details.join(", "),
+        detail: inputs.detail,
       });
       console.log("Response:", res);
       navigate("/package/view"); // Navigate to the package view page after successful edit

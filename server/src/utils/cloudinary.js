@@ -3,7 +3,6 @@ import cloudinary from 'cloudinary';
 import path from 'path';
 import fs from 'fs';
 
-
 // dotenv.config();
 
 cloudinary.v2.config({
