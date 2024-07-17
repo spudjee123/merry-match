@@ -9,6 +9,7 @@ const AdminEditPackagePage = () => {
   const [details, setDetails] = useState([""]);
   const [packageName, setPackageName] = useState("");
   const [merryLimit, setMerryLimit] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   const [inputs, setInputs] = useState({
     packages_name: "",
@@ -52,41 +53,6 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
-
-  // useEffect(() => {
-  //   const fetchPackage = async () => {
-  //     try {
-  //       const res = await axios.get(`http://localhost:4001/admin/get/${params.package_id}`);
-  //       const packageData = res.data.data;
-  
-  //       setInputs({
-  //         packages_name: packageData.packages_name,
-  //         merry_limit: packageData.merry_limit,
-  //         icons: packageData.icons,
-  //         detail: Array.isArray(packageData.detail) ? packageData.detail.join(", ") : packageData.detail,
-  //       });
-  
-  //       setPackageName(packageData.packages_name);
-  //       setMerryLimit(packageData.merry_limit);
-  //       setDetails(
-  //         Array.isArray(packageData.detail)
-  //           ? packageData.detail
-  //           : packageData.detail.split(", ").map((item) => item.trim())
-  //       );
-  //       setImageUrl(packageData.icons);
-  //     } catch (error) {
-  //       console.error("Error fetching package data:", error);
-  //     }
-  //   };
-  
-  //   if (params.package_id) {
-  //     fetchPackage();
-  //   } else {
-  //     console.error("No package_id found in params");
-  //   }
-  // }, [params]);
-  
-
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -94,49 +60,26 @@ const AdminEditPackagePage = () => {
     }));
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const numericMerryLimit = parseInt(inputs.merry_limit, 10);
-
-  //   if (isNaN(numericMerryLimit)) {
-  //     console.error("Merry limit is not a valid number");
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
-  //       packages_name: inputs.packages_name,
-  //       merry_limit: numericMerryLimit,
-  //       icons: inputs.icons,
-  //       detail: inputs.detail,
-  //     });
-  //     console.log("Response:", res);
-  //   } catch (error) {
-  //     if (error.response) {
-  //       console.error("Error response data:", error.response.data);
-  //     } else {
-  //       console.error("Error updating package data:", error.message);
-  //     }
-  //   }
-  // };
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const numericMerryLimit = parseInt(inputs.merry_limit, 10);
-  
+
     if (isNaN(numericMerryLimit)) {
       console.error("Merry limit is not a valid number");
       return;
     }
-  
+
     try {
       let imageUrlInSupabase = imageUrl; 
       if (image) {
         const formData = new FormData();
         formData.append("file", image);
-  
+
         const response = await axios.post("http://localhost:4001/admin/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -144,12 +87,12 @@ const AdminEditPackagePage = () => {
         });
         imageUrlInSupabase = response.data.url;  // รับ URL จากการอัปโหลด
       }
-  
+
       const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
         packages_name: inputs.packages_name,
         merry_limit: numericMerryLimit,
         icons: imageUrlInSupabase,  // ใช้ URL จาก Supabase
-        detail: inputs.detail,
+        detail: details.join(", "),
       });
       console.log("Response:", res);
     } catch (error) {
@@ -160,7 +103,6 @@ const AdminEditPackagePage = () => {
       }
     }
   };
-  
 
   const handleAddDetail = () => {
     setDetails([...details, ""]);
@@ -182,6 +124,7 @@ const AdminEditPackagePage = () => {
     setDetails([""]);
     setPackageName("");
     setMerryLimit("");
+    setImageUrl("");  // ลบ URL ของรูปภาพ
   };
 
   const navigate = useNavigate();
@@ -218,12 +161,9 @@ const AdminEditPackagePage = () => {
             </p>
             <input
               type="text"
-              value={packageName}
+              value={inputs.packages_name}
               name="packages_name"
-              onChange={(e) => {
-                handleChange(e);
-                setPackageName(e.target.value);
-              }}
+              onChange={handleChange}
               className="input input-bordered bg-white w-full"
             />
           </div>
@@ -234,12 +174,9 @@ const AdminEditPackagePage = () => {
             </p>
             <input
               type="number"
-              value={merryLimit}
+              value={inputs.merry_limit}
               name="merry_limit"
-              onChange={(e) => {
-                handleChange(e);
-                setMerryLimit(e.target.value);
-              }}
+              onChange={handleChange}
               className="input input-bordered bg-white w-full"
             />
           </div>
@@ -266,10 +203,7 @@ const AdminEditPackagePage = () => {
                   type="file"
                   className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
                   name="icons"
-                  onChange={(event) => {
-                    handleChange(event);
-                    setImage(event.target.files[0]);
-                  }}
+                  onChange={handleImageChange}
                 />
               </>
             )}
@@ -290,11 +224,7 @@ const AdminEditPackagePage = () => {
                 <input
                   type="text"
                   value={detail}
-                  name="detail"
-                  onChange={(e) => {
-                    handleChange(e);
-                    handleDetailChange(index, e.target.value);
-                  }}
+                  onChange={(e) => handleDetailChange(index, e.target.value)}
                   className="input input-bordered bg-white w-full"
                 />
                 <a

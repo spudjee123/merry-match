@@ -7,6 +7,7 @@ import supabase from "./lib/supabase.js";
 import cors from "cors";
 import cloudinary from "./src/utils/cloudinary.js";
 import fileUpload from "express-fileupload";
+import multer from "multer";
 
 const app = express();
 const port = 4001;
