@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import * as countryDB from "../../assets/test-data/Countrydata.json";
-import useRegister from "../hooks/hooks";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function RegisterForm() {
   const [hobbiesList, setHobbiesList] = useState([]);
@@ -16,7 +17,7 @@ function RegisterForm() {
   const locationDB = countryDB.data.map((item) => item.country_name);
   const sexDB = ["male", "female", "other"];
   const raceDB = ["Asian", "Black", "White", "Middle east"];
-  const meetingDB = [
+  const meetpreferDB = [
     "long term fish and chip",
     "friend with buffet",
     "one night swensen",
@@ -24,27 +25,27 @@ function RegisterForm() {
     "24-7 eleven",
     "keep donut",
   ];
-  const [images, setImages] = useState(["", "", "", "", ""]);
+  const [images, setImages] = useState({ 1: "", 2: "", 3: "", 4: "", 5: "" });
   const [step, setStep] = useState(1);
   const [userInfo, setUserInfo] = useState({
     name: "",
-    dateOfBirth: "",
+    birthdate: "",
     location: "",
     city: "",
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    sexIden: "",
-    sexPrefer: "",
-    racePrefer: "",
-    meeting: "",
-    hobbiesList: [],
-    images: ["", "", "", "", ""],
+    sexident: "",
+    sexprefer: "",
+    racialprefer: "",
+    meetprefer: "",
+    images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
   });
-  // const { createId, isError, isLoading } = useRegister();
+  const [confirmPwd, setConfirmPwd] = useState('');
+  const [errors, setErrors] = useState({});
+
   const handleSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); 
     const result = await axios.post("http://localhost:4001/register", userInfo);
     console.log(result);
   };
@@ -57,13 +58,19 @@ function RegisterForm() {
         ?.states?.map((item) => item.state_name) ?? []
     );
   }, [location]);
+
+  useEffect(() => {
+    const newUserInfo = { ...userInfo };
+    newUserInfo.images = images;
+    setUserInfo(newUserInfo);
+  }, [images]);
   const inputClassName =
     "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-white placeholder:text-gray-600";
   const formGroupClassName = "flex flex-col gap-1 w-full";
   const formGroupRowClassName =
     "flex flex-col-reverse gap-6 lg:flex-row-reverse lg:gap-6";
   const formClassName = "flex flex-col gap-6 leading-6 lg:gap-10 ";
-
+  
   return (
     <>
       <form className="" onSubmit={handleSubmit}>
@@ -178,20 +185,21 @@ function RegisterForm() {
               <div className="flex flex-col gap-6 leading-6 lg:gap-10 ">
                 <div className="flex flex-col-reverse gap-6 lg:flex-row-reverse lg:gap-6">
                   <div className="flex flex-col gap-1 w-full">
-                    <label htmlFor="dateOfBirth">Date of birth</label>
+                    <label htmlFor="birthdate">Date of birth</label>
                     <input
-                      id="dateOfBirth"
+                      id="birthdate"
                       className="h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900 placeholder:text-gray-600"
                       type="date"
-                      value={userInfo.dateOfBirth}
+                      value={userInfo.birthdate}
                       onChange={(event) =>
                         setUserInfo({
                           ...userInfo,
-                          dateOfBirth: event.target.value,
+                          birthdate: event.target.value,
                         })
                       }
                       required
                     />
+                    {errors.birthdate && <span className="text-rose-600">{errors.birthdate}</span>}
                   </div>
 
                   <div className={formGroupClassName}>
@@ -207,6 +215,7 @@ function RegisterForm() {
                       }
                       required
                     />
+                    {errors.name && <span className="text-rose-600">{errors.name}</span>}
                   </div>
                 </div>
 
@@ -225,6 +234,7 @@ function RegisterForm() {
                         <option key={index}>{item}</option>
                       ))}
                     </select>
+                    {errors.city && <span className="text-rose-600">{errors.city}</span>}
                   </div>
 
                   <div className={formGroupClassName}>
@@ -245,6 +255,7 @@ function RegisterForm() {
                         <option key={index}>{item}</option>
                       ))}
                     </select>
+                    {errors.location && <span className="text-rose-600">{errors.location}</span>}
                   </div>
                 </div>
 
@@ -261,6 +272,7 @@ function RegisterForm() {
                         setUserInfo({ ...userInfo, email: event.target.value })
                       }
                     />
+                    {errors.email && <span className="text-rose-600">{errors.email}</span>}
                   </div>
 
                   <div className={formGroupClassName}>
@@ -280,9 +292,9 @@ function RegisterForm() {
                       }
                       required
                     />
+                    {errors.username && <span className="text-rose-600">{errors.username}</span>}
                   </div>
                 </div>
-
                 <div className={formGroupRowClassName}>
                   <div className={formGroupClassName}>
                     <label htmlFor="confirmed-password">Confirm password</label>
@@ -292,15 +304,13 @@ function RegisterForm() {
                       type="password"
                       minLength="8"
                       placeholder="At least 8 characters"
-                      value={userInfo.confirmPassword}
+                      value={confirmPwd}
                       onChange={(event) =>
-                        setUserInfo({
-                          ...userInfo,
-                          confirmPassword: event.target.value,
-                        })
+                        setConfirmPwd(event.target.value)
                       }
                       required
                     />
+                    {errors.confirmPwd && <span className="text-rose-600">{errors.confirmPwd}</span>}
                   </div>
                   <div className={formGroupClassName}>
                     <label htmlFor="password">Password</label>
@@ -319,6 +329,7 @@ function RegisterForm() {
                       placeholder="At least 8 characters"
                       required
                     />
+                    {errors.password && <span className="text-rose-600">{errors.password}</span>}
                   </div>
                 </div>
               </div>
@@ -331,14 +342,14 @@ function RegisterForm() {
               <div className={formClassName}>
                 <div className={formGroupRowClassName}>
                   <div className={formGroupClassName}>
-                    <label htmlFor="sexPrefer">Sexual preferences:</label>
+                    <label htmlFor="sexprefer">Sexual preferences:</label>
                     <select
-                      id="sexPrefer"
-                      value={userInfo.sexPrefer}
+                      id="sexprefer"
+                      value={userInfo.sexprefer}
                       onChange={(event) =>
                         setUserInfo({
                           ...userInfo,
-                          sexPrefer: event.target.value,
+                          sexprefer: event.target.value,
                         })
                       }
                       className={inputClassName}
@@ -350,14 +361,14 @@ function RegisterForm() {
                   </div>
 
                   <div className={formGroupClassName}>
-                    <label htmlFor="sexIden">Sexual identities:</label>
+                    <label htmlFor="sexident">Sexual identities:</label>
                     <select
-                      id="sexIden"
-                      value={userInfo.sexIden}
+                      id="sexident"
+                      value={userInfo.sexident}
                       onChange={(event) =>
                         setUserInfo({
                           ...userInfo,
-                          sexIden: event.target.value,
+                          sexident: event.target.value,
                         })
                       }
                       className={inputClassName}
@@ -371,33 +382,33 @@ function RegisterForm() {
 
                 <div className={formGroupRowClassName}>
                   <div className={formGroupClassName}>
-                    <label htmlFor="meeting">Meeting interest:</label>
+                    <label htmlFor="meetprefer">Meeting interest:</label>
                     <select
-                      id="meeting"
-                      value={userInfo.meeting}
+                      id="meetprefer"
+                      value={userInfo.meetprefer}
                       onChange={(event) =>
                         setUserInfo({
                           ...userInfo,
-                          meeting: event.target.value,
+                          meetprefer: event.target.value,
                         })
                       }
                       className={inputClassName}
                     >
-                      {meetingDB.map((item, index) => (
+                      {meetpreferDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
                     </select>
                   </div>
 
                   <div className={formGroupClassName}>
-                    <label htmlFor="racePrefer">Racial preferences:</label>
+                    <label htmlFor="racialprefer">Racial preferences:</label>
                     <select
-                      id="racePrefer"
-                      value={userInfo.racePrefer}
+                      id="racialprefer"
+                      value={userInfo.racialprefer}
                       onChange={(event) =>
                         setUserInfo({
                           ...userInfo,
-                          racePrefer: event.target.value,
+                          racialprefer: event.target.value,
                         })
                       }
                       className={inputClassName}
@@ -472,15 +483,15 @@ function RegisterForm() {
                 </p>
               </article>
               <div className=" flex flex-wrap gap-2 lg:gap-6 lg:justify-center">
-                {images.map((item, index) => (
+                {Object.keys(images).map((item, index) => (
                   <div
                     key={index}
                     className=" w-[167px] h-[167px] bg-gray-200 rounded-2xl"
                   >
-                    {item ? (
+                    {images[item] ? (
                       <div className="relative w-full h-full">
                         <img
-                          src={URL.createObjectURL(item)}
+                          src={URL.createObjectURL(images[item])}
                           className=" w-[167px] h-[167px] rounded-2xl object-cover"
                           alt={"uploaded photo " + index}
                         />
@@ -488,9 +499,8 @@ function RegisterForm() {
                           type="button"
                           id={"remove-image-btn " + index}
                           onClick={() => {
-                            const newImages = [...images];
-                            newImages.splice(index, 1);
-                            newImages.push("");
+                            const newImages = { ...images };
+                            newImages[item] = "";
                             setImages(newImages);
                           }}
                           className="absolute top-[-4px] right-[-4px] bg-red-utility w-6 h-6 rounded-full text-white"
@@ -508,8 +518,8 @@ function RegisterForm() {
                           type="file"
                           onChange={(event) => {
                             event.preventDefault();
-                            const newImages = [...images];
-                            newImages[index] = event.target.files[0];
+                            const newImages = { ...images };
+                            newImages[item] = event.target.files[0];
                             setImages(newImages);
                           }}
                           className=" w-full h-full opacity-0"
@@ -539,14 +549,56 @@ function RegisterForm() {
             >
               &larr; back
             </button>
-            <Link to={"/login"}>
+            <Link >
               <button
                 className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
                 type={step === 3 ? "submit" : "button"}
                 onClick={(event) => {
-                  step === 3
-                    ? setStep(3)
-                    : (event.preventDefault(), setStep(step + 1));
+                  const validateError = {};
+                  if (!userInfo.name) {
+                    validateError.name = 'Name is required';
+                  }
+                  if (!userInfo.birthdate) {
+                    validateError.birthdate = 'Date of birth is required';
+                  }
+                  if (!userInfo.location) {
+                    validateError.location = 'Location is required';
+                  }
+                  if (!userInfo.city) {
+                    validateError.city = 'City is required';
+                  }
+                  if (!userInfo.username) {
+                    validateError.username = 'Username is required';
+                  }else if(userInfo.username.length < 6){
+                    validateError.username = 'Username should be at least 6 characters'
+                  }
+                  if (!userInfo.email) {
+                    validateError.email = 'Email is required';
+                  } else if (!EMAIL_REGEX.test(userInfo.email)) {
+                    validateError.email = 'Email is not valid';
+                  }
+                  if (!userInfo.password) {
+                    validateError.password = 'Password is required';
+                  } else if (userInfo.password.length < 8) {
+                    validateError.password = 'Password should be at least 8 characters';
+                  }
+                  if (confirmPwd !== userInfo.password) {
+                    validateError.confirmPwd = 'Passwords do not match';
+                  }
+                  if (Object.keys(validateError).length > 0) {
+                    setErrors(validateError);
+                    return; 
+                  }
+                  if (step === 3) {
+                    if (!images[1] || !images[2]) {
+                      setErrors({ images: 'Please upload at least 2 photos' });
+                      alert('Please upload at least 2 photos')
+                      return; //ต้องใส่ด้วย  ถ้าไม่ใสจะไม่ทำการ submit และไม่เปลี่ยน step
+                    }
+                    alert('Form submitted successfully!');
+                  } else {
+                    setStep(step + 1);
+                  }
                 }}
               >
                 {step === 3 ? "Confirm" : "Next Step"}
