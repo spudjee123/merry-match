@@ -13,6 +13,7 @@ import NavUser from "./pages/user-profile-management/navUser.jsx";
 import HomeUserLogin from "./pages/user-profile-management/home-login.jsx";
 import MerryListPage from "./pages/user-profile-management/merry-list-page.jsx";
 import Membership from "./pages/user-profile-management/membership.jsx";
+import Payment1Page from "./components/userpayment.jsx";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/user/:userId/merry-list" element={<MerryListPage />} />
           <Route path="/membership" element={<Membership />} />
           <Route path="/matching" element={<MatchingPage />} />
+          <Route path="/user/payment1" element={<Payment1Page/>} />
         </Routes>
       </BrowserRouter>
     </>
