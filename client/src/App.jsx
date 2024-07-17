@@ -11,6 +11,7 @@ import EditProfilePage from "./pages/user-profile-management/edit-profile-page.j
 import RegisterPage from "./pages/non-user/register-page.jsx";
 import NavUser from "./pages/user-profile-management/navUser.jsx";
 import HomeUserLogin from "./pages/user-profile-management/home-login.jsx";
+import MerryListPage from "./pages/user-profile-management/merry-list-page.jsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/page" element={<NavUser />} />
           <Route path="/home-login" element={<HomeUserLogin />} />
+          <Route path="/user/:userId/merry-list" element={<MerryListPage />} />
         </Routes>
       </BrowserRouter>
     </>
