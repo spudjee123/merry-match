@@ -22,6 +22,7 @@ const AdminAddPackagePage = () => {
   };
 
   const navigate = useNavigate();
+  console.log(inputs);
 
   // เมื่อadd เสร็จจะเพิ่มข้อมูลและกลับไปยังหน้าlist 
   const handleSubmit = async (e) => {
