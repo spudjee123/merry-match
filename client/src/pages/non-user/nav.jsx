@@ -25,7 +25,7 @@ function Nav() {
               role="button"
               className="btn btn-ghost rounded-btn md:hidden"
             >
-              <img src={bell} alt="" />
+              <img src={bell} alt="bell" />
             </div>
             <ul
               tabIndex={0}
@@ -52,7 +52,7 @@ function Nav() {
               className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-22 p-2 shadow"
             >
               <li>
-                <Link >Login</Link>
+                <Link to='/login'>Login</Link>
               </li>
             </ul>
           </div>
