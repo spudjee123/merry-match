@@ -19,20 +19,24 @@ const AdminEditPackagePage = () => {
   });
 
   const params = useParams();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // ดึงข้อมูลมาเพื่อแก้ไข
   useEffect(() => {
     const fetchPackage = async () => {
       try {
-        const res = await axios.get(`http://localhost:4001/admin/get/${params.package_id}`);
+        const res = await axios.get(
+          `http://localhost:4001/admin/get/${params.package_id}`
+        );
         const packageData = res.data.data;
 
         setInputs({
           packages_name: packageData.packages_name,
           merry_limit: packageData.merry_limit,
           icons: packageData.icons,
-          detail: Array.isArray(packageData.detail) ? packageData.detail.join(", ") : packageData.detail,
+          detail: Array.isArray(packageData.detail)
+            ? packageData.detail.join(", ")
+            : packageData.detail,
         });
 
         setPackageName(packageData.packages_name);
@@ -55,22 +59,21 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
-<<<<<<< HEAD
-  // แก้ไขข้อมูลในช่อง input 
+  // แก้ไขข้อมูลในช่อง input
 
   // useEffect(() => {
   //   const fetchPackage = async () => {
   //     try {
   //       const res = await axios.get(`http://localhost:4001/admin/get/${params.package_id}`);
   //       const packageData = res.data.data;
-  
+
   //       setInputs({
   //         packages_name: packageData.packages_name,
   //         merry_limit: packageData.merry_limit,
   //         icons: packageData.icons,
   //         detail: Array.isArray(packageData.detail) ? packageData.detail.join(", ") : packageData.detail,
   //       });
-  
+
   //       setPackageName(packageData.packages_name);
   //       setMerryLimit(packageData.merry_limit);
   //       setDetails(
@@ -83,17 +86,14 @@ const AdminEditPackagePage = () => {
   //       console.error("Error fetching package data:", error);
   //     }
   //   };
-  
+
   //   if (params.package_id) {
   //     fetchPackage();
   //   } else {
   //     console.error("No package_id found in params");
   //   }
   // }, [params]);
-  
 
-=======
->>>>>>> f38899a (fix:update code for use cloudinary)
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -101,223 +101,183 @@ const AdminEditPackagePage = () => {
     }));
   };
 
-<<<<<<< HEAD
   // ส่งข้อมูลใหม่ไปจัดเก็บใน data base
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
+    // const handleSubmit = async (e) => {
+    //   e.preventDefault();
 
-  //   const numericMerryLimit = parseInt(inputs.merry_limit, 10);
+    //   const numericMerryLimit = parseInt(inputs.merry_limit, 10);
 
-  //   if (isNaN(numericMerryLimit)) {
-  //     console.error("Merry limit is not a valid number");
-  //     return;
-  //   }
+    //   if (isNaN(numericMerryLimit)) {
+    //     console.error("Merry limit is not a valid number");
+    //     return;
+    //   }
 
-  //   try {
-  //     const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
-  //       packages_name: inputs.packages_name,
-  //       merry_limit: numericMerryLimit,
-  //       icons: inputs.icons,
-  //       detail: inputs.detail,
-  //     });
-  //     console.log("Response:", res);
-  //   } catch (error) {
-  //     if (error.response) {
-  //       console.error("Error response data:", error.response.data);
-  //     } else {
-  //       console.error("Error updating package data:", error.message);
-  //     }
-  //   }
-  // };
-=======
->>>>>>> f38899a (fix:update code for use cloudinary)
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
-  };
+    //   try {
+    //     const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
+    //       packages_name: inputs.packages_name,
+    //       merry_limit: numericMerryLimit,
+    //       icons: inputs.icons,
+    //       detail: inputs.detail,
+    //     });
+    //     console.log("Response:", res);
+    //   } catch (error) {
+    //     if (error.response) {
+    //       console.error("Error response data:", error.response.data);
+    //     } else {
+    //       console.error("Error updating package data:", error.message);
+    //     }
+    //   }
+    // };
+    const handleImageChange = (e) => {
+      setImage(e.target.files[0]);
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+      e.preventDefault();
 
-<<<<<<< HEAD
-  
-=======
->>>>>>> f38899a (fix:update code for use cloudinary)
-    const numericMerryLimit = parseInt(inputs.merry_limit, 10);
+      const numericMerryLimit = parseInt(inputs.merry_limit, 10);
 
-    if (isNaN(numericMerryLimit)) {
-      console.error("Merry limit is not a valid number");
-      return;
-    }
-
-    try {
-      let imageUrlInSupabase = imageUrl; 
-      if (image) {
-        const formData = new FormData();
-        formData.append("file", image);
-
-<<<<<<< HEAD
-  
-=======
->>>>>>> f38899a (fix:update code for use cloudinary)
-        const response = await axios.post("http://localhost:4001/admin/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        imageUrlInSupabase = response.data.url;  // รับ URL จากการอัปโหลด
+      if (isNaN(numericMerryLimit)) {
+        console.error("Merry limit is not a valid number");
+        return;
       }
 
-<<<<<<< HEAD
-  
-=======
->>>>>>> f38899a (fix:update code for use cloudinary)
-      const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
-        packages_name: inputs.packages_name,
-        merry_limit: numericMerryLimit,
-        icons: imageUrlInSupabase,  // ใช้ URL จาก Supabase
-        detail: details.join(", "),
-<<<<<<< HEAD
-        detail: inputs.detail,
-=======
->>>>>>> f38899a (fix:update code for use cloudinary)
-      });
-      console.log("Response:", res);
-      navigate("/package/view"); // Navigate to the package view page after successful edit
-    } catch (error) {
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
+      try {
+        let imageUrlInSupabase = imageUrl;
+        if (image) {
+          const formData = new FormData();
+          formData.append("file", image);
+
+          const response = await axios.post(
+            "http://localhost:4001/admin/upload",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+          imageUrlInSupabase = response.data.url; // รับ URL จากการอัปโหลด
+        }
+
+        const res = await axios.put(
+          `http://localhost:4001/admin/edit/${params.package_id}`,
+          {
+            packages_name: inputs.packages_name,
+            merry_limit: numericMerryLimit,
+            icons: imageUrlInSupabase, // ใช้ URL จาก Supabase
+            detail: details.join(", "),
+            detail: inputs.detail,
+          }
+        );
+        console.log("Response:", res);
+        navigate("/package/view"); // Navigate to the package view page after successful edit
+      } catch (error) {
+        if (error.response) {
+          console.error("Error response data:", error.response.data);
+        } else {
+          console.error("Error updating package data:", error.message);
+        }
+      }
+    };
+
+    // เพิ่มช่อง detail
+    const handleAddDetail = () => {
+      setDetails([...details, ""]);
+    };
+
+    // ลบช่อง detail
+    const handleDeleteDetail = (index) => {
+      if (details.length > 1) {
+        const newDetails = details.filter((_, i) => i !== index);
+        setDetails(newDetails);
       } else {
-        console.error("Error updating package data:", error.message);
+        alert("You must have at least one detail.");
       }
-    }
-  };
+    };
 
-  // เพิ่มช่อง detail
-  const handleAddDetail = () => {
-    setDetails([...details, ""]);
-  };
-
-  // ลบช่อง detail
-  const handleDeleteDetail = (index) => {
-    if (details.length > 1) {
-      const newDetails = details.filter((_, i) => i !== index);
+    // เก็บขอ้มูลใหม่และส่งต่อไปยัง data base
+    const handleDetailChange = (index, value) => {
+      const newDetails = [...details];
+      newDetails[index] = value;
       setDetails(newDetails);
-    } else {
-      alert("You must have at least one detail.");
-    }
-  };
+    };
 
-  // เก็บขอ้มูลใหม่และส่งต่อไปยัง data base 
-  const handleDetailChange = (index, value) => {
-    const newDetails = [...details];
-    newDetails[index] = value;
-    setDetails(newDetails);
-  };
+    // ลบpackage
+    const handleDeletePackage = () => {
+      setImage(null);
+      setDetails([""]);
+      setPackageName("");
+      setMerryLimit("");
+      setImageUrl(""); // ลบ URL ของรูปภาพ
+    };
 
-  // ลบpackage
-  const handleDeletePackage = () => {
-    setImage(null);
-    setDetails([""]);
-    setPackageName("");
-    setMerryLimit("");
-    setImageUrl("");  // ลบ URL ของรูปภาพ
-  };
+    const handleClick = () => {
+      navigate("/package/view");
+    };
 
-  const handleClick = () => {
-    navigate("/package/view");
-  };
-
-  return (
-    <section className="w-[90%] mx-auto px-6 py-4 bg-white border-b border-gray-300 rounded-lg">
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-xl font-bold text-gray-800">Edit Package</div>
-        <div className="flex gap-4">
-          <button
-            className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full font-bold hover:bg-rose-200"
-            onClick={handleClick}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-rose-700 text-white rounded-full font-bold hover:bg-rose-800"
-          >
-            Edit
-          </button>
-        </div>
-      </div>
-
-<<<<<<< HEAD
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="flex flex-col">
-          <label className="text-lg text-black">
-            Package Name <span className="text-red-600">*</span>
-          </label>
-          <input
-            type="text"
-            value={packageName}
-            name="packages_name"
-            onChange={(e) => {
-              handleChange(e);
-              setPackageName(e.target.value);
-            }}
-            className="input input-bordered bg-white"
-          />
+    return (
+      <section className="w-[90%] mx-auto px-6 py-4 bg-white border-b border-gray-300 rounded-lg">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xl font-bold text-gray-800">Edit Package</div>
+          <div className="flex gap-4">
+            <button
+              className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full font-bold hover:bg-rose-200"
+              onClick={handleClick}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-rose-700 text-white rounded-full font-bold hover:bg-rose-800"
+            >
+              Edit
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-col">
-          <label className="text-lg text-black">
-            Merry limit <span className="text-red-600">*</span>
-          </label>
-          <input
-            type="number"
-            value={merryLimit}
-            name="merry_limit"
-            onChange={(e) => {
-              handleChange(e);
-              setMerryLimit(e.target.value);
-            }}
-            className="input input-bordered bg-white"
-          />
-        </div>
-      </div>
-=======
-      <div className="flex rounded-2xl flex-col mt-[100px]">
-        <label className="grid grid-cols-2 gap-x-10">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="flex flex-col">
-            <p className="w-full text-[16px] text-black">
+            <label className="text-lg text-black">
               Package Name <span className="text-red-600">*</span>
-            </p>
+            </label>
             <input
               type="text"
-              value={inputs.packages_name}
+              value={packageName}
               name="packages_name"
-              onChange={handleChange}
-              className="input input-bordered bg-white w-full"
+              onChange={(e) => {
+                handleChange(e);
+                setPackageName(e.target.value);
+              }}
+              className="input input-bordered bg-white"
             />
           </div>
 
           <div className="flex flex-col">
-            <p className="w-full text-[16px] text-black">
+            <label className="text-lg text-black">
               Merry limit <span className="text-red-600">*</span>
-            </p>
+            </label>
             <input
               type="number"
-              value={inputs.merry_limit}
+              value={merryLimit}
               name="merry_limit"
-              onChange={handleChange}
-              className="input input-bordered bg-white w-full"
+              onChange={(e) => {
+                handleChange(e);
+                setMerryLimit(e.target.value);
+              }}
+              className="input input-bordered bg-white"
             />
           </div>
-        </label>
->>>>>>> f38899a (fix:update code for use cloudinary)
+        </div>
 
-      <label className="w-full md:w-1/3">
-          <div className="text-black">Icon <span className="text-red-600">*</span></div>
+        <label className="w-full md:w-1/3">
+          <div className="text-black">
+            Icon <span className="text-red-600">*</span>
+          </div>
           <div className="relative mt-2">
             {image ? (
               <div className="relative w-[130px] h-[100px]">
@@ -350,84 +310,51 @@ const AdminEditPackagePage = () => {
           </div>
         </label>
 
-<<<<<<< HEAD
-      <div className="mt-6">
-        <h1 className="text-lg font-bold">Package Detail</h1>
-        {details.map((detail, index) => (
-          <div key={index} className="flex items-center mt-4">
-            <img className="w-6 h-6 mr-2" src={drag} alt="Drag Icon" />
-            <input
-              type="text"
-              value={detail}
-              onChange={(e) => handleDetailChange(index, e.target.value)}
-              className="input input-bordered bg-white flex-1"
-            />
-            <button
-              className="text-red-600 ml-4"
-              onClick={() => handleDeleteDetail(index)}
-            >
-              Delete
-=======
-        <label className="form-control mt-12 w-full">
-          <h1>Package Detail</h1>
+        <div className="mt-6">
+          <h1 className="text-lg font-bold">Package Detail</h1>
           {details.map((detail, index) => (
-            <div key={index}>
-              <div className="label mt-5">
-                <p className="relative left-16">
-                  Detail <span className="text-red-600">*</span>
-                </p>
-              </div>
-              <div className="flex flex-row">
-                <img className="relative bottom-4" src={drag} alt="" />
-                <input
-                  type="text"
-                  value={detail}
-                  onChange={(e) => handleDetailChange(index, e.target.value)}
-                  className="input input-bordered bg-white w-full"
-                />
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleDeleteDetail(index);
-                  }}
-                >
-                  <span className="ml-4 text-red-600">Delete</span>
-                </a>
-              </div>
+            <div key={index} className="flex items-center mt-4">
+              <img className="w-6 h-6 mr-2" src={drag} alt="Drag Icon" />
+              <input
+                type="text"
+                value={detail}
+                onChange={(e) => handleDetailChange(index, e.target.value)}
+                className="input input-bordered bg-white flex-1"
+              />
+              <button
+                className="text-red-600 ml-4"
+                onClick={() => handleDeleteDetail(index)}
+              >
+                Delete
+              </button>
             </div>
           ))}
-          <div className="px-[50px] flex-col justify-start items-start gap-2 flex mb-2 relative right-14">
-            <button className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 inline-flex" onClick={handleAddDetail}>
-              <div className="text-center text-rose-800 text-base font-bold">+ Add detail</div>
->>>>>>> f38899a (fix:update code for use cloudinary)
+          <div className="mt-4">
+            <button
+              className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full font-bold hover:bg-rose-200"
+              onClick={handleAddDetail}
+            >
+              + Add detail
             </button>
           </div>
-        ))}
-        <div className="mt-4">
-          <button
-            className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full font-bold hover:bg-rose-200"
-            onClick={handleAddDetail}
-          >
-            + Add detail
-          </button>
         </div>
-      </div>
 
-      <footer className="border-t mt-4 pt-4">
-        <button
-          className="text-red-600"
-          onClick={() => {
-            if (window.confirm("Are you sure you want to delete this package?")) {
-              handleDeletePackage();
-            }
-          }}
-        >
-          Delete Package
-        </button>
-      </footer>
-    </section>
-  );
-}
-}
+        <footer className="border-t mt-4 pt-4">
+          <button
+            className="text-red-600"
+            onClick={() => {
+              if (
+                window.confirm("Are you sure you want to delete this package?")
+              ) {
+                handleDeletePackage();
+              }
+            }}
+          >
+            Delete Package
+          </button>
+        </footer>
+      </section>
+    );
+  };
+};
 export default AdminEditPackagePage;
