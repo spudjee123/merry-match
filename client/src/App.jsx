@@ -28,12 +28,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/page" element={<NavUser />} />
           <Route path="/home-login" element={<HomeUserLogin />} />
-<<<<<<< HEAD
           <Route path="/user/:userId/merry-list" element={<MerryListPage />} />
           <Route path="/membership" element={<Membership />} />
-=======
           <Route path="/matching" element={<MatchingPage />} />
->>>>>>> 16dc58e (wik:matching first commit)
         </Routes>
       </BrowserRouter>
     </>
