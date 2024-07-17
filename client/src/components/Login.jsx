@@ -34,7 +34,7 @@ const Login = () => {
   return (
     <div>
       <Nav />
-      <section className="bg-white h-screen w-full relative mt-[100px]">
+      <section className="bg-main h-screen w-full relative mt-[100px]">
         <img
           src={ImgCercle}
           alt="cercle"

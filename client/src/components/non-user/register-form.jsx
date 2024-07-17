@@ -73,7 +73,7 @@ function RegisterForm() {
   
   return (
     <>
-      <form className="" onSubmit={handleSubmit}>
+      <form className="bg-main" onSubmit={handleSubmit}>
         <section className="gap-10 lg:gap-20 flex flex-col px-4 py-10 lg:px-60 lg:pt-20 lg:pb-[60px] min-h-[calc(100vh-164px)] lg:min-h-[calc(100vh-200px)]">
           <section className=" flex flex-col max-lg:gap-[37px] lg:flex-row lg:justify-between">
             <article>

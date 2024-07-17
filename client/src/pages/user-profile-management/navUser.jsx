@@ -13,7 +13,7 @@ import exit from "../user-profile-management/images/exit.png";
 
 function NavUser() {
   return (
-    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 ">
+    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
         <a>
           <img
