@@ -55,6 +55,7 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
+<<<<<<< HEAD
   // แก้ไขข้อมูลในช่อง input 
 
   // useEffect(() => {
@@ -91,6 +92,8 @@ const AdminEditPackagePage = () => {
   // }, [params]);
   
 
+=======
+>>>>>>> f38899a (fix:update code for use cloudinary)
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -98,6 +101,7 @@ const AdminEditPackagePage = () => {
     }));
   };
 
+<<<<<<< HEAD
   // ส่งข้อมูลใหม่ไปจัดเก็บใน data base
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -128,6 +132,8 @@ const AdminEditPackagePage = () => {
   //     }
   //   }
   // };
+=======
+>>>>>>> f38899a (fix:update code for use cloudinary)
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -135,7 +141,10 @@ const AdminEditPackagePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+<<<<<<< HEAD
   
+=======
+>>>>>>> f38899a (fix:update code for use cloudinary)
     const numericMerryLimit = parseInt(inputs.merry_limit, 10);
 
     if (isNaN(numericMerryLimit)) {
@@ -149,7 +158,10 @@ const AdminEditPackagePage = () => {
         const formData = new FormData();
         formData.append("file", image);
 
+<<<<<<< HEAD
   
+=======
+>>>>>>> f38899a (fix:update code for use cloudinary)
         const response = await axios.post("http://localhost:4001/admin/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -158,13 +170,19 @@ const AdminEditPackagePage = () => {
         imageUrlInSupabase = response.data.url;  // รับ URL จากการอัปโหลด
       }
 
+<<<<<<< HEAD
   
+=======
+>>>>>>> f38899a (fix:update code for use cloudinary)
       const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
         packages_name: inputs.packages_name,
         merry_limit: numericMerryLimit,
         icons: imageUrlInSupabase,  // ใช้ URL จาก Supabase
         detail: details.join(", "),
+<<<<<<< HEAD
         detail: inputs.detail,
+=======
+>>>>>>> f38899a (fix:update code for use cloudinary)
       });
       console.log("Response:", res);
       navigate("/package/view"); // Navigate to the package view page after successful edit
@@ -233,6 +251,7 @@ const AdminEditPackagePage = () => {
         </div>
       </div>
 
+<<<<<<< HEAD
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="flex flex-col">
           <label className="text-lg text-black">
@@ -266,6 +285,36 @@ const AdminEditPackagePage = () => {
           />
         </div>
       </div>
+=======
+      <div className="flex rounded-2xl flex-col mt-[100px]">
+        <label className="grid grid-cols-2 gap-x-10">
+          <div className="flex flex-col">
+            <p className="w-full text-[16px] text-black">
+              Package Name <span className="text-red-600">*</span>
+            </p>
+            <input
+              type="text"
+              value={inputs.packages_name}
+              name="packages_name"
+              onChange={handleChange}
+              className="input input-bordered bg-white w-full"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <p className="w-full text-[16px] text-black">
+              Merry limit <span className="text-red-600">*</span>
+            </p>
+            <input
+              type="number"
+              value={inputs.merry_limit}
+              name="merry_limit"
+              onChange={handleChange}
+              className="input input-bordered bg-white w-full"
+            />
+          </div>
+        </label>
+>>>>>>> f38899a (fix:update code for use cloudinary)
 
       <label className="w-full md:w-1/3">
           <div className="text-black">Icon <span className="text-red-600">*</span></div>
@@ -301,6 +350,7 @@ const AdminEditPackagePage = () => {
           </div>
         </label>
 
+<<<<<<< HEAD
       <div className="mt-6">
         <h1 className="text-lg font-bold">Package Detail</h1>
         {details.map((detail, index) => (
@@ -317,6 +367,40 @@ const AdminEditPackagePage = () => {
               onClick={() => handleDeleteDetail(index)}
             >
               Delete
+=======
+        <label className="form-control mt-12 w-full">
+          <h1>Package Detail</h1>
+          {details.map((detail, index) => (
+            <div key={index}>
+              <div className="label mt-5">
+                <p className="relative left-16">
+                  Detail <span className="text-red-600">*</span>
+                </p>
+              </div>
+              <div className="flex flex-row">
+                <img className="relative bottom-4" src={drag} alt="" />
+                <input
+                  type="text"
+                  value={detail}
+                  onChange={(e) => handleDetailChange(index, e.target.value)}
+                  className="input input-bordered bg-white w-full"
+                />
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDeleteDetail(index);
+                  }}
+                >
+                  <span className="ml-4 text-red-600">Delete</span>
+                </a>
+              </div>
+            </div>
+          ))}
+          <div className="px-[50px] flex-col justify-start items-start gap-2 flex mb-2 relative right-14">
+            <button className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 inline-flex" onClick={handleAddDetail}>
+              <div className="text-center text-rose-800 text-base font-bold">+ Add detail</div>
+>>>>>>> f38899a (fix:update code for use cloudinary)
             </button>
           </div>
         ))}
