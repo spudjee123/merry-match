@@ -3,8 +3,34 @@ import ImgLogin from "../assets/images/loginpage.png";
 import ImgCercle from "../assets/images/cercleloginpage.png";
 import Nav from "../pages/non-user/nav";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const [userInfo, setUserInfo] = useState({   
+    usernameOrEmail: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    const validateError = {};
+    if (!userInfo.usernameOrEmail) {
+      validateError.usernameOrEmail = 'Username or Email is required';
+    }
+    if (!userInfo.password) {
+      validateError.password = 'Password is required';
+    }
+
+    if (Object.keys(validateError).length > 0) {
+      setErrors(validateError);
+      return;
+    }
+    navigate('/home-login');
+  };
+
   return (
     <div>
       <Nav />
@@ -41,7 +67,11 @@ const Login = () => {
                 type="text"
                 placeholder="Enter Username or Email"
                 className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
+                onChange={(event) =>
+                  setUserInfo({ ...userInfo, usernameOrEmail: event.target.value })
+                }
               />
+              {errors.usernameOrEmail && <div id="error-msg-email" className="text-rose-600">{errors.usernameOrEmail}</div>}
               <h4 className="text-[16px] text-black mb-[10px] mt-[30px]">
                 Password
               </h4>
@@ -50,11 +80,16 @@ const Login = () => {
                 type="text"
                 placeholder="Enter password"
                 className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
+                onChange={(event) =>
+                  setUserInfo({ ...userInfo, password: event.target.value })
+                }
               />
+              {errors.password && <div id="" className="text-rose-600">{errors.password}</div>}
             </div>
             <div className="lg:flex lg:justify-center mt-[30px]">
-              <Link to="/home-login">
-                <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto">
+              <Link >
+                <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto"
+                onClick={handleLogin}>
                   Log in
                 </button>
               </Link>
