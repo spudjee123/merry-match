@@ -9,6 +9,8 @@ const AdminEditPackagePage = () => {
   const [details, setDetails] = useState([""]);
   const [packageName, setPackageName] = useState("");
   const [merryLimit, setMerryLimit] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+
   const [inputs, setInputs] = useState({
     packages_name: "",
     merry_limit: "",
@@ -126,10 +128,13 @@ const AdminEditPackagePage = () => {
   //     }
   //   }
   // };
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const numericMerryLimit = parseInt(inputs.merry_limit, 10);
 
     if (isNaN(numericMerryLimit)) {
@@ -142,7 +147,7 @@ const AdminEditPackagePage = () => {
       if (image) {
         const formData = new FormData();
         formData.append("file", image);
-  
+
         const response = await axios.post("http://localhost:4001/admin/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -150,12 +155,12 @@ const AdminEditPackagePage = () => {
         });
         imageUrlInSupabase = response.data.url;  // รับ URL จากการอัปโหลด
       }
-  
+
       const res = await axios.put(`http://localhost:4001/admin/edit/${params.package_id}`, {
         packages_name: inputs.packages_name,
         merry_limit: numericMerryLimit,
         icons: imageUrlInSupabase,  // ใช้ URL จาก Supabase
-        detail: inputs.detail,
+        detail: details.join(", "),
       });
       console.log("Response:", res);
       navigate("/package/view"); // Navigate to the package view page after successful edit
@@ -196,6 +201,7 @@ const AdminEditPackagePage = () => {
     setDetails([""]);
     setPackageName("");
     setMerryLimit("");
+    setImageUrl("");  // ลบ URL ของรูปภาพ
   };
 
   const handleClick = () => {
@@ -284,10 +290,7 @@ const AdminEditPackagePage = () => {
                   type="file"
                   className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
                   name="icons"
-                  onChange={(event) => {
-                    handleChange(event);
-                    setImage(event.target.files[0]);
-                  }}
+                  onChange={handleImageChange}
                 />
               </>
             )}
