@@ -11,6 +11,7 @@ import location from "../assets/images/location.png";
 import filter from "../assets/images/filter.png";
 import TinderCard from "react-tinder-card";
 import Nav from "../pages/non-user/nav";
+import MatchingAdvanced from "./MatchingAdvance";
 
 const MatchingPage = () => {
   const [isHidden, setIsHidden] = useState(true);
@@ -126,7 +127,8 @@ const MatchingPage = () => {
 
         {/* Middle View */}
         <div className="lg:w-[55%] bg-[#160404] border-2 flex justify-center items-center">
-          <TinderCard
+          <MatchingAdvanced />
+          {/* <TinderCard
             onSwipe={onSwipe}
             onCardLeftScreen={() => onCardLeftScreen("fooBar")}
             preventSwipe={["right", "left"]}
@@ -137,7 +139,7 @@ const MatchingPage = () => {
             <div className="bg-[#160404] p-4 rounded shadow">
               <img src={ImgUser2} alt="User2" />
             </div>
-          </TinderCard>
+          </TinderCard> */}
         </div>
 
         {/* Right View */}
