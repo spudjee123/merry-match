@@ -10,6 +10,9 @@ const AdminEditPackagePage = () => {
   const [details, setDetails] = useState([""]);
   const [packageName, setPackageName] = useState("");
   const [merryLimit, setMerryLimit] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [inputs, setInputs] = useState({
     packages_name: "",
     merry_limit: "",
@@ -27,7 +30,6 @@ const AdminEditPackagePage = () => {
         const res = await axios.get(
           `http://localhost:4001/admin/get/${params.package_id}`
         );
-
         const packageData = res.data.data;
 
         setInputs({
@@ -57,7 +59,94 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
-  // แก้ไขข้อมูลในช่อง input
+  //upload img
+  const handleFileChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("image", image);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:4001/api/admin/uploadsAdmin",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setImageUrl(res.data.data.secure_url);
+      alert("Image uploaded successfully");
+    } catch (err) {
+      console.error("Error uploading the image", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // const convertBase64 = (file) => {
+  //   return new Promise((resolve, reject) => {
+  //     const fileReader = new FileReader();
+  //     fileReader.readAsDataURL(file);
+
+  //     fileReader.onload = () => {
+  //       resolve(fileReader.result);
+  //     };
+
+  //     fileReader.onerror = (error) => {
+  //       reject(error);
+  //     };
+  //   });
+  // };
+
+  // function uploadSingleImage(base64) {
+  //   setLoading(true);
+  //   axios
+  //     .post("localhost:4001/api/admin/uploadsAdmin", { image: base64 })
+  //     .then((res) => {
+  //       setImageUrl(res.data);
+  //       alert("Image uploaded Succesfully");
+  //     })
+  //     .then(() => setLoading(false))
+  //     .catch(console.log);
+  // }
+
+  // // function uploadMultipleImages(images) {
+  // //   setLoading(true);
+  // //   axios
+  // //     .post("localhost:4001/api/admin/uploadsAdmin", { images })
+  // //     .then((res) => {
+  // //       setImageUrl(res.data);
+  // //       alert("Image uploaded Succesfully");
+  // //     })
+  // //     .then(() => setLoading(false))
+  // //     .catch(console.log);
+  // // }
+
+  // const uploadImage = async (event) => {
+  //   const files = event.target.files;
+  //   console.log(files.length);
+
+  //   if (files.length === 1) {
+  //     const base64 = await convertBase64(files[0]);
+  //     uploadSingleImage(base64);
+  //     return;
+  //   }
+
+  //   const base64s = [];
+  //   for (var i = 0; i < files.length; i++) {
+  //     var base = await convertBase64(files[i]);
+  //     base64s.push(base);
+  //   }
+  //   // uploadMultipleImages(base64s);
+  // };
+
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -87,7 +176,6 @@ const AdminEditPackagePage = () => {
         }
       );
       console.log("Response:", res);
-      navigate("/package/view"); // Navigate to the package view page after successful edit
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);
@@ -125,6 +213,7 @@ const AdminEditPackagePage = () => {
     setDetails([""]);
     setPackageName("");
     setMerryLimit("");
+    setImageUrl(""); // ลบ imageUrl ของรูปภาพ
   };
 
   const handleClick = () => {
@@ -142,13 +231,15 @@ const AdminEditPackagePage = () => {
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-rose-700 text-white rounded-full font-bold hover:bg-rose-800"
-          >
-            Edit
-          </button>
+          <form onSubmit={handleFileChange}>
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-rose-700 text-white rounded-full font-bold hover:bg-rose-800"
+            >
+              Edit
+            </button>
+          </form>
         </div>
       </div>
 
@@ -195,7 +286,7 @@ const AdminEditPackagePage = () => {
             <div className="relative w-[130px] h-[100px]">
               <img
                 className="w-[120px] h-[100px] rounded-[5px]"
-                src={URL.createObjectURL(image)}
+                src={imageUrl.createObjectimageUrl(image)}
                 alt="Uploaded Icon"
               />
               <button
@@ -215,10 +306,7 @@ const AdminEditPackagePage = () => {
                 type="file"
                 className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
                 name="icons"
-                onChange={(event) => {
-                  handleChange(event);
-                  setImage(event.target.files[0]);
-                }}
+                onChange={handleUpload}
               />
             </>
           )}
