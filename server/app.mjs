@@ -5,9 +5,7 @@ import profileRouter from "../server/src/routes/profile.mjs";
 import loginRouter from "../server/src/routes/login.mjs";
 import supabase from "./lib/supabase.js";
 import cors from "cors";
-import cloudinary from "./src/utils/cloudinary.js";
-import fileUpload from "express-fileupload";
-import multer from "multer";
+import uploadImg from "./src/controllers/Upload.js";
 
 const app = express();
 const port = 4001;
@@ -17,18 +15,20 @@ app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
 app.use("/login", loginRouter);
 app.use(cors());
-
+//เรียกใช้ api สำหรับ ยิง postman to cloudinary
+app.use("/api/admin", uploadImg);
 
 app.get("/test", (req, res) => {
   return res.json("Server API is working 🚀");
 });
+
 // get all
 app.get("/users", async (req, res) => {
   let result;
   try {
-    const auth = req.headers['authorization']
-    console.log('authorization',auth)
-    
+    const auth = req.headers["authorization"];
+    console.log("authorization", auth);
+
     result = await connectionPool.query(`select * from users`);
   } catch (error) {
     return res.status(500).json({
@@ -163,7 +163,8 @@ app.get("/admin/get/:package_id", async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "The server has encountered a situation it does not know how to handle.",
+      message:
+        "The server has encountered a situation it does not know how to handle.",
       error: error.message,
     });
   }
@@ -279,13 +280,6 @@ app.put("/admin/edit/:package_id", async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
 //admin can delete
 // app.delete("/admin/delete/:package_id", async (req, res) => {
 //   const packagesId = req.params.package_id;
@@ -338,52 +332,50 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
   }
 });
 
-
 //admin upload icon
-app.post('/admin/upload', async (req, res) => {
-  try {
-    const file = req.files.file;
+// app.post('/admin/upload', async (req, res) => {
+//   try {
+//     const file = req.files.file;
 
-    if (!file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
+//     if (!file) {
+//       return res.status(400).json({ error: 'No file uploaded' });
+//     }
 
-    const result = await cloudinary.uploader.upload(file.tempFilePath);
+//     const result = await cloudinary.uploader.upload(file.tempFilePath);
 
-    const imageUrl = result.secure_url;
+//     const imageUrl = result.secure_url;
 
-    const { data, error } = await supabase
-      .from('images')
-      .insert([{ url: imageUrl }]);
+//     const { data, error } = await supabase
+//       .from('images')
+//       .insert([{ url: imageUrl }]);
 
-    if (error) {
-      throw new Error(error.message);
-    }
+//     if (error) {
+//       throw new Error(error.message);
+//     }
 
-    res.status(200).json({ url: imageUrl });
-  } catch (error) {
-    console.error('Error uploading image to Cloudinary:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
-  }
-});
+//     res.status(200).json({ url: imageUrl });
+//   } catch (error) {
+//     console.error('Error uploading image to Cloudinary:', error);
+//     res.status(500).json({ error: 'Failed to upload image' });
+//   }
+// });
 
-app.get('/get-image-urls', async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from('images')
-      .select('url');
+// app.get('/get-image-urls', async (req, res) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from('images')
+//       .select('url');
 
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    }
+//     if (error) {
+//       return res.status(400).json({ error: error.message });
+//     }
 
-    res.status(200).json({ urls: data });
-  } catch (error) {
-    console.error('Error fetching image URLs:', error);
-    res.status(500).json({ error: 'Failed to fetch image URLs' });
-  }
-});
-
+//     res.status(200).json({ urls: data });
+//   } catch (error) {
+//     console.error('Error fetching image URLs:', error);
+//     res.status(500).json({ error: 'Failed to fetch image URLs' });
+//   }
+// });
 
 app.listen(port, () => {
   console.log(`Server is running at ${port}`);
