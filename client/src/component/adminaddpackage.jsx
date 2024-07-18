@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import drag from "../assets/icons/drag.png";
 import X from "../assets/icons/X.png";
-// import multiparty from "multiparty"
 
 const AdminAddPackagePage = () => {
   const [image, setImage] = useState(null);
@@ -73,7 +72,7 @@ const AdminAddPackagePage = () => {
           >
             Cancel
           </button>
-          <form action="/upload" method="post" enctype="multipart/form-data">
+          <form action="/upload" method="post">
             {/* <input type="file" name="file"> */}
             <button
               id=""
