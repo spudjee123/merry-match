@@ -1,10 +1,25 @@
-import React from "react";
 import ImgLogin from "../assets/images/loginpage.png";
 import ImgCercle from "../assets/images/cercleloginpage.png";
 import Nav from "../pages/non-user/nav";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const Login = () => {
+
+  const [inputs, setInputs] = useState({
+    user: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setInputs((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // console.log(inputs);
+
   return (
     <div>
       <Nav />
@@ -37,19 +52,21 @@ const Login = () => {
                 Username or Email
               </h4>
               <input
-                name="email"
+                name="user"
                 type="text"
                 placeholder="Enter Username or Email"
                 className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
+                onChange={handleChange}
               />
               <h4 className="text-[16px] text-black mb-[10px] mt-[30px]">
                 Password
               </h4>
               <input
                 name="password"
-                type="text"
+                type="password"
                 placeholder="Enter password"
                 className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
+                onChange={handleChange}
               />
             </div>
             <div className="lg:flex lg:justify-center mt-[30px]">
