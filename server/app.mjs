@@ -12,17 +12,17 @@ import multer from "multer";
 const app = express();
 const port = 4001;
 
+app.use(cors());
 app.use(express.json());
 app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
 app.use("/login", loginRouter);
-app.use(cors());
-
 
 app.get("/test", (req, res) => {
   return res.json("Server API is working 🚀");
 });
-// get all
+
+// get all user
 app.get("/users", async (req, res) => {
   let result;
   try {

@@ -112,7 +112,7 @@ function NavUser() {
       </div>
       <div className="flex-none hidden md:flex space-x-6 content-start gap-6 ">
         <div className="dropdown dropdown-end  md:flex space-x-6 content-start gap-6 ">
-          <Link
+          <Link to={'/matching'}
             className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
           >
             Start Matching

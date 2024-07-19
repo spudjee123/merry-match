@@ -31,7 +31,7 @@ loginRouter.post("/", async (req, res) => {
     if (!match) {
       return res.status(404).json({
         code: "U001",
-        message: "Password is incorrect",
+        message: "Email or Username and Password is incorrect",
       });
     }
 
@@ -39,9 +39,8 @@ loginRouter.post("/", async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(200).json({ message: "Login successful", token });
+    res.status(200).json({code: "U000", message: "Login successfully", token });
   } catch (error) {
-    console.error("Database error:", error);
     return res.status(500).json({
       message: "Server could not login because of a database error",
     });
