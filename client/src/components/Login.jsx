@@ -1,9 +1,9 @@
-import React from "react";
 import ImgLogin from "../assets/images/loginpage.png";
 import ImgCercle from "../assets/images/cercleloginpage.png";
 import Nav from "../pages/non-user/nav";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
@@ -44,6 +44,25 @@ const Login = () => {
       }
   };
 
+=======
+
+const Login = () => {
+
+  const [inputs, setInputs] = useState({
+    user: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setInputs((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // console.log(inputs);
+
+>>>>>>> 1f79dd7 (fix:add usestate for input login page)
   return (
     <div>
       <Nav />
@@ -76,6 +95,7 @@ const Login = () => {
                 Username or Email
               </h4>
               <input
+<<<<<<< HEAD
                       id="username-email"
                       name="usernameOrPassword"
                       className="input bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
@@ -90,18 +110,30 @@ const Login = () => {
                       required
                     />
               {errors.usernameOrEmail && <div id="error-msg-email" className="text-rose-600">{errors.usernameOrEmail}</div>}
+=======
+                name="user"
+                type="text"
+                placeholder="Enter Username or Email"
+                className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
+                onChange={handleChange}
+              />
+>>>>>>> 1f79dd7 (fix:add usestate for input login page)
               <h4 className="text-[16px] text-black mb-[10px] mt-[30px]">
                 Password
               </h4>
               <input
               id="password"
                 name="password"
-                type="text"
+                type="password"
                 placeholder="Enter password"
                 className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
+<<<<<<< HEAD
                 onChange={(event) =>
                   setUserInfo({ ...userInfo, password: event.target.value })
                 }
+=======
+                onChange={handleChange}
+>>>>>>> 1f79dd7 (fix:add usestate for input login page)
               />
               {errors.password && <div id="error-password" className="text-rose-600">{errors.password}</div>}
             </div>

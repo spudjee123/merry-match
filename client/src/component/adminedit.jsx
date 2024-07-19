@@ -59,18 +59,26 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
-  //upload img
+  //file upload
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
   };
 
+  
   const handleUpload = async (e) => {
     e.preventDefault();
+    
+    if (!image) {
+      alert("Please select an image first");
+      return;
+    }
+  
     setLoading(true);
-
+  
     const formData = new FormData();
     formData.append("image", image);
 
+  // file upload 1) Sending POST request with “multipart/form-data”
     try {
       const res = await axios.post(
         "http://localhost:4001/api/admin/uploadsAdmin",
@@ -90,6 +98,7 @@ const AdminEditPackagePage = () => {
     }
   };
 
+<<<<<<< HEAD
   // const convertBase64 = (file) => {
   //   return new Promise((resolve, reject) => {
   //     const fileReader = new FileReader();
@@ -147,6 +156,9 @@ const AdminEditPackagePage = () => {
   //   // uploadMultipleImages(base64s);
   // };
 
+=======
+  
+>>>>>>> 1f79dd7 (fix:add usestate for input login page)
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -286,12 +298,13 @@ const AdminEditPackagePage = () => {
             <div className="relative w-[130px] h-[100px]">
               <img
                 className="w-[120px] h-[100px] rounded-[5px]"
-                src={imageUrl.createObjectimageUrl(image)}
+                // src={imageUrl.createObjectimageUrl(image)}
+                src={imageUrl}
                 alt="Uploaded Icon"
               />
               <button
                 className="absolute top-[-20px] right-[-20px]"
-                onClick={() => setImage(null)}
+                onClick={() => setImage("")}
                 type="button"
               >
                 <img src={X} alt="Delete Icon" />
@@ -306,11 +319,20 @@ const AdminEditPackagePage = () => {
                 type="file"
                 className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
                 name="icons"
-                onChange={handleUpload}
+                onChange={handleFileChange}
               />
             </>
           )}
         </div>
+        <form onSubmit={handleUpload}>
+          <button
+            type="submit"
+            className="bg-rose-100 text-red-600 py-2 px-4 rounded-full mt-2 w-[120px] font-bold"
+            disabled={loading}
+          >
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+        </form>
       </label>
 
       <div className="mt-6">
@@ -325,6 +347,7 @@ const AdminEditPackagePage = () => {
               className="input input-bordered bg-white flex-1"
             />
             <button
+             type="button"
               className="text-red-600 ml-4"
               onClick={() => handleDeleteDetail(index)}
             >

@@ -6,6 +6,8 @@ import loginRouter from "../server/src/routes/login.mjs";
 import supabase from "./lib/supabase.js";
 import cors from "cors";
 import uploadImg from "./src/controllers/Upload.js";
+// import { cloudinaryUpload } from "./src/controllers/Upload.js";
+
 
 const app = express();
 const port = 4001;
@@ -334,49 +336,25 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
 });
 
 //admin upload icon
-// app.post('/admin/upload', async (req, res) => {
+// app.post("/uploadsAdmin", upload.fields([{ name: "avatar", maxCount: 2 }]), async (req, res) => {
 //   try {
-//     const file = req.files.file;
+//     const uploadResult = await cloudinaryUpload(req.files);
 
-//     if (!file) {
-//       return res.status(400).json({ error: 'No file uploaded' });
-//     }
-
-//     const result = await cloudinary.uploader.upload(file.tempFilePath);
-
-//     const imageUrl = result.secure_url;
-
-//     const { data, error } = await supabase
-//       .from('images')
-//       .insert([{ url: imageUrl }]);
-
-//     if (error) {
-//       throw new Error(error.message);
-//     }
-
-//     res.status(200).json({ url: imageUrl });
-//   } catch (error) {
-//     console.error('Error uploading image to Cloudinary:', error);
-//     res.status(500).json({ error: 'Failed to upload image' });
+//     res.status(200).json({
+//       success: true,
+//       message: "Uploaded!",
+//       data: uploadResult,
+//     });
+//   } catch (err) {
+//     console.error("Error uploading image to Cloudinary:", err);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error uploading image to Cloudinary: " + err.message,
+//     });
 //   }
 // });
 
-// app.get('/get-image-urls', async (req, res) => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('images')
-//       .select('url');
 
-//     if (error) {
-//       return res.status(400).json({ error: error.message });
-//     }
-
-//     res.status(200).json({ urls: data });
-//   } catch (error) {
-//     console.error('Error fetching image URLs:', error);
-//     res.status(500).json({ error: 'Failed to fetch image URLs' });
-//   }
-// });
 
 app.listen(port, () => {
   console.log(`Server is running at ${port}`);
