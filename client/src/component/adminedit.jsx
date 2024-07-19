@@ -103,7 +103,7 @@ const AdminEditPackagePage = () => {
     }));
   };
 
-  // ส่งข้อมูลใหม่ไปจัดเก็บใน data base
+  // ส่งข้อมูลใหม่ไปจัดเก็บใน data base (natsu)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
