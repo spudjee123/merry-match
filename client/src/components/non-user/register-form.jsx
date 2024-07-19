@@ -45,12 +45,62 @@ function RegisterForm() {
   const [errors, setErrors] = useState({});
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); 
-    const result = await axios.post("http://localhost:4001/register", userInfo);
-    console.log(result);
+    event.preventDefault();
+    const validateError = {};
+    
+    if (!userInfo.name) {
+      validateError.name = 'Name is required';
+    }
+    if (!userInfo.birthdate) {
+      validateError.birthdate = 'Date of birth is required';
+    }
+    if (!userInfo.location) {
+      validateError.location = 'Location is required';
+    }
+    if (!userInfo.city) {
+      validateError.city = 'City is required';
+    }
+    if (!userInfo.username) {
+      validateError.username = 'Username is required';
+    } else if (userInfo.username.length < 6) {
+      validateError.username = 'Username should be at least 6 characters';
+    }
+    if (!userInfo.email) {
+      validateError.email = 'Email is required';
+    } else if (!EMAIL_REGEX.test(userInfo.email)) {
+      validateError.email = 'Email is not valid';
+    }
+    if (!userInfo.password) {
+      validateError.password = 'Password is required';
+    } else if (userInfo.password.length < 8) {
+      validateError.password = 'Password should be at least 8 characters';
+    }
+    if (confirmPwd !== userInfo.password) {
+      validateError.confirmPwd = 'Passwords do not match';
+    }
+    if (step === 3 && (!images[1] || !images[2])) {
+      validateError.images = 'Please upload at least 2 photos';
+      alert('Please upload at least 2 photos');
+    }
+
+    if (Object.keys(validateError).length > 0) {
+      setErrors(validateError);
+      return;
+    }
+
+    if (step === 3) {
+      try {
+        const result = await axios.post( `http://localhost:4001/register `, userInfo);
+        alert('Form submitted successfully!');
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        setErrors({ submit: 'There was an error submitting the form' });
+      }
+    } else {
+      setStep(step + 1);
+    }
   };
 
-  console.log(userInfo);
   useEffect(() => {
     setCityList(
       countryDB.data
@@ -64,6 +114,7 @@ function RegisterForm() {
     newUserInfo.images = images;
     setUserInfo(newUserInfo);
   }, [images]);
+  
   const inputClassName =
     "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-white placeholder:text-gray-600";
   const formGroupClassName = "flex flex-col gap-1 w-full";
@@ -73,7 +124,7 @@ function RegisterForm() {
   
   return (
     <>
-      <form className="" onSubmit={handleSubmit}>
+      <form className="bg-main" onSubmit={handleSubmit}>
         <section className="gap-10 lg:gap-20 flex flex-col px-4 py-10 lg:px-60 lg:pt-20 lg:pb-[60px] min-h-[calc(100vh-164px)] lg:min-h-[calc(100vh-200px)]">
           <section className=" flex flex-col max-lg:gap-[37px] lg:flex-row lg:justify-between">
             <article>
@@ -553,53 +604,7 @@ function RegisterForm() {
               <button
                 className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
                 type={step === 3 ? "submit" : "button"}
-                onClick={(event) => {
-                  const validateError = {};
-                  if (!userInfo.name) {
-                    validateError.name = 'Name is required';
-                  }
-                  if (!userInfo.birthdate) {
-                    validateError.birthdate = 'Date of birth is required';
-                  }
-                  if (!userInfo.location) {
-                    validateError.location = 'Location is required';
-                  }
-                  if (!userInfo.city) {
-                    validateError.city = 'City is required';
-                  }
-                  if (!userInfo.username) {
-                    validateError.username = 'Username is required';
-                  }else if(userInfo.username.length < 6){
-                    validateError.username = 'Username should be at least 6 characters'
-                  }
-                  if (!userInfo.email) {
-                    validateError.email = 'Email is required';
-                  } else if (!EMAIL_REGEX.test(userInfo.email)) {
-                    validateError.email = 'Email is not valid';
-                  }
-                  if (!userInfo.password) {
-                    validateError.password = 'Password is required';
-                  } else if (userInfo.password.length < 8) {
-                    validateError.password = 'Password should be at least 8 characters';
-                  }
-                  if (confirmPwd !== userInfo.password) {
-                    validateError.confirmPwd = 'Passwords do not match';
-                  }
-                  if (Object.keys(validateError).length > 0) {
-                    setErrors(validateError);
-                    return; 
-                  }
-                  if (step === 3) {
-                    if (!images[1] || !images[2]) {
-                      setErrors({ images: 'Please upload at least 2 photos' });
-                      alert('Please upload at least 2 photos')
-                      return; //ต้องใส่ด้วย  ถ้าไม่ใสจะไม่ทำการ submit และไม่เปลี่ยน step
-                    }
-                    alert('Form submitted successfully!');
-                  } else {
-                    setStep(step + 1);
-                  }
-                }}
+                onClick={handleSubmit}
               >
                 {step === 3 ? "Confirm" : "Next Step"}
               </button>

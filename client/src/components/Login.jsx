@@ -5,6 +5,8 @@ import Nav from "../pages/non-user/nav";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({   
@@ -13,28 +15,39 @@ const Login = () => {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const handleLogin = (event) => {
+  
+  const handleLogin = async (event) => {
     event.preventDefault();
-
     const validateError = {};
+
     if (!userInfo.usernameOrEmail) {
       validateError.usernameOrEmail = 'Username or Email is required';
     }
     if (!userInfo.password) {
       validateError.password = 'Password is required';
     }
-
     if (Object.keys(validateError).length > 0) {
       setErrors(validateError);
       return;
     }
-    navigate('/home-login');
+   
+      try {
+        console.log(userInfo)
+        const result = await axios.post( `http://localhost:4001/login `, userInfo);
+        const token = result.token;
+        localStorage.setItem('token',token)
+        alert('Login successfully!');
+        navigate('/home-login');
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        setErrors({ submit: 'There was an error submitting the form' });
+      }
   };
 
   return (
     <div>
       <Nav />
-      <section className="bg-white h-screen w-full relative mt-[100px]">
+      <form className="bg-main h-screen w-full relative mt-[100px]" onSubmit={handleLogin}>
         <img
           src={ImgCercle}
           alt="cercle"
@@ -63,19 +76,25 @@ const Login = () => {
                 Username or Email
               </h4>
               <input
-                name="email"
-                type="text"
-                placeholder="Enter Username or Email"
-                className="bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
-                onChange={(event) =>
-                  setUserInfo({ ...userInfo, usernameOrEmail: event.target.value })
-                }
-              />
+                      id="username-email"
+                      name="usernameOrPassword"
+                      className="input bg-white p-[12px] h-[48px] w-[343px] rounded-lg border-[1px] lg:w-[425px]"
+                      type="text"
+                      value={userInfo.usernameOrEmail}
+                      onChange={(event) =>
+                        setUserInfo({
+                          ...userInfo,
+                          usernameOrEmail: event.target.value,
+                        })
+                      }
+                      required
+                    />
               {errors.usernameOrEmail && <div id="error-msg-email" className="text-rose-600">{errors.usernameOrEmail}</div>}
               <h4 className="text-[16px] text-black mb-[10px] mt-[30px]">
                 Password
               </h4>
               <input
+              id="password"
                 name="password"
                 type="text"
                 placeholder="Enter password"
@@ -84,11 +103,11 @@ const Login = () => {
                   setUserInfo({ ...userInfo, password: event.target.value })
                 }
               />
-              {errors.password && <div id="" className="text-rose-600">{errors.password}</div>}
+              {errors.password && <div id="error-password" className="text-rose-600">{errors.password}</div>}
             </div>
             <div className="lg:flex lg:justify-center mt-[30px]">
               <Link >
-                <button className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto"
+                <button id="login-btn" className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto"
                 onClick={handleLogin}>
                   Log in
                 </button>
@@ -104,7 +123,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-      </section>
+      </form>
     </div>
   );
 };

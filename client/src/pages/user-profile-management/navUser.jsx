@@ -13,7 +13,7 @@ import exit from "../user-profile-management/images/exit.png";
 
 function NavUser() {
   return (
-    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 ">
+    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
         <a>
           <img
@@ -112,7 +112,7 @@ function NavUser() {
       </div>
       <div className="flex-none hidden md:flex space-x-6 content-start gap-6 ">
         <div className="dropdown dropdown-end  md:flex space-x-6 content-start gap-6 ">
-          <Link
+          <Link to={'/matching'}
             className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
           >
             Start Matching
