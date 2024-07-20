@@ -7,6 +7,10 @@ import X from "../assets/icons/X.png";
 const AdminAddPackagePage = () => {
   const [image, setImage] = useState(null);
   const [details, setDetails] = useState([""]);
+
+  const [imageUrl, setImageUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [inputs, setInputs] = useState({
     packages_name: "",
     merry_limit: "",
@@ -22,20 +26,78 @@ const AdminAddPackagePage = () => {
   };
 
   const navigate = useNavigate();
-  console.log(inputs);
+  // console.log(inputs);
 
-  // เมื่อadd เสร็จจะเพิ่มข้อมูลและกลับไปยังหน้าlist
+    // File upload
+    const handleFileChange = (e) => {
+      setImage(e.target.files[0]);
+    };
+  
+    const handleUpload = async (e) => {
+      e.preventDefault();
+  
+      if (!image) {
+        alert("Please select an image first");
+        return;
+      }
+  
+      setLoading(true);
+  
+      const formData = new FormData();
+      formData.append("image", image);
+  
+      // File upload: Sending POST request with "multipart/form-data"
+      try {
+        const res = await axios.post(
+          "http://localhost:4001/api/admin/uploadsAdmin",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setImageUrl(res.data.data.secure_url);
+        alert("Image uploaded successfully");
+      } catch (err) {
+        console.error("Error uploading the image", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+
+  // เมื่อ กด create เสร็จจะเพิ่มข้อมูลและกลับไปยังหน้าlist
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const numericMerryLimit = parseInt(inputs.merry_limit, 10);
+
+    if (isNaN(numericMerryLimit)) {
+      console.error("Merry limit is not a valid number");
+      return;
+    }
+
     try {
-      const res = await axios.post("http://localhost:4001/admin/create", {
-        ...inputs,
-        details,
-      });
-      console.log(res);
+      const res = await axios.post(
+        "http://localhost:4001/admin/create",
+        {
+          packages_name: inputs.packages_name,
+          merry_limit: numericMerryLimit,
+          icons: imageUrl,
+          detail: details.join(", "),
+        }
+      );
+      console.log("Response:", res);
+      alert("Package updated successfully");
       navigate("/package/view");
     } catch (error) {
-      console.error("Error creating package:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+      } else {
+        console.error("An error occurred:", error);
+      }
     }
   };
 
@@ -112,44 +174,50 @@ const AdminAddPackagePage = () => {
           </div>
         </label>
 
-        <label className="w-full md:w-1/3">
-          <div className="text-black">
-            Icon <span className="text-red-600">*</span>
-          </div>
-          <div className="relative mt-2">
-            {image ? (
-              <div className="relative w-[130px] h-[100px]">
-                <img
-                  className="w-[120px] h-[100px] rounded-[5px]"
-                  src={URL.createObjectURL(image)}
-                  alt="Uploaded Icon"
-                />
-                <button
-                  className="absolute top-[-20px] right-[-20px]"
-                  onClick={() => setImage(null)}
-                  type="button"
-                >
-                  <img src={X} alt="Delete Icon" />
-                </button>
+<label className="w-full md:w-1/3">
+        <div className="text-black">
+          Icon <span className="text-red-600">*</span>
+        </div>
+        <div className="relative mt-2">
+          {imageUrl ? (
+            <div className="relative w-[130px] h-[100px]">
+              <img
+                className="w-[120px] h-[100px] rounded-[5px]"
+                src={imageUrl}
+                alt="Uploaded Icon"
+              />
+              <button
+                className="absolute top-[-20px] right-[-20px]"
+                onClick={() => setImageUrl("")}
+                type="button"
+              >
+                <img src={X} alt="Delete Icon" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px]">
+                <p>Upload Icon</p>
               </div>
-            ) : (
-              <>
-                <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px]">
-                  <p>Upload Icon</p>
-                </div>
-                <input
-                  type="file"
-                  className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
-                  name="icons"
-                  onChange={(event) => {
-                    handleChange(event);
-                    setImage(event.target.files[0]);
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </label>
+              <input
+                type="file"
+                className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
+                name="icons"
+                onChange={handleFileChange}
+              />
+            </>
+          )}
+        </div>
+        <form onSubmit={handleUpload}>
+          <button
+            type="submit"
+            className="bg-rose-100 text-red-600 py-2 px-4 rounded-full mt-2 w-[120px] font-bold"
+            disabled={loading}
+          >
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+        </form>
+      </label>
 
         <label className="form-control w-full">
           <h1 className="text-black">Package Detail</h1>
