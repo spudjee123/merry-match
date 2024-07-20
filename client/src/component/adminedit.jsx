@@ -23,7 +23,7 @@ const AdminEditPackagePage = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  // ดึงข้อมูลมาเพื่อแก้ไข
+  // Fetch package data for editing
   useEffect(() => {
     const fetchPackage = async () => {
       try {
@@ -59,26 +59,25 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
-  //file upload
+  // File upload
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
   };
 
-  
   const handleUpload = async (e) => {
     e.preventDefault();
-    
+
     if (!image) {
       alert("Please select an image first");
       return;
     }
-  
+
     setLoading(true);
-  
+
     const formData = new FormData();
     formData.append("image", image);
 
-  // file upload 1) Sending POST request with “multipart/form-data”
+    // File upload: Sending POST request with "multipart/form-data"
     try {
       const res = await axios.post(
         "http://localhost:4001/api/admin/uploadsAdmin",
@@ -98,67 +97,6 @@ const AdminEditPackagePage = () => {
     }
   };
 
-<<<<<<< HEAD
-  // const convertBase64 = (file) => {
-  //   return new Promise((resolve, reject) => {
-  //     const fileReader = new FileReader();
-  //     fileReader.readAsDataURL(file);
-
-  //     fileReader.onload = () => {
-  //       resolve(fileReader.result);
-  //     };
-
-  //     fileReader.onerror = (error) => {
-  //       reject(error);
-  //     };
-  //   });
-  // };
-
-  // function uploadSingleImage(base64) {
-  //   setLoading(true);
-  //   axios
-  //     .post("localhost:4001/api/admin/uploadsAdmin", { image: base64 })
-  //     .then((res) => {
-  //       setImageUrl(res.data);
-  //       alert("Image uploaded Succesfully");
-  //     })
-  //     .then(() => setLoading(false))
-  //     .catch(console.log);
-  // }
-
-  // // function uploadMultipleImages(images) {
-  // //   setLoading(true);
-  // //   axios
-  // //     .post("localhost:4001/api/admin/uploadsAdmin", { images })
-  // //     .then((res) => {
-  // //       setImageUrl(res.data);
-  // //       alert("Image uploaded Succesfully");
-  // //     })
-  // //     .then(() => setLoading(false))
-  // //     .catch(console.log);
-  // // }
-
-  // const uploadImage = async (event) => {
-  //   const files = event.target.files;
-  //   console.log(files.length);
-
-  //   if (files.length === 1) {
-  //     const base64 = await convertBase64(files[0]);
-  //     uploadSingleImage(base64);
-  //     return;
-  //   }
-
-  //   const base64s = [];
-  //   for (var i = 0; i < files.length; i++) {
-  //     var base = await convertBase64(files[i]);
-  //     base64s.push(base);
-  //   }
-  //   // uploadMultipleImages(base64s);
-  // };
-
-=======
-  
->>>>>>> 1f79dd7 (fix:add usestate for input login page)
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -166,7 +104,7 @@ const AdminEditPackagePage = () => {
     }));
   };
 
-  // ส่งข้อมูลใหม่ไปจัดเก็บใน data base (natsu)
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -183,49 +121,43 @@ const AdminEditPackagePage = () => {
         {
           packages_name: inputs.packages_name,
           merry_limit: numericMerryLimit,
-          icons: inputs.icons,
-          detail: inputs.detail,
+          icons: imageUrl,
+          detail: details.join(", "),
         }
       );
       console.log("Response:", res);
+      alert("Package updated successfully");
+      navigate("/package/view");
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);
       } else {
-        console.error("Error updating package data:", error.message);
+        console.error("An error occurred:", error);
       }
     }
   };
 
-  // เพิ่มช่อง detail
-  const handleAddDetail = () => {
-    setDetails([...details, ""]);
-  };
-
-  // ลบช่อง detail
-  const handleDeleteDetail = (index) => {
-    if (details.length > 1) {
-      const newDetails = details.filter((_, i) => i !== index);
-      setDetails(newDetails);
-    } else {
-      alert("You must have at least one detail.");
-    }
-  };
-
-  // เก็บขอ้มูลใหม่และส่งต่อไปยัง data base
   const handleDetailChange = (index, value) => {
     const newDetails = [...details];
     newDetails[index] = value;
     setDetails(newDetails);
   };
 
-  // ลบpackage
-  const handleDeletePackage = () => {
-    setImage(null);
-    setDetails([""]);
-    setPackageName("");
-    setMerryLimit("");
-    setImageUrl(""); // ลบ imageUrl ของรูปภาพ
+  const handleDeleteDetail = (index) => {
+    const newDetails = details.filter((_, i) => i !== index);
+    setDetails(newDetails);
+  };
+
+  const handleDeletePackage = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:4001/admin/delete/${params.package_id}`
+      );
+      alert("Package deleted successfully");
+      navigate("/package/view");
+    } catch (error) {
+      console.error("Error deleting package:", error);
+    }
   };
 
   const handleClick = () => {
@@ -243,15 +175,12 @@ const AdminEditPackagePage = () => {
           >
             Cancel
           </button>
-          <form onSubmit={handleFileChange}>
-            <button
-              type="submit"
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-rose-700 text-white rounded-full font-bold hover:bg-rose-800"
-            >
-              Edit
-            </button>
-          </form>
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-2 bg-rose-700 text-white rounded-full font-bold hover:bg-rose-800"
+          >
+            Edit
+          </button>
         </div>
       </div>
 
@@ -294,17 +223,16 @@ const AdminEditPackagePage = () => {
           Icon <span className="text-red-600">*</span>
         </div>
         <div className="relative mt-2">
-          {image ? (
+          {imageUrl ? (
             <div className="relative w-[130px] h-[100px]">
               <img
                 className="w-[120px] h-[100px] rounded-[5px]"
-                // src={imageUrl.createObjectimageUrl(image)}
                 src={imageUrl}
                 alt="Uploaded Icon"
               />
               <button
                 className="absolute top-[-20px] right-[-20px]"
-                onClick={() => setImage("")}
+                onClick={() => setImageUrl("")}
                 type="button"
               >
                 <img src={X} alt="Delete Icon" />
@@ -347,7 +275,7 @@ const AdminEditPackagePage = () => {
               className="input input-bordered bg-white flex-1"
             />
             <button
-             type="button"
+              type="button"
               className="text-red-600 ml-4"
               onClick={() => handleDeleteDetail(index)}
             >
@@ -355,14 +283,6 @@ const AdminEditPackagePage = () => {
             </button>
           </div>
         ))}
-        <div className="mt-4">
-          <button
-            className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full font-bold hover:bg-rose-200"
-            onClick={handleAddDetail}
-          >
-            + Add detail
-          </button>
-        </div>
       </div>
 
       <footer className="border-t mt-4 pt-4">
