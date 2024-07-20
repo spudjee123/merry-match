@@ -8,7 +8,6 @@ import cors from "cors";
 import uploadImg from "./src/controllers/Upload.js";
 // import { cloudinaryUpload } from "./src/controllers/Upload.js";
 
-
 const app = express();
 const port = 4001;
 
@@ -353,8 +352,6 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
 //     });
 //   }
 // });
-
-
 
 app.listen(port, () => {
   console.log(`Server is running at ${port}`);
