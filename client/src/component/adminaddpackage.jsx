@@ -7,13 +7,17 @@ import X from "../assets/icons/X.png";
 const AdminAddPackagePage = () => {
   const [image, setImage] = useState(null);
   const [details, setDetails] = useState([""]);
+
+  const [imageUrl, setImageUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [inputs, setInputs] = useState({
     packages_name: "",
     merry_limit: "",
     icons: "",
     detail: "",
   });
-// การเพิ่มข้อมูลในช่อง input 
+  // การเพิ่มข้อมูลในช่อง input
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -22,24 +26,82 @@ const AdminAddPackagePage = () => {
   };
 
   const navigate = useNavigate();
-  console.log(inputs);
+  // console.log(inputs);
 
-  // เมื่อadd เสร็จจะเพิ่มข้อมูลและกลับไปยังหน้าlist 
+    // File upload
+    const handleFileChange = (e) => {
+      setImage(e.target.files[0]);
+    };
+  
+    const handleUpload = async (e) => {
+      e.preventDefault();
+  
+      if (!image) {
+        alert("Please select an image first");
+        return;
+      }
+  
+      setLoading(true);
+  
+      const formData = new FormData();
+      formData.append("image", image);
+  
+      // File upload: Sending POST request with "multipart/form-data"
+      try {
+        const res = await axios.post(
+          "http://localhost:4001/api/admin/uploadsAdmin",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setImageUrl(res.data.data.secure_url);
+        alert("Image uploaded successfully");
+      } catch (err) {
+        console.error("Error uploading the image", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+
+  // เมื่อ กด create เสร็จจะเพิ่มข้อมูลและกลับไปยังหน้าlist
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const numericMerryLimit = parseInt(inputs.merry_limit, 10);
+
+    if (isNaN(numericMerryLimit)) {
+      console.error("Merry limit is not a valid number");
+      return;
+    }
+
     try {
-      const res = await axios.post("http://localhost:4001/admin/create", {
-        ...inputs,
-        details,
-      });
-      console.log(res);
-      navigate("/package/view"); 
+      const res = await axios.post(
+        "http://localhost:4001/admin/create",
+        {
+          packages_name: inputs.packages_name,
+          merry_limit: numericMerryLimit,
+          icons: imageUrl,
+          detail: details.join(", "),
+        }
+      );
+      console.log("Response:", res);
+      alert("Package updated successfully");
+      navigate("/package/view");
     } catch (error) {
-      console.error("Error creating package:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+      } else {
+        console.error("An error occurred:", error);
+      }
     }
   };
 
-  // กดปุ่ม + Add detail จะเพิ่มช่องให้เขียน detial เพิ่ม 
+  // กดปุ่ม + Add detail จะเพิ่มช่องให้เขียน detial เพิ่ม
   const handleAddDetail = () => {
     setDetails([...details, ""]);
   };
@@ -72,21 +134,26 @@ const AdminAddPackagePage = () => {
           >
             Cancel
           </button>
-          <button
-          id=""
-            type="submit"
-            onClick={handleSubmit}
-            className="px-6 py-3 bg-rose-700 rounded-full shadow text-white font-bold"
-          >
-            Create
-          </button>
+          <form action="/upload" method="post">
+            {/* <input type="file" name="file"> */}
+            <button
+              id=""
+              type="submit"
+              onClick={handleSubmit}
+              className="px-6 py-3 bg-rose-700 rounded-full shadow text-white font-bold"
+            >
+              Create
+            </button>
+          </form>
         </div>
       </div>
 
       <div className="mt-10 flex flex-col space-y-6">
         <label className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col">
-            <p className="text-black">Package Name <span className="text-red-600">*</span></p>
+            <p className="text-black">
+              Package Name <span className="text-red-600">*</span>
+            </p>
             <input
               type="text"
               name="packages_name"
@@ -95,7 +162,9 @@ const AdminAddPackagePage = () => {
             />
           </div>
           <div className="flex flex-col">
-            <p className="text-black">Merry limit <span className="text-red-600">*</span></p>
+            <p className="text-black">
+              Merry limit <span className="text-red-600">*</span>
+            </p>
             <input
               type="number"
               name="merry_limit"
@@ -103,45 +172,52 @@ const AdminAddPackagePage = () => {
               onChange={handleChange}
             />
           </div>
-          
         </label>
 
-        <label className="w-full md:w-1/3">
-          <div className="text-black">Icon <span className="text-red-600">*</span></div>
-          <div className="relative mt-2">
-            {image ? (
-              <div className="relative w-[130px] h-[100px]">
-                <img
-                  className="w-[120px] h-[100px] rounded-[5px]"
-                  src={URL.createObjectURL(image)}
-                  alt="Uploaded Icon"
-                />
-                <button
-                  className="absolute top-[-20px] right-[-20px]"
-                  onClick={() => setImage(null)}
-                  type="button"
-                >
-                  <img src={X} alt="Delete Icon" />
-                </button>
+<label className="w-full md:w-1/3">
+        <div className="text-black">
+          Icon <span className="text-red-600">*</span>
+        </div>
+        <div className="relative mt-2">
+          {imageUrl ? (
+            <div className="relative w-[130px] h-[100px]">
+              <img
+                className="w-[120px] h-[100px] rounded-[5px]"
+                src={imageUrl}
+                alt="Uploaded Icon"
+              />
+              <button
+                className="absolute top-[-20px] right-[-20px]"
+                onClick={() => setImageUrl("")}
+                type="button"
+              >
+                <img src={X} alt="Delete Icon" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px]">
+                <p>Upload Icon</p>
               </div>
-            ) : (
-              <>
-                <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px]">
-                  <p>Upload Icon</p>
-                </div>
-                <input
-                  type="file"
-                  className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
-                  name="icons"
-                  onChange={(event) => {
-                    handleChange(event);
-                    setImage(event.target.files[0]);
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </label>
+              <input
+                type="file"
+                className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
+                name="icons"
+                onChange={handleFileChange}
+              />
+            </>
+          )}
+        </div>
+        <form onSubmit={handleUpload}>
+          <button
+            type="submit"
+            className="bg-rose-100 text-red-600 py-2 px-4 rounded-full mt-2 w-[120px] font-bold"
+            disabled={loading}
+          >
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+        </form>
+      </label>
 
         <label className="form-control w-full">
           <h1 className="text-black">Package Detail</h1>
@@ -169,7 +245,8 @@ const AdminAddPackagePage = () => {
             </div>
           ))}
           <div className="px-[50px] flex-col justify-start items-start gap-2 flex mb-2 relative right-14">
-            <button id="add-detail"
+            <button
+              id="add-detail"
               className="px-6 py-3 bg-rose-100 rounded-[99px] shadow justify-center items-center gap-2 inline-flex"
               onClick={handleAddDetail}
             >

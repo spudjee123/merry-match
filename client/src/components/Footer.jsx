@@ -18,7 +18,7 @@ const Footer = () => {
               New generation of online dating website for everyone
             </h3>
           </div>
-          <div className="w-[327px] mt-[40px] lg:w-[1000px]">
+          <div className="bg-slate-200 h-[3px] w-[327px] mt-[40px] lg:w-[700px] lg:mx-auto">
             <hr />
           </div>
           <div className="mt-[25px]">

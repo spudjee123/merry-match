@@ -10,6 +10,9 @@ const AdminEditPackagePage = () => {
   const [details, setDetails] = useState([""]);
   const [packageName, setPackageName] = useState("");
   const [merryLimit, setMerryLimit] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [inputs, setInputs] = useState({
     packages_name: "",
     merry_limit: "",
@@ -18,16 +21,15 @@ const AdminEditPackagePage = () => {
   });
 
   const params = useParams();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  // ดึงข้อมูลมาเพื่อแก้ไข
+  // Fetch package data for editing
   useEffect(() => {
     const fetchPackage = async () => {
       try {
         const res = await axios.get(
           `http://localhost:4001/admin/get/${params.package_id}`
         );
-
         const packageData = res.data.data;
 
         setInputs({
@@ -57,7 +59,44 @@ const AdminEditPackagePage = () => {
     }
   }, [params]);
 
-  // แก้ไขข้อมูลในช่อง input 
+  // File upload
+  const handleFileChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+
+    if (!image) {
+      alert("Please select an image first");
+      return;
+    }
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("image", image);
+
+    // File upload: Sending POST request with "multipart/form-data"
+    try {
+      const res = await axios.post(
+        "http://localhost:4001/api/admin/uploadsAdmin",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setImageUrl(res.data.data.secure_url);
+      alert("Image uploaded successfully");
+    } catch (err) {
+      console.error("Error uploading the image", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
     setInputs((prev) => ({
       ...prev,
@@ -65,7 +104,7 @@ const AdminEditPackagePage = () => {
     }));
   };
 
-  // ส่งข้อมูลใหม่ไปจัดเก็บใน data base
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,49 +121,43 @@ const AdminEditPackagePage = () => {
         {
           packages_name: inputs.packages_name,
           merry_limit: numericMerryLimit,
-          icons: inputs.icons,
-          detail: inputs.detail,
+          icons: imageUrl,
+          detail: details.join(", "),
         }
       );
       console.log("Response:", res);
-      navigate("/package/view"); // Navigate to the package view page after successful edit
+      alert("Package updated successfully");
+      navigate("/package/view");
     } catch (error) {
       if (error.response) {
         console.error("Error response data:", error.response.data);
       } else {
-        console.error("Error updating package data:", error.message);
+        console.error("An error occurred:", error);
       }
     }
   };
 
-  // เพิ่มช่อง detail
-  const handleAddDetail = () => {
-    setDetails([...details, ""]);
-  };
-
-  // ลบช่อง detail
-  const handleDeleteDetail = (index) => {
-    if (details.length > 1) {
-      const newDetails = details.filter((_, i) => i !== index);
-      setDetails(newDetails);
-    } else {
-      alert("You must have at least one detail.");
-    }
-  };
-
-  // เก็บขอ้มูลใหม่และส่งต่อไปยัง data base 
   const handleDetailChange = (index, value) => {
     const newDetails = [...details];
     newDetails[index] = value;
     setDetails(newDetails);
   };
 
-  // ลบpackage
-  const handleDeletePackage = () => {
-    setImage(null);
-    setDetails([""]);
-    setPackageName("");
-    setMerryLimit("");
+  const handleDeleteDetail = (index) => {
+    const newDetails = details.filter((_, i) => i !== index);
+    setDetails(newDetails);
+  };
+
+  const handleDeletePackage = async () => {
+    try {
+      await axios.delete(
+        `http://localhost:4001/admin/delete/${params.package_id}`
+      );
+      alert("Package deleted successfully");
+      navigate("/package/view");
+    } catch (error) {
+      console.error("Error deleting package:", error);
+    }
   };
 
   const handleClick = () => {
@@ -143,7 +176,6 @@ const AdminEditPackagePage = () => {
             Cancel
           </button>
           <button
-            type="submit"
             onClick={handleSubmit}
             className="px-4 py-2 bg-rose-700 text-white rounded-full font-bold hover:bg-rose-800"
           >
@@ -187,41 +219,49 @@ const AdminEditPackagePage = () => {
       </div>
 
       <label className="w-full md:w-1/3">
-          <div className="text-black">Icon <span className="text-red-600">*</span></div>
-          <div className="relative mt-2">
-            {image ? (
-              <div className="relative w-[130px] h-[100px]">
-                <img
-                  className="w-[120px] h-[100px] rounded-[5px]"
-                  src={URL.createObjectURL(image)}
-                  alt="Uploaded Icon"
-                />
-                <button
-                  className="absolute top-[-20px] right-[-20px]"
-                  onClick={() => setImage(null)}
-                  type="button"
-                >
-                  <img src={X} alt="Delete Icon" />
-                </button>
+        <div className="text-black">
+          Icon <span className="text-red-600">*</span>
+        </div>
+        <div className="relative mt-2">
+          {imageUrl ? (
+            <div className="relative w-[130px] h-[100px]">
+              <img
+                className="w-[120px] h-[100px] rounded-[5px]"
+                src={imageUrl}
+                alt="Uploaded Icon"
+              />
+              <button
+                className="absolute top-[-20px] right-[-20px]"
+                onClick={() => setImageUrl("")}
+                type="button"
+              >
+                <img src={X} alt="Delete Icon" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px]">
+                <p>Upload Icon</p>
               </div>
-            ) : (
-              <>
-                <div className="absolute w-[120px] h-[100px] top-0 left-0 bg-[#f6f7fc] flex justify-center items-center rounded-[5px]">
-                  <p>Upload Icon</p>
-                </div>
-                <input
-                  type="file"
-                  className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
-                  name="icons"
-                  onChange={(event) => {
-                    handleChange(event);
-                    setImage(event.target.files[0]);
-                  }}
-                />
-              </>
-            )}
-          </div>
-        </label>
+              <input
+                type="file"
+                className="input input-bordered bg-white w-[120px] h-[100px] opacity-0"
+                name="icons"
+                onChange={handleFileChange}
+              />
+            </>
+          )}
+        </div>
+        <form onSubmit={handleUpload}>
+          <button
+            type="submit"
+            className="bg-rose-100 text-red-600 py-2 px-4 rounded-full mt-2 w-[120px] font-bold"
+            disabled={loading}
+          >
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+        </form>
+      </label>
 
       <div className="mt-6">
         <h1 className="text-lg font-bold">Package Detail</h1>
@@ -235,6 +275,7 @@ const AdminEditPackagePage = () => {
               className="input input-bordered bg-white flex-1"
             />
             <button
+              type="button"
               className="text-red-600 ml-4"
               onClick={() => handleDeleteDetail(index)}
             >
@@ -242,21 +283,15 @@ const AdminEditPackagePage = () => {
             </button>
           </div>
         ))}
-        <div className="mt-4">
-          <button
-            className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full font-bold hover:bg-rose-200"
-            onClick={handleAddDetail}
-          >
-            + Add detail
-          </button>
-        </div>
       </div>
 
       <footer className="border-t mt-4 pt-4">
         <button
           className="text-red-600"
           onClick={() => {
-            if (window.confirm("Are you sure you want to delete this package?")) {
+            if (
+              window.confirm("Are you sure you want to delete this package?")
+            ) {
               handleDeletePackage();
             }
           }}
