@@ -20,51 +20,49 @@ function AuthProvider(props) {
   const [state, setState] = useState({
     loading: null,
     error: null,
-    user: getDataFromToken,
+    user: null,
   });
 
-  const navigate = useNavigate();
+  const [userLogin, setUserLogin] = useState({
+    usernameOrEmail: "",
+    password: "",
+  });
 
-  // make a login request
-  const login = async (data) => {
-    try {
-      setState({ ...state, error: null, loading: true });
-      console.log(data);
-      const result = await axios.post("http://localhost:4001/auth/login", data);
-      console.log(result);
-      const token = result.data.token;
-      console.log(token);
-      localStorage.setItem("token", token);
-      const user = jwtDecode(token);
-      setState({ ...state, user });
-      alert("Login successfully!");
-      console.log(user);
-      if (user.role === "admin") {
-        navigate("/package/view");
-      } else {
-        navigate("/");
-      }
-    } catch (error) {
-      console.log(error);
-      setState({
-        ...state,
-        error: error.response.data.message,
-        loading: false,
-      });
-    }
-  };
+  const updateLogin = useCallback((info)=>{
+    setUserLogin(info)
+  },[])
 
+// register
+const [userInfo, setUserInfo] = useState({
+  name: "",
+  birthdate: "",
+  location: "",
+  city: "",
+  username: "",
+  email: "",
+  password: "",
+  sexident: "",
+  sexprefer: "",
+  racialprefer: "",
+  meetprefer: "",
+  images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
+});
+  const updateRegister = useCallback((info)=>{
+    setUserInfo(info)
+  },[])
   const logout = () => {
     localStorage.removeItem("token");
     setState({ ...state, user: null });
     navigate("/");
   };
 
+
   const isAuthenticated = Boolean(localStorage.getItem("token"));
 
   return (
-    <AuthContext.Provider value={{ state, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ state, login, logout, isAuthenticateduserInfo,updateRegister,userLogin,updateLogin,state }}>
       {props.children}
+
     </AuthContext.Provider>
   );
 }
