@@ -22,9 +22,9 @@ function jwtInterceptor() {
         window.location.replace("/home-login");
       }
 
-      return Promise.reject(error);
-    }
-  );
-}
+//       return Promise.reject(error);
+//     }
+//   );
+// }
 
-export default jwtInterceptor;
+// export default jwtInterceptor;
