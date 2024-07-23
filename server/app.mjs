@@ -399,16 +399,16 @@ app.post('/api/checkout', express.json(),async(req,res)=>{
 
     const result = await connectionPool.query(`INSERT INTO payment_test (name,package_name,order_id,status,session_id) 
       VALUES ($1, $2, $3, $4, $5) `, [  
-        user.name,
-        packageName.name,
-        orderId,
-        session.status,
-        session.id,
+        orderData.name,
+        orderData.package_name,
+        orderData.order_id,
+        orderData.status,
+        orderData.session_id
       ])
 
     console.log('Created session:', session);
 
-    res.json({ user, packageName, order: result });
+    res.json({ user, packageName,orderId, order: result.rows[0] });
   } catch (error) {
     console.error('Error creating session:', error);
     res.status(500).json({ error: error.message });
@@ -417,10 +417,10 @@ app.post('/api/checkout', express.json(),async(req,res)=>{
 
 // เช็ค order id ว่า status เป็นยังไง
 app.get("/api/order/:id", async (req, res) => {
-  const { id } = req.params
+  const orderId = req.params.id
   try {
-    const result = await connectionPool.query(`select * from payment_test where order_id = $1 `,[id]);
-    res.json({result})
+    const result = await connectionPool.query(`select * from payment_test where order_id = $1 `,[orderId]);
+    res.json({ result: result.rows[0] });
   } catch (error) {
     return res.status(500).json({
       message: "Server could not read assignment because database connection",
@@ -429,7 +429,7 @@ app.get("/api/order/:id", async (req, res) => {
 
 });
 
-app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
+app.post('/webhook', express.raw({type: 'application/json'}), async(req, res) => {
   // รับค่า stripe-signature
   const sig = req.headers['stripe-signature'];
 
@@ -445,10 +445,25 @@ app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
 
   // Handle the event ถ้าทำสำเร็จ
   switch (event.type) {
-    case 'checkout_intent.succeeded':
-      const paymentIntentSucceeded = event.data.object;
-      console.log('paymentIntentSucceeded',paymentIntentSucceeded)
-      // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา จะบอกว่าสำเร็จ
+    case 'checkout_session.completed':
+      const paymentSucceeded = event.data.object;
+      console.log('paymentSucceeded',paymentSucceeded)
+      const sessionId = paymentSucceeded.id
+      // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา ถึงจะบอกว่าสำเร็จ
+      const status = {
+        status : paymentSucceeded.status
+      }
+      // จากนั้นหา order จาก session id และ update กลับ
+      
+      try {
+        const result = await connectionPool.query(
+          `UPDATE payment_test SET status = $1 WHERE session_id = $2 RETURNING *`, 
+          [status, sessionId]
+        );
+        console.log('result', result.rows[0]);
+      } catch (error) {
+        console.error('Error updating payment status:', error);
+      }
       break;
     // ... handle other event types
     default:
