@@ -82,6 +82,64 @@ authRouter.post("/register", async (req, res) => {
   }
 });
 
-authRouter.post("/login", async (req, res) => {});
+authRouter.post("/login", async (req, res) => {
+  try {
+    if (!req.body.username || !req.body.password) {
+      return res.status(400).json({
+        code: "U002",
+        message: "Email or username and password is null",
+      });
+    }
+    const userData = await connectionPool.query(
+      "select * from users where username=$1 or email =$1",
+      [req.body.username]
+    );
+    console.log(userData);
+    if (!userData.rowCount) {
+      return res.status(404).json({
+        code: "U001",
+        message: "Email or Username and Password is incorrect",
+      });
+    }
+
+    const user = userData.rows[0];
+    const isValidPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+
+    if (!isValidPassword) {
+      return res.status(404).json({
+        code: "U001",
+        message: "Email or Username and Password is incorrect",
+      });
+    }
+
+    if (user.role === "user") {
+      const nameData = await connectionPool.query(
+        "select name from user_profiles where user_id = $1",
+        [user.user_id]
+      );
+      const [{ name }] = nameData.rows;
+      user.name = name;
+    }
+
+    //not export user password (hash)
+    delete user.password;
+
+    const token = jwt.sign(user, process.env.SECRET_KEY, { expiresIn: 900000 });
+    return res.status(201).json({
+      code: "U000",
+      message: "Login successfully",
+      token,
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Server could not login becasue database connection",
+    });
+  }
+});
 
 export default authRouter;
