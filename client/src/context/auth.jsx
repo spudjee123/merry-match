@@ -22,7 +22,7 @@ function AuthProvider(props) {
     error: null,
     user: getDataFromToken(),
   });
-  
+
   const login = async (data) => {
     try {
       setState({ ...state, error: null, loading: true });
@@ -56,9 +56,9 @@ function AuthProvider(props) {
   //   password: "",
   // });
 
-  const updateLogin = useCallback((info) => {
-    setUserLogin(info);
-  }, []);
+  // const updateLogin = useCallback((info) => {
+  //   setUserLogin(info);
+  // }, []);
 
   // register
   // const [userInfo, setUserInfo] = useState({
@@ -75,9 +75,9 @@ function AuthProvider(props) {
   //   meetprefer: "",
   //   images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
   // });
-  const updateRegister = useCallback((info) => {
-    setUserInfo(info);
-  }, []);
+  // const updateRegister = useCallback((info) => {
+  //   setUserInfo(info);
+  // }, []);
   const logout = () => {
     localStorage.removeItem("token");
     setState({ ...state, user: null });
@@ -94,9 +94,9 @@ function AuthProvider(props) {
         logout,
         isAuthenticated,
         // userInfo,
-        updateRegister,
+        // updateRegister,
         // userLogin,
-        updateLogin,
+        // updateLogin,
       }}
     >
       {props.children}
