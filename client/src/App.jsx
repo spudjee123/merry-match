@@ -25,7 +25,7 @@ function App() {
   const { isAuthenticated, state } = useAuth();
   return (
     <>
-      {!isAuthenticated ? (
+      {(!isAuthenticated) ? (
         <NonUserRoutes />
       ) : state.user.role === "admin" ? (
         <AdminRoutes />
