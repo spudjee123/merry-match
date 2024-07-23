@@ -16,7 +16,9 @@ import Membership from "./pages/user-profile-management/membership.jsx";
 import MerryMembership from "./components/merrymembership.jsx";
 import PayMentOne from "./components/payment1.jsx";
 import Payment2Page from "./components/Payment2Page.jsx";
-// import { useAuth } from "./context/auth.jsx";
+import MatchingChat from "../src/components/MatchingChat.jsx"
+
+import { useAuth } from "./context/auth.jsx";
 import NonUserRoutes from "./routes/non-user-routes.jsx";
 import UserRoutes from "./routes/user-routes.jsx";
 import AdminRoutes from "./routes/admin-routes.jsx";
@@ -50,7 +52,9 @@ function App() {
         <Route path="/user/Membership" element={<MerryMembership />} />
         <Route path="/user/payment1" element={<PayMentOne />} />
         <Route path="/user/payment2" element={<Payment2Page />} />
-      </Routes>
+        <Route path="/user/matchingchat" element={<MatchingChat />} />
+
+      </Routes> */}
     </>
   );
 }
