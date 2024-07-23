@@ -4,30 +4,53 @@ import { jwtDecode } from "jwt-decode"
 
 const AuthContext = React.createContext();
 
-function AuthProvider(props) {
+export const AuthContextProvider = ({ children }) => {
   const [state, setState] = useState({
     loading: null,
     error: null,
     user: null,
   });
 
+  const [userLogin, setUserLogin] = useState({
+    usernameOrEmail: "",
+    password: "",
+  });
+
+  const updateLogin = useCallback((info)=>{
+    setUserLogin(info)
+  },[])
+
+// register
+const [userInfo, setUserInfo] = useState({
+  name: "",
+  birthdate: "",
+  location: "",
+  city: "",
+  username: "",
+  email: "",
+  password: "",
+  sexident: "",
+  sexprefer: "",
+  racialprefer: "",
+  meetprefer: "",
+  images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
+});
+  const updateRegister = useCallback((info)=>{
+    setUserInfo(info)
+  },[])
   const logout = () => {
     localStorage.removeItem("token");
     setState({ ...state, user: null })
   };
 
+
   const isAuthenticated = Boolean(localStorage.getItem("token"));
 
   return (
     <AuthContext.Provider
-      value={{ state, login, logout, register, isAuthenticated }}
+      value={{ userInfo,updateRegister,userLogin,updateLogin,state,  logout }}
     >
-      {props.children}
+      {children}
     </AuthContext.Provider>
   );
-}
-
-// this is a hook that consume AuthContext
-const useAuth = () => React.useContext(AuthContext);
-
-export { AuthProvider, useAuth };
+};
