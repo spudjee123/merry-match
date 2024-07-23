@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
-function AuthProvider (props) {
+function AuthProvider(props) {
   //get data from token on local storage
   const getDataFromToken = () => {
     const token = localStorage.getItem("token");
@@ -22,6 +22,34 @@ function AuthProvider (props) {
     error: null,
     user: getDataFromToken(),
   });
+  
+  const login = async (data) => {
+    try {
+      setState({ ...state, error: null, loading: true });
+      console.log(data);
+      const result = await axios.post("http://localhost:4001/auth/login", data);
+      console.log(result);
+      const token = result.data.token;
+      console.log(token);
+      localStorage.setItem("token", token);
+      const user = jwtDecode(token);
+      setState({ ...state, user });
+      alert("Login successfully!");
+      console.log(user);
+      if (user.role === "admin") {
+        navigate("/package/view");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
+      setState({
+        ...state,
+        error: error.response.data.message,
+        loading: false,
+      });
+    }
+  };
 
   // const [userLogin, setUserLogin] = useState({
   //   usernameOrEmail: "",
