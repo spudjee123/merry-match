@@ -3,16 +3,15 @@ import ImgCercle from "../assets/images/cercleloginpage.png";
 import Nav from "../pages/non-user/nav";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "../context/auth";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({
     usernameOrEmail: "",
     password: "",
   });
+  const { login, state } = useAuth();
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -31,11 +30,10 @@ const Login = () => {
 
     try {
       console.log(userInfo);
-      const result = await axios.post(`http://localhost:4001/login `, userInfo);
-      const token = result.token;
-      localStorage.setItem("token", token);
-      alert("Login successfully!");
-      navigate("/home-login");
+      login({
+        username: userInfo.usernameOrEmail,
+        password: userInfo.password,
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       setErrors({ submit: "There was an error submitting the form" });

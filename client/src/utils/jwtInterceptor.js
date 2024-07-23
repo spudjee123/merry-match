@@ -2,8 +2,8 @@ import axios from "axios";
 
 function jwtInterceptor() {
   axios.interceptors.request.use((req) => {
-    const hashToken = window.localStorage.getItem("token")
-    if(hashToken){
+    const token = window.localStorage.getItem("token");
+    if (token) {
       req.headers.Authorization = `Bearer ${token}`;
     }
     return req;
@@ -14,13 +14,13 @@ function jwtInterceptor() {
       return res;
     },
     (error) => {
-      if(error.response.status === 401 && 
-        error.response.statusText === "Unathorized"
-      ){
-        window.localStorage.removeItem("token")
-        window.location.replace("/home-login")
+      if (
+        error.response?.status === 401 &&
+        error.response?.statusText === "Unathorized"
+      ) {
+        window.localStorage.removeItem("token");
+        window.location.replace("/home-login");
       }
-
 
       return Promise.reject(error);
     }
