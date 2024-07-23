@@ -11,7 +11,10 @@ import Vector from "../user-profile-management/images/Vector.png";
 import Profile from "../user-profile-management/images/Profile.png";
 import exit from "../user-profile-management/images/exit.png";
 
+import { useAuth } from "../../context/auth";
+
 function NavUser() {
+  const { logout } = useAuth();
   return (
     <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
@@ -55,48 +58,52 @@ function NavUser() {
               <img src={hamburger} alt="" />
             </div>
             <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content  rounded-box z-[1] mt-3 w-52 p-2 shadow bg-white"
-          >
-            <li>
-              <a className="justify-between">
-                <span className="badge bg-gradient-to-r from-[#742138] to-[#A87ABF] border-none text-white h-[41px] w-[179px]">
-                  <img src={star} alt="" />
-                  More limit Merry!
-                </span>
-              </a>
-            </li>
-            <li id="list-1">
-              <a href="/user/:userId/edit" id="list-profile">
-                <img src={Profile} alt="profile" className="w-[16px]" />
-                Profile
-              </a>
-            </li>
-            <li id="list-2">
-              <a>
-                <img src={like} alt="heart" className="w-[16px]" />
-                Merry list
-              </a>
-            </li>
-            <li id="list-3">
-              <a>
-                <img src={Box} alt="box" className="w-[16px]" />
-                Merry Membership
-              </a>
-            </li>
-            <li id="list-4">
-              <a>
-                <img src={Vector} alt="vector" className="w-[16px]" />
-                Compliant
-              </a>
-            </li>
-            <li id="list-5">
-              <a href="/">
-                <img src={exit} alt="logout" className="w-[16px]" />
-                Log out
-              </a>
-            </li>
-          </ul>
+              tabIndex={0}
+              className="menu menu-sm dropdown-content  rounded-box z-[1] mt-3 w-52 p-2 shadow bg-white"
+            >
+              <li>
+                <a className="justify-between">
+                  <span className="badge bg-gradient-to-r from-[#742138] to-[#A87ABF] border-none text-white h-[41px] w-[179px]">
+                    <img src={star} alt="" />
+                    More limit Merry!
+                  </span>
+                </a>
+              </li>
+              <li id="list-1">
+                <a href="/profile" id="list-profile">
+                  <img src={Profile} alt="profile" className="w-[16px]" />
+                  Profile
+                </a>
+              </li>
+              <li id="list-2">
+                <a>
+                  <img src={like} alt="heart" className="w-[16px]" />
+                  Merry list
+                </a>
+              </li>
+              <li id="list-3">
+                <a>
+                  <img src={Box} alt="box" className="w-[16px]" />
+                  Merry Membership
+                </a>
+              </li>
+              <li id="list-4">
+                <a>
+                  <img src={Vector} alt="vector" className="w-[16px]" />
+                  Compliant
+                </a>
+              </li>
+              <li id="list-5">
+                <button
+                  onClick={() => {
+                    logout();
+                  }}
+                >
+                  <img src={exit} alt="logout" className="w-[16px]" />
+                  Log out
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -112,19 +119,26 @@ function NavUser() {
       </div>
       <div className="flex-none hidden md:flex space-x-6 content-start gap-6 ">
         <div className="dropdown dropdown-end  md:flex space-x-6 content-start gap-6 ">
-          <Link to={'/matching'}
+          <Link
+            to={"/matching"}
             className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
           >
             Start Matching
           </Link>
-          <Link
-            className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
-          >
+          <Link className="text-red-800 content-center md:text-[12px] lg:text-[18px]">
             Merry Member
           </Link>
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn m-1 bg-white hover:bg-white hover:border-white border-white rounded-[60px]">
-            <img src={Frame} alt="notification" className="w-[18px] h-[18px] bg-white" />
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn m-1 bg-white hover:bg-white hover:border-white border-white rounded-[60px]"
+            >
+              <img
+                src={Frame}
+                alt="notification"
+                className="w-[18px] h-[18px] bg-white"
+              />
             </div>
             <ul
               tabIndex={0}
@@ -165,7 +179,7 @@ function NavUser() {
               </a>
             </li>
             <li id="list-1">
-              <a href="/user/:userId/edit" id="list-profile">
+              <a href="/profile" id="list-profile">
                 <img src={Profile} alt="profile" className="w-[16px]" />
                 Profile
               </a>
@@ -189,10 +203,14 @@ function NavUser() {
               </a>
             </li>
             <li id="list-5">
-              <a href="/">
+              <button
+                onClick={() => {
+                  logout();
+                }}
+              >
                 <img src={exit} alt="logout" className="w-[16px]" />
                 Log out
-              </a>
+              </button>
             </li>
           </ul>
         </div>

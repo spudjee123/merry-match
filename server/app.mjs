@@ -6,7 +6,11 @@ import loginRouter from "../server/src/routes/login.mjs";
 import supabase from "./lib/supabase.js";
 import cors from "cors";
 import uploadImg from "./src/controllers/Upload.js";
+import authRouter from "./src/routes/auth.mjs";
+import dotenv from "dotenv";
 // import { cloudinaryUpload } from "./src/controllers/Upload.js";
+
+dotenv.config();
 
 const app = express();
 const port = 4001;
@@ -16,7 +20,8 @@ app.use(express.json());
 app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
 app.use("/login", loginRouter);
-app.use(cors());
+app.use("/auth", authRouter);
+
 //เรียกใช้ api สำหรับ ยิง postman to cloudinary
 app.use("/api/admin", uploadImg);
 
