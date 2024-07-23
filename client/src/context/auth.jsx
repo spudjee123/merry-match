@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
-function AuthProvider(props) {
+function AuthProvider (props) {
   //get data from token on local storage
   const getDataFromToken = () => {
     const token = localStorage.getItem("token");
@@ -20,49 +20,58 @@ function AuthProvider(props) {
   const [state, setState] = useState({
     loading: null,
     error: null,
-    user: null,
+    user: getDataFromToken(),
   });
 
-  const [userLogin, setUserLogin] = useState({
-    usernameOrEmail: "",
-    password: "",
-  });
+  // const [userLogin, setUserLogin] = useState({
+  //   usernameOrEmail: "",
+  //   password: "",
+  // });
 
-  const updateLogin = useCallback((info)=>{
-    setUserLogin(info)
-  },[])
+  const updateLogin = useCallback((info) => {
+    setUserLogin(info);
+  }, []);
 
-// register
-const [userInfo, setUserInfo] = useState({
-  name: "",
-  birthdate: "",
-  location: "",
-  city: "",
-  username: "",
-  email: "",
-  password: "",
-  sexident: "",
-  sexprefer: "",
-  racialprefer: "",
-  meetprefer: "",
-  images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
-});
-  const updateRegister = useCallback((info)=>{
-    setUserInfo(info)
-  },[])
+  // register
+  // const [userInfo, setUserInfo] = useState({
+  //   name: "",
+  //   birthdate: "",
+  //   location: "",
+  //   city: "",
+  //   username: "",
+  //   email: "",
+  //   password: "",
+  //   sexident: "",
+  //   sexprefer: "",
+  //   racialprefer: "",
+  //   meetprefer: "",
+  //   images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
+  // });
+  const updateRegister = useCallback((info) => {
+    setUserInfo(info);
+  }, []);
   const logout = () => {
     localStorage.removeItem("token");
     setState({ ...state, user: null });
     navigate("/");
   };
 
-
   const isAuthenticated = Boolean(localStorage.getItem("token"));
 
   return (
-    <AuthContext.Provider value={{ state, login, logout, isAuthenticateduserInfo,updateRegister,userLogin,updateLogin,state }}>
+    <AuthContext.Provider
+      value={{
+        state,
+        login,
+        logout,
+        isAuthenticated,
+        // userInfo,
+        updateRegister,
+        // userLogin,
+        updateLogin,
+      }}
+    >
       {props.children}
-
     </AuthContext.Provider>
   );
 }
