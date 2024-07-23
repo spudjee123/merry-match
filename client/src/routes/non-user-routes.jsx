@@ -5,13 +5,11 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 function NonUserRoutes() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/login" element={<Login />} />
+    </Routes>
   );
 }
 
