@@ -46,38 +46,7 @@ const MatchingPage = () => {
 
       {/* Mobile and iPad view */}
       <div className="lg:hidden bg-[#160404] h-screen overflow-x-hidden">
-        <img
-          src={ImgUser1}
-          className="mt-[115px] object-cover w-full rounded-b-3xl z-1 relative"
-        />
-        <div className="h-[30%] w-full absolute top-[46%] bg-gradient-to-t from-purple-900 to-transparent opacity-90 rounded-b-3xl z-2"></div>
-        <div className="absolute z-10 top-[65%] w-full flex flex-col items-center">
-          <div className="w-[90%] flex justify-between">
-            <p className="text-[45px] text-white ">Daeny 24</p>
-            <img src={SeeProfile} className="w-[60px] h-[60px] mt-2" />
-          </div>
-          <div className="w-[90%] flex">
-            <img src={location} className="mt-[6px] w-[15px] h-[20px]" />
-            <p className="text-[20px] ml-2 text-[#D6D9E4]">Bangkok, Thailand</p>
-          </div>
-          <div className="flex">
-            <button>
-              <img src={DislikeButton} className="cursor-pointer" />
-            </button>
-            <button>
-              <img src={LikeButton} className="cursor-pointer" />
-            </button>
-          </div>
-          <div className="mt-[15%] w-[90%] flex justify-between">
-            <div className="flex">
-              <img src={filter} className="w-[25px]" />
-              <p className="ml-2 text-[#D6D9E4]">Filter</p>
-            </div>
-            <p>
-              Merry limit today <span className="text-[#FF1659]">2/20</span>
-            </p>
-          </div>
-        </div>
+        <MatchingAdvanced />
       </div>
 
       {/* Desktop view */}
@@ -128,18 +97,6 @@ const MatchingPage = () => {
         {/* Middle View */}
         <div className="lg:w-[55%] bg-[#160404] border-2 flex justify-center items-center">
           <MatchingAdvanced />
-          {/* <TinderCard
-            onSwipe={onSwipe}
-            onCardLeftScreen={() => onCardLeftScreen("fooBar")}
-            preventSwipe={["right", "left"]}
-          >
-            <div className="bg-[#160404] p-4 rounded shadow">
-              <img src={ImgUser1} alt="User1" />
-            </div>
-            <div className="bg-[#160404] p-4 rounded shadow">
-              <img src={ImgUser2} alt="User2" />
-            </div>
-          </TinderCard> */}
         </div>
 
         {/* Right View */}
