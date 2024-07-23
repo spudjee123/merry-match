@@ -19,7 +19,6 @@ import next_icon from "../assets/icons/next-vector-icon.png";
 import location_icon from "../assets/icons/location-icon.png";
 import reject_icon from "../assets/icons/reject-icon.png";
 import love_icon from "../assets/icons/love-icon.png";
-import preview_exit_icon from "../assets/icons/preview-exit-icon.png";
 
 const db = [
   {
