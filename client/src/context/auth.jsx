@@ -20,7 +20,7 @@ function AuthProvider(props) {
   const [state, setState] = useState({
     loading: null,
     error: null,
-    user: getDataFromToken,
+    user: getDataFromToken(),
   });
 
   const navigate = useNavigate();
