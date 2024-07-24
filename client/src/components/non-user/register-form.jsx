@@ -3,6 +3,7 @@ import * as countryDB from "../../assets/test-data/Countrydata.json";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../context/auth";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -10,10 +11,7 @@ function RegisterForm() {
   const [hobbiesList, setHobbiesList] = useState([]);
   const [hobby, setHobby] = useState("");
   const [location, setLocation] = useState("");
-  const [city, setCity] = useState("");
   const [cityList, setCityList] = useState([]);
-  const [isSecondImage, setIsSecondImage] = useState(false);
-  const [isMobilePreview, setIsMobilePreview] = useState(false);
   const locationDB = countryDB.data.map((item) => item.country_name);
   const sexDB = ["male", "female", "other"];
   const raceDB = ["Asian", "Black", "White", "Middle east"];
@@ -41,46 +39,47 @@ function RegisterForm() {
     meetprefer: "",
     images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
   });
-  const [confirmPwd, setConfirmPwd] = useState('');
+  const [confirmPwd, setConfirmPwd] = useState("");
   const [errors, setErrors] = useState({});
+  const { register } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validateError = {};
-    
+
     if (!userInfo.name) {
-      validateError.name = 'Name is required';
+      validateError.name = "Name is required";
     }
     if (!userInfo.birthdate) {
-      validateError.birthdate = 'Date of birth is required';
+      validateError.birthdate = "Date of birth is required";
     }
     if (!userInfo.location) {
-      validateError.location = 'Location is required';
+      validateError.location = "Location is required";
     }
     if (!userInfo.city) {
-      validateError.city = 'City is required';
+      validateError.city = "City is required";
     }
     if (!userInfo.username) {
-      validateError.username = 'Username is required';
+      validateError.username = "Username is required";
     } else if (userInfo.username.length < 6) {
-      validateError.username = 'Username should be at least 6 characters';
+      validateError.username = "Username should be at least 6 characters";
     }
     if (!userInfo.email) {
-      validateError.email = 'Email is required';
+      validateError.email = "Email is required";
     } else if (!EMAIL_REGEX.test(userInfo.email)) {
-      validateError.email = 'Email is not valid';
+      validateError.email = "Email is not valid";
     }
     if (!userInfo.password) {
-      validateError.password = 'Password is required';
+      validateError.password = "Password is required";
     } else if (userInfo.password.length < 8) {
-      validateError.password = 'Password should be at least 8 characters';
+      validateError.password = "Password should be at least 8 characters";
     }
     if (confirmPwd !== userInfo.password) {
-      validateError.confirmPwd = 'Passwords do not match';
+      validateError.confirmPwd = "Passwords do not match";
     }
     if (step === 3 && (!images[1] || !images[2])) {
-      validateError.images = 'Please upload at least 2 photos';
-      alert('Please upload at least 2 photos');
+      validateError.images = "Please upload at least 2 photos";
+      alert("Please upload at least 2 photos");
     }
 
     if (Object.keys(validateError).length > 0) {
@@ -90,11 +89,10 @@ function RegisterForm() {
 
     if (step === 3) {
       try {
-        const result = await axios.post( `http://localhost:4001/register `, userInfo);
-        alert('Form submitted successfully!');
+        register(userInfo);
       } catch (error) {
-        console.error('Error submitting form:', error);
-        setErrors({ submit: 'There was an error submitting the form' });
+        console.error("Error submitting form:", error);
+        setErrors({ submit: "There was an error submitting the form" });
       }
     } else {
       setStep(step + 1);
@@ -114,14 +112,14 @@ function RegisterForm() {
     newUserInfo.images = images;
     setUserInfo(newUserInfo);
   }, [images]);
-  
+
   const inputClassName =
     "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-white placeholder:text-gray-600";
   const formGroupClassName = "flex flex-col gap-1 w-full";
   const formGroupRowClassName =
     "flex flex-col-reverse gap-6 lg:flex-row-reverse lg:gap-6";
   const formClassName = "flex flex-col gap-6 leading-6 lg:gap-10 ";
-  
+
   return (
     <>
       <form className="bg-main" onSubmit={handleSubmit}>
@@ -250,7 +248,9 @@ function RegisterForm() {
                       }
                       required
                     />
-                    {errors.birthdate && <span className="text-rose-600">{errors.birthdate}</span>}
+                    {errors.birthdate && (
+                      <span className="text-rose-600">{errors.birthdate}</span>
+                    )}
                   </div>
 
                   <div className={formGroupClassName}>
@@ -266,7 +266,9 @@ function RegisterForm() {
                       }
                       required
                     />
-                    {errors.name && <span className="text-rose-600">{errors.name}</span>}
+                    {errors.name && (
+                      <span className="text-rose-600">{errors.name}</span>
+                    )}
                   </div>
                 </div>
 
@@ -281,11 +283,14 @@ function RegisterForm() {
                         setUserInfo({ ...userInfo, city: event.target.value })
                       }
                     >
+                      <option value="">Select city</option>
                       {cityList.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
                     </select>
-                    {errors.city && <span className="text-rose-600">{errors.city}</span>}
+                    {errors.city && (
+                      <span className="text-rose-600">{errors.city}</span>
+                    )}
                   </div>
 
                   <div className={formGroupClassName}>
@@ -302,11 +307,14 @@ function RegisterForm() {
                         });
                       }}
                     >
+                      <option value="">Select location</option>
                       {locationDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
                     </select>
-                    {errors.location && <span className="text-rose-600">{errors.location}</span>}
+                    {errors.location && (
+                      <span className="text-rose-600">{errors.location}</span>
+                    )}
                   </div>
                 </div>
 
@@ -323,7 +331,9 @@ function RegisterForm() {
                         setUserInfo({ ...userInfo, email: event.target.value })
                       }
                     />
-                    {errors.email && <span className="text-rose-600">{errors.email}</span>}
+                    {errors.email && (
+                      <span className="text-rose-600">{errors.email}</span>
+                    )}
                   </div>
 
                   <div className={formGroupClassName}>
@@ -343,7 +353,9 @@ function RegisterForm() {
                       }
                       required
                     />
-                    {errors.username && <span className="text-rose-600">{errors.username}</span>}
+                    {errors.username && (
+                      <span className="text-rose-600">{errors.username}</span>
+                    )}
                   </div>
                 </div>
                 <div className={formGroupRowClassName}>
@@ -356,12 +368,12 @@ function RegisterForm() {
                       minLength="8"
                       placeholder="At least 8 characters"
                       value={confirmPwd}
-                      onChange={(event) =>
-                        setConfirmPwd(event.target.value)
-                      }
+                      onChange={(event) => setConfirmPwd(event.target.value)}
                       required
                     />
-                    {errors.confirmPwd && <span className="text-rose-600">{errors.confirmPwd}</span>}
+                    {errors.confirmPwd && (
+                      <span className="text-rose-600">{errors.confirmPwd}</span>
+                    )}
                   </div>
                   <div className={formGroupClassName}>
                     <label htmlFor="password">Password</label>
@@ -380,7 +392,9 @@ function RegisterForm() {
                       placeholder="At least 8 characters"
                       required
                     />
-                    {errors.password && <span className="text-rose-600">{errors.password}</span>}
+                    {errors.password && (
+                      <span className="text-rose-600">{errors.password}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -405,6 +419,7 @@ function RegisterForm() {
                       }
                       className={inputClassName}
                     >
+                      <option value="">Select sex</option>
                       {sexDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -424,6 +439,7 @@ function RegisterForm() {
                       }
                       className={inputClassName}
                     >
+                      <option value="">Select sex</option>
                       {sexDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -445,6 +461,7 @@ function RegisterForm() {
                       }
                       className={inputClassName}
                     >
+                      <option value="">Select meeting preferences</option>
                       {meetpreferDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -464,6 +481,7 @@ function RegisterForm() {
                       }
                       className={inputClassName}
                     >
+                      <option value="">Select racial preferences</option>
                       {raceDB.map((item, index) => (
                         <option key={index}>{item}</option>
                       ))}
@@ -600,7 +618,7 @@ function RegisterForm() {
             >
               &larr; back
             </button>
-            <Link >
+            <Link>
               <button
                 className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
                 type={step === 3 ? "submit" : "button"}
