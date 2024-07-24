@@ -54,6 +54,31 @@ function MatchingAdvanced() {
   const [hobbiesList, setHobbiesList] = useState([]);
   const [hobby, setHobby] = useState("");
   const currentIndexRef = useRef(currentIndex);
+  const [isHidden, setIsHidden] = useState(true);
+  const [minAge, setMinAge] = useState(18);
+  const [maxAge, setMaxAge] = useState(80);
+
+  const toggleDiv = () => setIsHidden(!isHidden);
+
+  const onSwipe = (direction) => {
+    console.log(`You swiped: ${direction}`);
+  };
+
+  const onCardLeftScreen = (myIdentifier) => {
+    console.log(`${myIdentifier} left the screen`);
+  };
+
+  const handleMinAgeChange = (e) => {
+    const value =
+      e.target.value === "" ? 0 : Math.min(Number(e.target.value), maxAge);
+    setMinAge(value);
+  };
+
+  const handleMaxAgeChange = (e) => {
+    const value =
+      e.target.value === "" ? 0 : Math.max(Number(e.target.value), minAge);
+    setMaxAge(value);
+  };
 
   const childRefs = useMemo(
     () =>
@@ -126,8 +151,6 @@ function MatchingAdvanced() {
                       Bangkok, Thailand
                     </p>
                   </div>
-
-                  <button className="mt-2"></button>
                   <button
                     className=""
                     onClick={() =>
@@ -136,31 +159,24 @@ function MatchingAdvanced() {
                   >
                     <img src={SeeProfile} className="w-[60px] h-[60px]" />
                   </button>
-                  <dialog id="SeeProfileMobile" className="modal">
-                    <div className="w-screen h-screen flex justify-center items-center">
-                      <div className="bg-white rounded-[32px] w-[80%] h-[80%] px-12 py-10 shadow-primary relative ">
-                        <div className="relative flex justify-center items-center h-full">
-                          <img
-                            style={{
-                              backgroundImage: `url(${db[currentIndex].url})`,
-                            }}
-                            className="w-[450px] h-[400px]"
-                          />
-                          <button className=" bg-dark absolute w-12 h-12 flex justify-center items-center rounded-full top-2 left-2 shadow-primary">
-                            <img
-                              src={preview_exit_icon}
-                              width={16}
-                              height={16}
-                              alt="preview exit icon"
-                              onClick={(event) => {
-                                event.preventDefault();
-                                setIsMobilePreview(false);
-                              }}
-                              className=" shadow-2xl"
-                            />
-                          </button>
-                        </div>
-                        <div className=" h-12 flex justify-between items-center absolute text-gray-700 ">
+                  <dialog
+                    id="SeeProfileMobile"
+                    className="modal bg-white w-screen h-screen mt-[110px]"
+                  >
+                    <div className="w-full h-full">
+                      <form method="dialog">
+                        <button className="btn btn-sm btn-circle btn-ghost absolute left-2 top-2 z-10">
+                          <img src={arrowleft} className=" w-[16px] h-[16px]" />
+                        </button>
+                      </form>
+                      <section className="w-screen h-screen ">
+                        <div
+                          style={{
+                            backgroundImage: `url(${db[currentIndex].url})`,
+                          }}
+                          className="rounded-b-3xl bg-cover bg-center w-full h-[30%] shadow-lg"
+                        ></div>
+                        <div className=" h-12 flex justify-between items-center relative text-gray-700 ">
                           <div className=" flex justify-center absolute top-[-30px] w-full gap-6 z-10">
                             <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl">
                               <img
@@ -218,7 +234,6 @@ function MatchingAdvanced() {
                             </button>
                           </div>
                         </div>
-
                         <div className="flex flex-col px-4 py-6 gap-6 items-center text-gray-900 leading-6">
                           <article className=" w-full">
                             <h1 className=" text-[46px] leading-[57.5px] font-extrabold mb-2">
@@ -288,7 +303,7 @@ function MatchingAdvanced() {
                             </div>
                           </article>
                         </div>
-                      </div>
+                      </section>
                     </div>
                   </dialog>
                 </div>
@@ -319,18 +334,21 @@ function MatchingAdvanced() {
               </div>
               <div className="w-full h-full flex justify-center mb-10 p-4 z-40">
                 <div className="w-[90%] h-full flex flex-row items-end justify-between">
-                  <h3 className="text-white text-[25px] flex justify-center items-center">
+                  <div className="text-white text-[25px] flex justify-center items-center">
                     <div className="">{db[currentIndex].name} 24</div>
-                    {/* <button className="mt-2"></button> */}
                     <button
-                      className="mt-2"
+                      className=""
                       onClick={() =>
                         document.getElementById("SeeProfileDesktop").showModal()
                       }
                     >
-                      <img src={SeeProfile} className="w-[60px] h-[60px]" />
+                      <img
+                        src={SeeProfile}
+                        className="mt-2 w-[60px] h-[60px]"
+                      />
                     </button>
-                  </h3>
+                  </div>
+
                   <div className="mb-4">
                     <button onClick={goBack}>
                       <img src={arrowleft} className="mr-6 w-[16px] h-[16px]" />
@@ -368,31 +386,172 @@ function MatchingAdvanced() {
 
       {/* bottom mobile*/}
       <div className="w-[90%] flex items-end justify-between lg:hidden">
-        <p className="flex flex-row ">
+        <div className="flex flex-row ">
           <button
             className=""
             onClick={() => document.getElementById("Filter").showModal()}
           >
             <img src={filter} className="w-[25px] h-[25px] mr-2" />
           </button>
-          <dialog id="Filter" className="modal">
-            <div className="modal-box w-11/12 max-w-5xl">
-              <h3 className="font-bold text-lg">Hello!</h3>
-              <p className="py-4">Click the button below to close</p>
-              <div className="modal-action">
-                <form method="dialog">
-                  {/* if there is a button, it will close the modal */}
-                  <button className="btn">Close</button>
-                </form>
-              </div>
-            </div>
-          </dialog>
           Filter
-        </p>
+        </div>
         <p className=" flex flex-row">
           Merry limit today <span className="text-[#FF1659] ml-4">2/20</span>
         </p>
       </div>
+
+      {/*  Filter  modal-box*/}
+      <section className="">
+        <dialog
+          id="Filter"
+          className="modal bg-white w-screen h-[80%] flex flex-col mt-[180px] rounded-t-3xl"
+        >
+          <form method="dialog">
+            <button className="text-[18px] text-black btn btn-sm btn-circle btn-ghost absolute left-3 top-4">
+              ✕
+            </button>
+            <p className="text-[20px] text-[#191C77] absolute right-[45%] top-4">
+              Filter
+            </p>
+            <button className="text-[16px] text-red-500 btn btn-sm btn-circle btn-ghost absolute right-6 top-4">
+              Clear
+            </button>
+          </form>
+
+          {/* Search by Keywords */}
+          <div className="w-full h-[20%] flex pt-24 items-start justify-center">
+            <div className="w-[90%]">
+              <p className="text-black text-lg">Search by Keywords</p>
+              <form method="GET">
+                <div className="relative pt-4">
+                  <span className="absolute inset-y-0 left-0 flex pt-4 pl-2">
+                    <button type="submit" className="p-1 border-gray-300">
+                      <svg
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        className="w-6 h-6"
+                      >
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                      </svg>
+                    </button>
+                  </span>
+                  <input
+                    type="search"
+                    name="q"
+                    className="py-2 w-full text-sm text-black rounded-md pl-10 bg-white border focus:border-gray-300 border-gray-300"
+                    placeholder="Search..."
+                    autoComplete="off"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Sex you interest */}
+          <div className="w-full h-[20%] flex pt-24 justify-center">
+            <div className="w-[90%] h-full ">
+              <p className="text-black text-lg ">Sex you interest</p>
+              {["Default", "Female", "Non-binary people"].map((label) => (
+                <div className="flex" key={label}>
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="checkbox mt-4 border-gray-300 [--chkbg:purple] [--chkfg:white] checked:border-purple-300"
+                  />
+                  <p className="ml-4 mt-3 w-full text-lg">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Age Range */}
+          <div className="w-full h-full mt-[120px] flex justify-center items-center">
+            <div className="w-[90%]">
+              <p className="text-black text-lg">Age Range</p>
+              <div className="w-full mt-4">
+                <div className="">
+                  <input
+                    type="range"
+                    step="1"
+                    min={18}
+                    max={maxAge}
+                    value={minAge}
+                    onChange={handleMinAgeChange}
+                    className={`absolute pointer-events-auto appearance-none z-20 h-2 w-[50%] opacity-0 cursor-pointer`}
+                  />
+                  <input
+                    type="range"
+                    step="1"
+                    min={minAge}
+                    max={80}
+                    value={maxAge}
+                    onChange={handleMaxAgeChange}
+                    className={`absolute pointer-events-auto appearance-none z-20 h-2 w-[50%] right-0 opacity-0 cursor-pointer`}
+                  />
+                  <div className="relative z-10 h-2 ">
+                    <div className="absolute z-10 left-0 right-0 bottom-0 top-0 h-1 rounded-md bg-gray-200 "></div>
+                    <div
+                      className="absolute z-20 top-0 bottom-0 rounded-md flex h-1 bg-purple-500"
+                      style={{
+                        right: `${(1 - (maxAge - 18) / 80) * 100}%`,
+                        left: `${((minAge - 18) / 80) * 100}%`,
+                      }}
+                    ></div>
+                    <div
+                      className="absolute z-30 w-5 h-5 top-0 left-0 bg-purple-300 border-[3px] border-purple-500 rounded-full -mt-2 -ml-1"
+                      style={{
+                        left: `${((minAge - 18) / 80) * 100}%`,
+                      }}
+                    ></div>
+                    <div
+                      className="absolute z-30 w-5 h-5 bg-purple-300 border-[3px] right-0 border-purple-500 rounded-full -mt-2 -mr-3"
+                      style={{
+                        right: `${(1 - (maxAge - 18) / 80) * 100}%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center py-5">
+                  <input
+                    type="text"
+                    value={minAge}
+                    onChange={(e) =>
+                      handleMinAgeChange({
+                        target: {
+                          value: Math.max(parseInt(e.target.value) || 0),
+                        },
+                      })
+                    }
+                    className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-[110px] h-[60px] text-start"
+                  />
+                  <p className="text-black">-</p>
+                  <input
+                    type="text"
+                    value={maxAge}
+                    onChange={(e) =>
+                      handleMaxAgeChange({
+                        target: {
+                          value: Math.min(parseInt(e.target.value) || 0, 80),
+                        },
+                      })
+                    }
+                    className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-[110px] h-[60px] text-start"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-[90%] m-6 flex items-center justify-center ">
+            <button className="bg-red-500 rounded-[30px] w-full h-[60px] text-xl text-white">
+              Search
+            </button>
+          </div>
+        </dialog>
+      </section>
     </div>
   );
 }
