@@ -70,6 +70,11 @@ authRouter.post("/register", async (req, res) => {
       ]
     );
 
+    await connectionPool.query(
+      `insert into user_statuses (user_id, "merryCounts", "createdAt") values ($1,$2,$3)`,
+      [user_id, 20, new Date()]
+    );
+
     return res.json({
       code: "U000",
       message: "Register successfully",
@@ -123,6 +128,11 @@ authRouter.post("/login", async (req, res) => {
       const [{ name }] = nameData.rows;
       user.name = name;
     }
+
+    await connectionPool.query(
+      `update users set "lastLogin" = $1 where user_id = $2`,
+      [new Date(), user.user_id]
+    );
 
     //not export user password (hash)
     delete user.password;
