@@ -30,9 +30,7 @@ function AuthProvider(props) {
   const login = async (data) => {
     try {
       setState({ ...state, error: null, loading: true });
-      console.log(data);
       const result = await axios.post("http://localhost:4001/auth/login", data);
-      console.log(result);
       const token = result.data.token;
       localStorage.setItem("token", token);
       const user = jwtDecode(token);
@@ -72,6 +70,33 @@ function AuthProvider(props) {
     }
   };
 
+  // const [userLogin, setUserLogin] = useState({
+  //   usernameOrEmail: "",
+  //   password: "",
+  // });
+
+  // const updateLogin = useCallback((info) => {
+  //   setUserLogin(info);
+  // }, []);
+
+  // register
+  // const [userInfo, setUserInfo] = useState({
+  //   name: "",
+  //   birthdate: "",
+  //   location: "",
+  //   city: "",
+  //   username: "",
+  //   email: "",
+  //   password: "",
+  //   sexident: "",
+  //   sexprefer: "",
+  //   racialprefer: "",
+  //   meetprefer: "",
+  //   images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
+  // });
+  // const updateRegister = useCallback((info) => {
+  //   setUserInfo(info);
+  // }, []);
   const logout = () => {
     localStorage.removeItem("token");
     setState({ ...state, user: null });
