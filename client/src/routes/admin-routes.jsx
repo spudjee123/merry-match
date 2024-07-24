@@ -3,6 +3,7 @@ import AddPackagePage from "../component/addpackage";
 import EditPackage from "../component/editpackage";
 import ComplainList from "../component/complainlist.jsx";
 import SeeComplaintDetail from "../component/seecomplaint.jsx";
+import NotFoundPage from "../pages/NotFoundPage";
 import { Routes, Route } from "react-router-dom";
 
 function AdminRoutes() {
@@ -13,6 +14,7 @@ function AdminRoutes() {
       <Route path="/package/edit/:package_id" element={<EditPackage />} />
       <Route path="/complaint/list" element={<ComplainList />} />
       <Route path="/complaint/see" element={<SeeComplaintDetail />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
