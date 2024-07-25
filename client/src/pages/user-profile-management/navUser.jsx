@@ -10,11 +10,13 @@ import Box from "../user-profile-management/images/Box.png";
 import Vector from "../user-profile-management/images/Vector.png";
 import Profile from "../user-profile-management/images/Profile.png";
 import exit from "../user-profile-management/images/exit.png";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/auth";
 
 function NavUser() {
   const { logout } = useAuth();
+  const navigate = useNavigate();
   return (
     <div className="navbar h-[70px] bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
@@ -76,10 +78,14 @@ function NavUser() {
                 </a>
               </li>
               <li id="list-2">
-                <a>
+                <button
+                  onClick={() => {
+                    navigate("/merry-list");
+                  }}
+                >
                   <img src={like} alt="heart" className="w-[16px]" />
                   Merry list
-                </a>
+                </button>
               </li>
               <li id="list-3">
                 <a>
@@ -185,10 +191,14 @@ function NavUser() {
               </a>
             </li>
             <li id="list-2">
-              <a>
+              <button
+                onClick={() => {
+                  navigate("/merry-list");
+                }}
+              >
                 <img src={like} alt="heart" className="w-[16px]" />
                 Merry list
-              </a>
+              </button>
             </li>
             <li id="list-3">
               <a href="/membership">

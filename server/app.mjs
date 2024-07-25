@@ -70,6 +70,8 @@ const port = 4001;
 
 app.use(express.json());
 app.use("/auth", authRouter);
+
+// app.use(protect);
 app.use("/", stripeRouter);
 app.use("/profiles", profilesRouter);
 

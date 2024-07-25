@@ -14,7 +14,8 @@ profilesRouter.get("/", async (req, res) => {
     console.log(profilesList);
 
     return res.status(200).json({
-      message: "get",
+      code: "U000",
+      message: "Get profiles successfully",
       data: profilesList,
     });
   } catch (error) {
@@ -52,7 +53,8 @@ profilesRouter.get("/view/:profile_id", async (req, res) => {
     console.log(profile);
 
     return res.status(200).json({
-      message: "get",
+      code: "U000",
+      message: "Get profile successfully",
       data: profile,
     });
   } catch (error) {

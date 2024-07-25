@@ -21,6 +21,7 @@ function MerryListView() {
   const [isSecondImage, setIsSecondImage] = useState(false);
   const [currentView, setCurrentView] = useState({});
   const [isMobilePreview, setIsMobilePreview] = useState(false);
+  const date = new Date();
 
   return (
     <>
@@ -65,7 +66,7 @@ function MerryListView() {
                   <span className=" text-red-400 ">{`${2}/${20}`}</span>
                 </p>
                 <p className=" text-xs leading-[18px] text-gray-600">
-                  Reset in {12}h...
+                  Reset in {24 - date.getHours()}h...
                 </p>
               </div>
             </div>
@@ -127,7 +128,7 @@ function MerryListView() {
                         {`${item.city}, ${item.location}`}
                       </p>
                     </div>
-                    <div className=" grid grid-cols-2 gap-y-2 py-1">
+                    <div className=" grid grid-cols-2 gap-y-2 gap-x-4 py-1">
                       <p className=" flex items-center">Sexual identities</p>
                       <p className=" font-semibold text-gray-700">
                         {item.sexident}

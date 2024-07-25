@@ -111,7 +111,7 @@ authRouter.post("/login", async (req, res) => {
       "select * from users where username=$1 or email =$1",
       [req.body.username]
     );
-    console.log(userData);
+
     if (!userData.rowCount) {
       return res.status(404).json({
         code: "U001",
@@ -132,20 +132,44 @@ authRouter.post("/login", async (req, res) => {
       });
     }
 
-    if (user.role === "user") {
-      const nameData = await connectionPool.query(
-        "select name from user_profiles where user_id = $1",
-        [user.user_id]
-      );
-      const [{ name }] = nameData.rows;
-      user.name = name;
+    const nameData = await connectionPool.query(
+      "select name from user_profiles where user_id = $1",
+      [user.user_id]
+    );
+    const [{ name }] = nameData.rows;
+    user.name = name;
+    const packageData = await connectionPool.query(
+      `select p.packages_name as 'packageName', p.merry_limit as 'merryLimit' from user_statuses s inner join packages p on s.package_id = p.package_id  where s.user_id = $1`,
+      [user.user_id]
+    );
+
+    if (packageData.rowCount) {
+      const [{ packageName, merryLimit }] = packageData.rows;
+      user.packageName = packageName;
+      user.merryLimit = merryLimit;
+    } else {
+      user.merryLimit = 50;
     }
+
+    if (currentDate.toDateString() !== lastLogin.toDateString()) {
+      connectionPool.query(
+        `update user_statuses set merry_counts = $1 where user_id = $2`,
+        [user.merryLimit, user.user_id]
+      );
+    }
+
+    const currentDate = new Date();
+    const lastLogin = user.last_login;
 
     await connectionPool.query(
       `update users set "last_login" = $1 where user_id = $2`,
-      [new Date(), user.user_id]
+      [currentDate, user.user_id]
     );
 
+    user.lastLogin = currentDate;
+
+    delete user.last_login;
+    delete user.merryLimit;
     //not export user password (hash)
     delete user.password;
 
