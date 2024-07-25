@@ -52,7 +52,7 @@ const MatchingPage = () => {
       {/* Desktop view */}
       <div className="bg-white mt-[115px] flex overflow-x-hidden max-lg:hidden">
         {/* Left View */}
-        <div className="lg:w-[25%] border-2 flex flex-col items-center">
+        <div className="lg:w-[25%] border-2 flex flex-col items-center ">
           <div className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center">
             <div className="lg:h-[80%] lg:w-[95%] lg:bg-[#F6F7FC] lg:rounded-xl lg:border lg:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
               <img src={Heart} alt="" />
