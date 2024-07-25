@@ -27,7 +27,7 @@ const io = new Server(server, {
 app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
+    // methods: ["GET", "POST"],
   })
 );
 
@@ -182,7 +182,7 @@ app.put("/admin/edit/:package_id", async (req, res) => {
 
   if (!packageId || !packages_name || !merry_limit || !icons) {
     return res.status(400).json({
-      message: "Invalid input, all fields except 'detail' are required",
+      message: "Invalid input, all fields except detail are required",
     });
   }
 

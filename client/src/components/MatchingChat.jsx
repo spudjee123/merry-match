@@ -160,13 +160,19 @@ const MatchingChat = () => {
         <div className="bg-[#200009] lg:w-[75%] lg:flex lg:flex-col lg:justify-end lg:items-end">
           {/* chat box */}
           <div className="lg:w-full lg:mx-auto">
-            <div className="lg:w-[90%] mx-auto">
+            <div className="lg:w-[90%] mx-auto flex flex-col">
               {messages.map((message, index) => (
-                <div key={index} className="text-white mb-2">
-                  <strong className="font-semibold">{message.author}:</strong>{" "}
-                  {message.message}
-                  <br />
-                  <span className="text-xs">{message.time}</span>
+                <div
+                  key={index}
+                  className={`mb-2 p-2 rounded-3xl lg:w-[500px] ${
+                    message.author === username
+                      ? "bg-[#7D2262] text-white self-end"
+                      : "bg-[#EFC4E2] text-black self-start"
+                  }`}
+                >
+                  <div className="font-bold">{message.author}</div>
+                  <div>{message.message}</div>
+                  <div className="text-xs text-black">{message.time}</div>
                 </div>
               ))}
             </div>

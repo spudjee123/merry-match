@@ -10,8 +10,13 @@ import emojiparty from "./images/emojiparty.png";
 import emojilove from "./images/emojilove.png";
 import containervertical from "./images/containervertical.png";
 import NavUser from "./navUser";
+import { useAuth } from "../../context/auth";
 
 export function HomeUserLogin() {
+
+  const {state} = useAuth()
+
+  console.log(state);
   return (
     <div className="bg-[#160404] lg:h-[2700px] max-lg:h-[4000px] pt-[180px]">
       <NavUser />
