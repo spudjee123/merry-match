@@ -113,15 +113,13 @@ const Login = () => {
               )}
             </div>
             <div className="lg:flex lg:justify-center mt-[30px]">
-              <Link>
-                <button
-                  id="login-btn"
-                  className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto"
-                  onClick={handleLogin}
-                >
-                  Log in
-                </button>
-              </Link>
+              <button
+                id="login-btn"
+                className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto"
+                onClick={handleLogin}
+              >
+                Log in
+              </button>
             </div>
             <div>
               <h4 className="text-[16px] text-black mt-[40px] text-center">
