@@ -22,17 +22,17 @@ import UserRoutes from "./routes/user-routes.jsx";
 import AdminRoutes from "./routes/admin-routes.jsx";
 
 function App() {
-  const { isAuthenticated, state } = useAuth();
+  // const { isAuthenticated, state } = useAuth();
   return (
     <>
-      {(!isAuthenticated) ? (
+      {/* {(!isAuthenticated) ? (
         <NonUserRoutes />
       ) : state.user.role === "admin" ? (
         <AdminRoutes />
       ) : (
         <UserRoutes />
-      )}
-      {/* <Routes>
+      )} */}
+      <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/package/add" element={<AddPackagePage />} />
         <Route path="/package/view" element={<PackageListPage />} />
@@ -48,7 +48,7 @@ function App() {
         <Route path="/user/Membership" element={<MerryMembership />} />
         <Route path="/user/paymentone" element={<PayMentOne />} />
         <Route path="/user/payment2" element={<Payment2Page />} />
-      </Routes> */}
+      </Routes>
     </>
   );
 }
