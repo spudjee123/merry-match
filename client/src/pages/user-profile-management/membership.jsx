@@ -2,6 +2,10 @@ import NavUser from "./navUser";
 import Footer from "../../components/Footer";
 import heart from "./images/heart.png";
 import check from "./images/check.png";
+import axios from "axios";
+import { useState } from "react";
+
+
 
 const packages = [
   {
@@ -31,6 +35,7 @@ const packages = [
 ];
 
 function Membership() {
+  
   return (
     <>
       <NavUser />

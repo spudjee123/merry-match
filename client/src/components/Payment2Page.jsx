@@ -2,8 +2,21 @@ import NavUser from "../pages/user-profile-management/navUser";
 import Success from "../assets/icons/successpay2.png";
 import IconPremium from "../assets/icons/iconpay2.png";
 import Footer from "./Footer";
+import { useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 const Payment2Page = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get('session_id');
+
+    // ดำเนินการกับ sessionId เช่น ส่งไปยังเซิร์ฟเวอร์เพื่อดึงข้อมูลการชำระเงิน
+    console.log('Session ID:', sessionId);
+
+    // คุณสามารถแสดงข้อมูลหรือดำเนินการเพิ่มเติมที่นี่
+  }, [location.search]);
   return (
     <section className="bg-white h-full w-full">
       <div>

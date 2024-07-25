@@ -32,7 +32,7 @@ function Nav() {
               className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow "
             >
               <li>
-                 <Link>Why Merry Match?</Link>
+                 <Link to={"/#section-two"}>Why Merry Match?</Link>
               </li>
               <li>
                 <Link >How to Merry</Link>
@@ -63,14 +63,14 @@ function Nav() {
         <div className="flex flex-rows flex-wrap w-full justify-between place-content-center">
           <div className="hidden md:flex space-x-6 content-start gap-6 ">
             <Link
-              to="/#section-two"
+              to={"/#section-two"}
               className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
             >
               {" "}
               Why Merry Match?
             </Link>
             <Link
-              to="/"
+              to={"/#section-three"}
               className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
             >
               {" "}

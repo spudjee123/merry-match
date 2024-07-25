@@ -1,6 +1,7 @@
 import { application, Router } from "express";
 import connectionPool from "../utils/db.mjs";
 import bcrypt from "bcrypt"
+import multer from "multer";
 
 import supabase from "../apps/lib/supabase.js";
 import express from 'express'
@@ -9,9 +10,13 @@ const app = express()
 const registerRouter = Router();
 
 app.use(express.json());
+const multerUpload = multer({ dest: "uploads/" });
+const avatarUpload = multerUpload.fields([{ name: "avatar", maxCount: 2 }]);
 
-registerRouter.post("/", async (req, res) => {
+registerRouter.post("/",avatarUpload, async (req, res) => {
   const inputData = { ...req.body };
+  const avatarUrl = await cloudinaryUpload(req.files);
+	user["avatars"] = avatarUrl;
 
   try {
     const hashPassword = await bcrypt.hash(inputData.password,10)

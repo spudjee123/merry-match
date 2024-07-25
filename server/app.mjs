@@ -3,20 +3,16 @@ import connectionPool from "./src/utils/db.mjs";
 import registerRouter from "../server/src/routes/register.mjs";
 import profileRouter from "../server/src/routes/profile.mjs";
 import loginRouter from "../server/src/routes/login.mjs";
+import stripeRouter from "../server/src/routes/payment.mjs"
 import supabase from "./lib/supabase.js";
 import cors from "cors";
 import uploadImg from "./src/controllers/Upload.js";
 import authRouter from "./src/routes/auth.mjs";
 import dotenv from "dotenv";
 // import { cloudinaryUpload } from "./src/controllers/Upload.js";
-import { v4 as uuidv4 } from 'uuid';
-import Stripe from 'stripe';
 
 dotenv.config();
 
-// keyนี้สำหรับtest
-const stripe = new Stripe('sk_test_51PfGepCsaxbmSm5DJmnpDuh8XVSMZVQ0jiSfh7jI0cc4hBdAr6lhXYw97a3VU48TMQz6ElBUcUxqOEUuWTINVTxQ00Qb1hJloP');
-const endpointSecret = "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9";
 const app = express();
 const port = 4001;
 
@@ -26,6 +22,7 @@ app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
 app.use("/login", loginRouter);
 app.use("/auth", authRouter);
+app.use("/", stripeRouter)
 
 //เรียกใช้ api สำหรับ ยิง postman to cloudinary
 app.use("/api/admin", uploadImg);
@@ -363,116 +360,9 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
 //   }
 // });
 
-// ยิงreq ไปที่stripeโดยตรง
-app.post('/api/checkout', express.json(),async(req,res)=>{
-  const { user, packageName } = req.body
-  // random id 
-  const orderId = uuidv4();
 
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'thb',
-            product_data: {
-              name: packageName.name,
-            },
-            unit_amount: packageName.price * 100,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `http://localhost:4001/success?id=${orderId}`,
-      cancel_url: `http://localhost:4001/cancel?id=${orderId}`,
-    });
 
-    const orderData = {
-      name: user.name,
-      package_name: packageName.name,
-      order_id : orderId,
-      session_id: session.id,
-      status: session.status
-    }
 
-    const result = await connectionPool.query(`INSERT INTO payment_test (name,package_name,order_id,status,session_id) 
-      VALUES ($1, $2, $3, $4, $5) `, [  
-        orderData.name,
-        orderData.package_name,
-        orderData.order_id,
-        orderData.status,
-        orderData.session_id
-      ])
-
-    console.log('Created session:', session);
-
-    res.json({ user, packageName,orderId, order: result.rows[0] });
-  } catch (error) {
-    console.error('Error creating session:', error);
-    res.status(500).json({ error: error.message });
-  }
-})
-
-// เช็ค order id ว่า status เป็นยังไง
-app.get("/api/order/:id", async (req, res) => {
-  const orderId = req.params.id
-  try {
-    const result = await connectionPool.query(`select * from payment_test where order_id = $1 `,[orderId]);
-    res.json({ result: result.rows[0] });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server could not read assignment because database connection",
-    });
-  }
-
-});
-
-app.post('/webhook', express.raw({type: 'application/json'}), async(req, res) => {
-  // รับค่า stripe-signature
-  const sig = req.headers['stripe-signature'];
-
-  let event;
-
-  try {
-    // แล้วเอาไปเทียบ
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-  } catch (err) {
-    res.status(400).send(`Webhook Error: ${err.message}`);
-    return;
-  }
-
-  // Handle the event ถ้าทำสำเร็จ
-  switch (event.type) {
-    case 'checkout_session.completed':
-      const paymentSucceeded = event.data.object;
-      console.log('paymentSucceeded',paymentSucceeded)
-      const sessionId = paymentSucceeded.id
-      // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา ถึงจะบอกว่าสำเร็จ
-      const status = {
-        status : paymentSucceeded.status
-      }
-      // จากนั้นหา order จาก session id และ update กลับ
-      
-      try {
-        const result = await connectionPool.query(
-          `UPDATE payment_test SET status = $1 WHERE session_id = $2 RETURNING *`, 
-          [status, sessionId]
-        );
-        console.log('result', result.rows[0]);
-      } catch (error) {
-        console.error('Error updating payment status:', error);
-      }
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
-
-  // Return a 200 response to acknowledge receipt of the event
-  res.send();
-});
 
 app.listen(port, () => {
   console.log(`Server is running at ${port}`);

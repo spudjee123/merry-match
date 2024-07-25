@@ -11,10 +11,10 @@ import Vector from "../user-profile-management/images/Vector.png";
 import Profile from "../user-profile-management/images/Profile.png";
 import exit from "../user-profile-management/images/exit.png";
 
-import { useAuth } from "../../context/auth";
+// import { useAuth } from "../../context/auth";
 
 function NavUser() {
-  const { logout } = useAuth();
+
   return (
     <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
@@ -205,7 +205,7 @@ function NavUser() {
             <li id="list-5">
               <button
                 onClick={() => {
-                  logout();
+                  // logout();
                 }}
               >
                 <img src={exit} alt="logout" className="w-[16px]" />
