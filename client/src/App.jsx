@@ -23,14 +23,17 @@ import AdminRoutes from "./routes/admin-routes.jsx";
 
 function App() {
   // const { isAuthenticated, state } = useAuth();
+  // const { isAuthenticated, state } = useAuth();
   return (
     <>
-      {/* {!isAuthenticated ? (
+      {/* {(!isAuthenticated) ? (
         <NonUserRoutes />
       ) : state.user.role === "admin" ? (
         <AdminRoutes />
       ) : (
         <UserRoutes />
+      )} */}
+      <Routes>
       )} */}
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -48,6 +51,7 @@ function App() {
         <Route path="/user/membership" element={<MerryMembership />} />
         <Route path="/user/paymentone" element={<PayMentOne />} />
         <Route path="/user/payment2" element={<Payment2Page />} />
+      </Routes>
       </Routes>
     </>
   );

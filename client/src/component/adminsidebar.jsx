@@ -3,12 +3,12 @@ import logo from "../assets/images/logo.png";
 import Box from "../assets/icons/Box.png";
 import Vector from "../assets/icons/Vector.png";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/auth";
+// import { useAuth } from "../context/auth";
 
 const AdminPageSidebar = () => {
   const navigate = useNavigate();
 
-  const { logout } = useAuth();
+  // const { logout } = useAuth();
 
   const handleClick = () => {
     navigate("/package/view");
