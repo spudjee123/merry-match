@@ -38,12 +38,8 @@ import axios from "axios";
 //   },
 // ];
 
-
-
-
 function Membership() {
   const [packages, setPackages] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -64,13 +60,23 @@ function Membership() {
   }, []);
 
   const filteredPackages = packages.filter((item) =>
-    item.packages_name.toLowerCase().includes(searchTerm.toLowerCase())
+    item.packages_name.toLowerCase()
   );
 
+  const paymentCheckout = async () => {
+    try {
+      const result = await axios.post("http://localhost:4001/api/checkout", {
+        packageName: {
+          name: packageName.name,
+        },
+      });
+      const {url} = result.data
+      window.location.href = url
 
-  const handlePayPackage = async () => {
-    
-  }
+    } catch (error) {
+      console.error("Error to payment checkout package:", error);
+    }
+  };
 
 
   if (loading) return <p>Loading...</p>;
@@ -112,10 +118,8 @@ function Membership() {
                     {item.packages_name}
                   </h2>
                   <h2 className="card-title text-purple-800 text-xl">
-                  THB {item.price}.00
-                    <span className="text-gray-600 text-base">
-                      /Month
-                    </span>
+                    THB {item.price}.00
+                    <span className="text-gray-600 text-base">/Month</span>
                   </h2>
                   <div className="flex items-center">
                     <img src={check} alt="checklist" />
@@ -130,7 +134,7 @@ function Membership() {
                   <div className="card-actions">
                     <button
                       id="choose-btn"
-                      className="btn hover:bg-red-100 bg-red-100 border-red-100 text-red-600 rounded-[99px] w-[311px] h-[48px] leading-6 text-base mb-12" 
+                      className="btn hover:bg-red-100 bg-red-100 border-red-100 text-red-600 rounded-[99px] w-[311px] h-[48px] leading-6 text-base mb-12" onClick={() => {paymentCheckout(item.packages_name)}}
                     >
                       Choose package
                     </button>
