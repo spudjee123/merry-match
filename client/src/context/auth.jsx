@@ -23,9 +23,6 @@ function AuthProvider(props) {
     user: getDataFromToken(),
   });
 
-  const navigate = useNavigate();
-
-  // make a login request
   const login = async (data) => {
     try {
       setState({ ...state, error: null, loading: true });
@@ -54,6 +51,33 @@ function AuthProvider(props) {
     }
   };
 
+  // const [userLogin, setUserLogin] = useState({
+  //   usernameOrEmail: "",
+  //   password: "",
+  // });
+
+  // const updateLogin = useCallback((info) => {
+  //   setUserLogin(info);
+  // }, []);
+
+  // register
+  // const [userInfo, setUserInfo] = useState({
+  //   name: "",
+  //   birthdate: "",
+  //   location: "",
+  //   city: "",
+  //   username: "",
+  //   email: "",
+  //   password: "",
+  //   sexident: "",
+  //   sexprefer: "",
+  //   racialprefer: "",
+  //   meetprefer: "",
+  //   images: { 1: "", 2: "", 3: "", 4: "", 5: "" },
+  // });
+  // const updateRegister = useCallback((info) => {
+  //   setUserInfo(info);
+  // }, []);
   const logout = () => {
     localStorage.removeItem("token");
     setState({ ...state, user: null });
@@ -63,7 +87,18 @@ function AuthProvider(props) {
   const isAuthenticated = Boolean(localStorage.getItem("token"));
 
   return (
-    <AuthContext.Provider value={{ state, login, logout, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{
+        state,
+        login,
+        logout,
+        isAuthenticated,
+        // userInfo,
+        // updateRegister,
+        // userLogin,
+        // updateLogin,
+      }}
+    >
       {props.children}
     </AuthContext.Provider>
   );

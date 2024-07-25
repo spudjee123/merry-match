@@ -62,14 +62,13 @@ function Nav() {
         <div className="flex flex-rows flex-wrap w-full justify-between place-content-center">
           <div className="hidden md:flex space-x-6 content-start gap-6 ">
             <Link
-              to="/"
+              to={"/#section-two"}
               className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
             >
-              {" "}
               Why Merry Match?
             </Link>
             <Link
-              to="/"
+               to={"/#section-three"}
               className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
             >
               {" "}
