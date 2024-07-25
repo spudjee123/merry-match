@@ -89,7 +89,7 @@ function RegisterForm() {
 
     if (step === 3) {
       try {
-        register(userInfo);
+        register({ ...userInfo, hobbiesList: [...hobbiesList] });
       } catch (error) {
         console.error("Error submitting form:", error);
         setErrors({ submit: "There was an error submitting the form" });

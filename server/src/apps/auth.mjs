@@ -10,7 +10,6 @@ authRouter.post("/register", async (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: req.body.password,
-    createdAt: new Date(),
   };
 
   const userProfile = {
@@ -23,6 +22,8 @@ authRouter.post("/register", async (req, res) => {
     racialprefer: req.body.racialprefer,
     meetprefer: req.body.meetprefer,
   };
+
+  const hobbiesList = req.body.hobbiesList;
 
   try {
     if ((!user.username && !user.email) || !user.password) {
@@ -49,14 +50,14 @@ authRouter.post("/register", async (req, res) => {
     user.password = await bcrypt.hash(user.password, salt);
 
     const insertID = await connectionPool.query(
-      `insert into users (username, email, password, "createdAt") values ($1,$2,$3,$4) returning user_id`,
-      [user.username, user.email, user.password, user.createdAt]
+      `insert into users (username, email, password) values ($1,$2,$3) returning user_id`,
+      [user.username, user.email, user.password]
     );
 
     const [{ user_id }] = insertID.rows;
 
-    await connectionPool.query(
-      "insert into user_profiles (user_id, name, birthdate, location, city, sexident, sexprefer, racialprefer, meetprefer) values ($1,$2,$3,$4,$5,$6,$7,$8, $9)",
+    const insertProfileID = await connectionPool.query(
+      "insert into user_profiles (user_id, name, birthdate, location, city, sexident, sexprefer, racialprefer, meetprefer) values ($1,$2,$3,$4,$5,$6,$7,$8, $9) returning profile_id",
       [
         user_id,
         userProfile.name,
@@ -70,9 +71,20 @@ authRouter.post("/register", async (req, res) => {
       ]
     );
 
+    const [{ profile_id }] = insertProfileID.rows;
+
+    console.log("hello");
+
+    hobbiesList.forEach(async (item, index) => {
+      await connectionPool.query(
+        `insert into user_hobbies (profile_id, hobby_name, hobby_order) values ($1,$2,$3) `,
+        [profile_id, item, index + 1]
+      );
+    });
+
     await connectionPool.query(
-      `insert into user_statuses (user_id, "merryCounts", "createdAt") values ($1,$2,$3)`,
-      [user_id, 20, new Date()]
+      `insert into user_statuses (user_id, merry_counts) values ($1,$2)`,
+      [user_id, 20]
     );
 
     return res.json({
@@ -130,7 +142,7 @@ authRouter.post("/login", async (req, res) => {
     }
 
     await connectionPool.query(
-      `update users set "lastLogin" = $1 where user_id = $2`,
+      `update users set "last_login" = $1 where user_id = $2`,
       [new Date(), user.user_id]
     );
 
@@ -142,7 +154,6 @@ authRouter.post("/login", async (req, res) => {
       code: "U000",
       message: "Login successfully",
       token,
-      user,
     });
   } catch (error) {
     console.log(error);

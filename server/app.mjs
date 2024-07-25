@@ -1,7 +1,6 @@
 import express from "express";
 import connectionPool from "./src/utils/db.mjs";
 import registerRouter from "../server/src/routes/register.mjs";
-import profileRouter from "../server/src/routes/profile.mjs";
 import loginRouter from "../server/src/routes/login.mjs";
 import stripeRouter from "../server/src/routes/payment.mjs";
 import supabase from "./lib/supabase.js";
@@ -10,6 +9,7 @@ import uploadImg from "./src/controllers/Upload.js";
 import authRouter from "./src/apps/auth.mjs";
 import dotenv from "dotenv";
 import { protect } from "./src/middlewares/protect.mjs";
+import profilesRouter from "./src/apps/profiles.mjs";
 import http from "http";
 import { Server } from "socket.io";
 import upload from "./src/middlewares/Multer.js";
@@ -69,13 +69,9 @@ io.on("connection", (socket) => {
 const port = 4001;
 
 app.use(express.json());
-app.use("/register", registerRouter);
-app.use("/profile", profileRouter);
-app.use("/login", loginRouter);
 app.use("/auth", authRouter);
 app.use("/", stripeRouter);
-
-app.use("/profile", profileRouter);
+app.use("/profiles", profilesRouter);
 
 app.use(protect);
 
