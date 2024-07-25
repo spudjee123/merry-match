@@ -3,21 +3,6 @@ import React, { useEffect, useState } from "react";
 const Chat = ({ socket, username, room, onNewMessage }) => {
   const [currentMessage, setCurrentMessage] = useState("");
 
-  //   const sendMessage = async () => {
-  //     if (currentMessage !== "") {
-  //       const messageData = {
-  //         room: room,
-  //         author: username,
-  //         message: currentMessage,
-  //         time:
-  //           new Date(Date.now()).getHours() +
-  //           ":" +
-  //           new Date(Date.now()).getMinutes(),
-  //       };
-  //       await socket.emit("send_message", messageData);
-  //       setCurrentMessage("");  // Clear message input after sending
-  //     }
-  //   };
   const sendMessage = async () => {
     if (currentMessage !== "") {
       const messageData = {
@@ -28,6 +13,7 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
       };
       try {
         await socket.emit("send_message", messageData);
+        onNewMessage(messageData); // เพิ่มข้อความที่ส่งเข้าไปในสถานะ messages
         setCurrentMessage(""); // Clear message input after sending
       } catch (error) {
         console.error("Error sending message:", error);
