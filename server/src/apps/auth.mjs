@@ -101,6 +101,7 @@ authRouter.post("/register", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   try {
+    console.log("hello");
     if (!req.body.username || !req.body.password) {
       return res.status(400).json({
         code: "U002",
@@ -139,17 +140,20 @@ authRouter.post("/login", async (req, res) => {
     const [{ name }] = nameData.rows;
     user.name = name;
     const packageData = await connectionPool.query(
-      `select p.packages_name as 'packageName', p.merry_limit as 'merryLimit' from user_statuses s inner join packages p on s.package_id = p.package_id  where s.user_id = $1`,
+      `select p.packages_name, p.merry_limit from user_statuses s inner join packages p on s.package_id = p.package_id  where s.user_id = $1`,
       [user.user_id]
     );
 
     if (packageData.rowCount) {
-      const [{ packageName, merryLimit }] = packageData.rows;
-      user.packageName = packageName;
-      user.merryLimit = merryLimit;
+      const [{ package_name, merry_limit }] = packageData.rows;
+      user.packageName = package_name;
+      user.merryLimit = merry_limit;
     } else {
       user.merryLimit = 50;
     }
+
+    const currentDate = new Date();
+    const lastLogin = user.last_login;
 
     if (currentDate.toDateString() !== lastLogin.toDateString()) {
       connectionPool.query(
@@ -157,9 +161,6 @@ authRouter.post("/login", async (req, res) => {
         [user.merryLimit, user.user_id]
       );
     }
-
-    const currentDate = new Date();
-    const lastLogin = user.last_login;
 
     await connectionPool.query(
       `update users set "last_login" = $1 where user_id = $2`,
