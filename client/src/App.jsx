@@ -34,8 +34,8 @@ function App() {
       ) : (
         <UserRoutes />
       )} */}
-      <Routes>
-      )} */}
+      {/* <Routes>
+      )} */} 
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/package/add" element={<AddPackagePage />} />
@@ -53,7 +53,7 @@ function App() {
         <Route path="/user/payment1" element={<PayMentOne />} />
         <Route path="/user/payment2" element={<Payment2Page />} />
       </Routes>
-      </Routes>
+      {/* </Routes> */}
     </>
   );
 }
