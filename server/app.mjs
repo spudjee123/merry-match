@@ -11,6 +11,7 @@ import authRouter from "./src/routes/auth.mjs";
 import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
+import upload from "./src/middlewares/Multer.js";
 
 dotenv.config();
 
@@ -126,6 +127,37 @@ app.post("/admin/create", async (req, res) => {
     return res.status(500).json({
       message:
         "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});
+
+// user upload img from chat
+app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const imgUrl = `http://localhost:4001/uploads/${req.file.filename}`;
+
+  const newPackages = {
+    img: imgUrl,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  try {
+    await connectionPool.query(
+      `INSERT INTO packages (img, created_at, updated_at) VALUES ($1, $2, $3)`,
+      [newPackages.img, newPackages.created_at, newPackages.updated_at]
+    );
+    return res.status(201).json({
+      message: "Create data successfully.",
+    });
+  } catch (error) {
+    console.error("Database insertion error:", error);
+    return res.status(500).json({
+      message: "The server has encountered a situation it does not know how to handle.",
       error: error.message,
     });
   }
