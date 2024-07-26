@@ -49,23 +49,23 @@ app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
             message: "Error uploading image to Cloudinary: " + error.message,
           });
         }
-    
+
         const imgUrl = result.secure_url; // ส่ง URL ของภาพที่อัพโหลดไปยัง Cloudinary
-    
-        const newPackages = {
+
+        const imgFromChat = {
           img: imgUrl,
           created_at: new Date(),
           updated_at: new Date(),
         };
-    
+
         try {
           await connectionPool.query(
             `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
-            [newPackages.img, newPackages.created_at, newPackages.updated_at]
+            [imgFromChat.img, imgFromChat.created_at, imgFromChat.updated_at]
           );
           return res.status(201).json({
             message: "Create data successfully.",
-            data: newPackages, // ส่งกลับข้อมูลที่สร้างใหม่
+            data: imgFromChat, // ส่งกลับข้อมูลที่สร้างใหม่
           });
         } catch (error) {
           console.error("Database insertion error:", error);

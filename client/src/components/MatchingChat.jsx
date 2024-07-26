@@ -166,27 +166,30 @@ const MatchingChat = () => {
           {/* chat box */}
           <div className="lg:w-full lg:mx-auto">
             <div className="lg:w-[90%] mx-auto flex flex-col">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`mb-2 py-[10px] px-[25px] rounded-xl lg:w-[500px] ${
-                    message.author === username
-                      ? "bg-[#7D2262] text-white self-end"
-                      : "bg-[#EFC4E2] text-black self-start"
-                  }`}
-                >
-                  <div className="font-bold">{message.author}</div>
-                  <div>{message.message}</div>
-                  <div className="text-xs text-black">{message.time}</div>
-                  {message.img && ( // ตรวจสอบว่า message.img มีค่า
-                    <img
-                      src={message.img}
-                      alt="Uploaded"
-                      // className="mt-2 rounded-lg"
-                    />
-                  )}
-                </div>
-              ))}
+              {messages.map((message, index) => {
+                console.log(message); // ตรวจสอบค่าของ message
+                return (
+                  <div
+                    key={index}
+                    className={`mb-2 py-[10px] px-[25px] rounded-xl lg:w-[500px] ${
+                      message.author === username
+                        ? "bg-[#7D2262] text-white self-end"
+                        : "bg-[#EFC4E2] text-black self-start"
+                    }`}
+                  >
+                    <div className="font-bold">{message.author}</div>
+                    <div>{message.message}</div>
+                    <div className="text-xs text-black">{message.time}</div>
+                    {message.img && ( 
+                      <img
+                        src={message.img}
+                        alt="Uploaded"
+                        className="mt-2 rounded-lg"
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
           {/* input */}

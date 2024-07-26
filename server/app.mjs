@@ -192,7 +192,11 @@ app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
 
     return res.status(201).json({
       message: "Create data successfully.",
-      data: newPackages, // ส่งกลับข้อมูลที่สร้างใหม่
+      data: {
+        img: imgUrl,
+        created_at: newPackages.created_at,
+        updated_at: newPackages.updated_at,
+      }, // ส่งกลับข้อมูลที่สร้างใหม่
     });
   } catch (error) {
     console.error("Error uploading image to Cloudinary:", error);
