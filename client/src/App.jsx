@@ -23,7 +23,6 @@ import MatchingChat from "../src/components/MatchingChat.jsx"
 // import UserRoutes from "./routes/user-routes.jsx";
 // import AdminRoutes from "./routes/admin-routes.jsx";
 
-
 function App() {
   // const { isAuthenticated, state } = useAuth();
   return (
