@@ -353,9 +353,10 @@ function MatchingAdvanced() {
               >
                 <div
                   style={{ backgroundImage: `url(${db[currentIndex].url})` }}
-                  className="card bg-cover bg-center mt-[10%] w-[650px] h-[650px] rounded-3xl shadow-lg"
+                  className="card bg-cover bg-center mt-[10%] w-[580px] h-[580px]  w-rounded-3xl shadow-lg"
                 >
                   <div className="h-full w-full ">
+                    s
                     <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-80 rounded-b-3xl z-2"></div>
                   </div>
                   <div className="w-full h-full flex justify-center mb-10 p-4 z-40">
@@ -504,7 +505,7 @@ function MatchingAdvanced() {
               <div className="w-full h-full mt-[120px] flex justify-center items-center">
                 <div className="w-[90%]">
                   <p className="text-black text-lg">Age Range</p>
-                  <div className="w-full mt-4">
+                  <div className="w-full mt-4 ">
                     <div className="">
                       <input
                         type="range"

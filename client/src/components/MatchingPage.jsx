@@ -12,6 +12,7 @@ import filter from "../assets/images/filter.png";
 import TinderCard from "react-tinder-card";
 import Nav from "../pages/non-user/nav";
 import MatchingAdvanced from "./MatchingAdvance";
+import RangeSlider from "./rangeslider";
 
 const MatchingPage = () => {
   const [isHidden, setIsHidden] = useState(true);
@@ -95,7 +96,7 @@ const MatchingPage = () => {
         </div>
 
         {/* Middle View */}
-        <div className="lg:w-[55%] bg-[#160404] border-2 flex justify-center items-center">
+        <div className="lg:w-[55%] bg-[#160404]  ">
           <MatchingAdvanced />
         </div>
 
@@ -150,78 +151,8 @@ const MatchingPage = () => {
           {/* Age Range */}
           <div className="mt-[25%]">
             <p className="text-black text-lg ml-4">Age Range</p>
-            <div className="relative w-[90%] mt-4 ml-4">
-              <div className="">
-                <input
-                  type="range"
-                  step="1"
-                  min={18}
-                  max={maxAge}
-                  value={minAge}
-                  onChange={handleMinAgeChange}
-                  className={`absolute pointer-events-auto appearance-none z-20 h-2 w-[50%] opacity-0 cursor-pointer`}
-                />
-                <input
-                  type="range"
-                  step="1"
-                  min={minAge}
-                  max={80}
-                  value={maxAge}
-                  onChange={handleMaxAgeChange}
-                  className={`absolute pointer-events-auto appearance-none z-20 h-2 w-[50%] right-0 opacity-0 cursor-pointer`}
-                />
-                <div className="relative z-10 h-2 ">
-                  <div className="absolute z-10 left-0 right-0 bottom-0 top-0 h-1 rounded-md bg-gray-200 "></div>
-                  <div
-                    className="absolute z-20 top-0 bottom-0 rounded-md flex h-1 bg-purple-500"
-                    style={{
-                      right: `${(1 - (maxAge - 18) / 80) * 100}%`,
-                      left: `${((minAge - 18) / 80) * 100}%`,
-                    }}
-                  ></div>
-                  <div
-                    className="absolute z-30 w-5 h-5 top-0 left-0 bg-purple-300 border-[3px] border-purple-500 rounded-full -mt-2 -ml-1"
-                    style={{
-                      left: `${((minAge - 18) / 80) * 100}%`,
-                    }}
-                  ></div>
-                  <div
-                    className="absolute z-30 w-5 h-5 bg-purple-300 border-[3px] right-0 border-purple-500 rounded-full -mt-2 -mr-3"
-                    style={{
-                      right: `${(1 - (maxAge - 18) / 80) * 100}%`,
-                    }}
-                  ></div>
-                </div>
-              </div>
-              <div className="flex justify-between items-center py-5">
-                <input
-                  type="text"
-                  // maxLength="5"
-                  value={minAge}
-                  onChange={(e) =>
-                    handleMinAgeChange({
-                      target: {
-                        value: Math.max(parseInt(e.target.value) || 0),
-                      },
-                    })
-                  }
-                  className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-[110px] h-[60px] text-start"
-                />
-                <p className="text-black">-</p>
-                <input
-                  type="text"
-                  // maxLength="5"
-                  value={maxAge}
-                  onChange={(e) =>
-                    handleMaxAgeChange({
-                      target: {
-                        value: Math.min(parseInt(e.target.value) || 0, 80),
-                      },
-                    })
-                  }
-                  className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-[110px] h-[60px] text-start"
-                />
-              </div>
+            <div className="ml-5">
+              <RangeSlider />
             </div>
           </div>
           <div className="flex m-6 justify-between">
