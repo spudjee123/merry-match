@@ -1,9 +1,16 @@
 import multer from "multer";
 import path from "path";
-import app from "../controllers/Upload.js";
 
 // file upload 2) Parsing “multipart/form-data” request
+// const storage = multer.diskStorage({
+//   filename: (req, file, cb) => {
+//     cb(null, `${Date.now()}-${file.originalname}`);
+//   },
+// });
 const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Specify the upload directory
+  },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
   },

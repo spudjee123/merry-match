@@ -44,7 +44,7 @@ const MatchingChat = () => {
   }, []);
 
   return (
-    <section className="bg-[#200009] w-screen h-screen">
+    <section className="bg-[#200009] w-full h-screen">
       <div>
         <Nav />
       </div>
@@ -91,7 +91,7 @@ const MatchingChat = () => {
       {/* desktop view */}
       <div className="lg:bg-white lg:h-full lg:w-full lg:flex hidden">
         {/* left container */}
-        <div className="lg:w-[25%]">
+        <div className="lg:w-[20%]">
           <div className="lg:w-full">
             <div className="lg:h-[30%] lg:w-full flex justify-center items-center lg:py-[30px]">
               <div className="lg:h-[80%] lg:w-[95%] lg:rounded-xl lg:border lg:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
@@ -157,14 +157,14 @@ const MatchingChat = () => {
           </div>
         </div>
         {/* right container */}
-        <div className="bg-[#200009] lg:w-[75%] lg:flex lg:flex-col lg:justify-end lg:items-end">
+        <div className="bg-[#200009] lg:w-[80%] lg:flex lg:flex-col lg:justify-end lg:items-end">
           {/* chat box */}
           <div className="lg:w-full lg:mx-auto">
             <div className="lg:w-[90%] mx-auto flex flex-col">
               {messages.map((message, index) => (
                 <div
                   key={index}
-                  className={`mb-2 p-2 rounded-3xl lg:w-[500px] ${
+                  className={`mb-2 py-[10px] px-[25px] rounded-xl lg:w-[500px] ${
                     message.author === username
                       ? "bg-[#7D2262] text-white self-end"
                       : "bg-[#EFC4E2] text-black self-start"
@@ -178,34 +178,37 @@ const MatchingChat = () => {
             </div>
           </div>
           {/* input */}
-          <div className="lg:h-[50px] lg:w-full">
-            <input
-              placeholder="My name..."
-              type="text"
-              className="lg:w-[45%] lg:h-[50px]"
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-            />
-            <input
-              placeholder="Room ID..."
-              type="text"
-              className="lg:w-[40%] lg:h-[50px]"
-              onChange={(e) => {
-                setRoom(e.target.value);
-              }}
-            />
-            <button className="lg:w-[15%] lg:h-[50px]" onClick={joinRoom}>
-              Join a room
-            </button>
-          </div>
-          <div className="lg:w-full lg:flex justify-center">
-            <Chat
-              socket={socket}
-              username={username}
-              room={room}
-              onNewMessage={handleNewMessage}
-            />
+          <div className="lg:w-[90%] mx-auto">
+            <div className="lg:h-[50px] lg:w-full">
+              <input
+                placeholder="My name..."
+                type="text"
+                className="lg:w-[45%] lg:h-[50px] lg:bg-[#200009] lg:border lg:rounded-xl"
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+              />
+              <input
+                placeholder="Room ID..."
+                type="text"
+                className="lg:w-[40%] lg:h-[50px] lg:bg-[#200009] lg:border lg:rounded-xl"
+                onChange={(e) => {
+                  setRoom(e.target.value);
+                }}
+              />
+              <button className="lg:w-[15%] lg:h-[50px] " onClick={joinRoom}>
+                Join a room
+              </button>
+            </div>
+            {/* ช่องพิมพ์ข้อความ */}
+            <div className="lg:w-full">
+              <Chat
+                socket={socket}
+                username={username}
+                room={room}
+                onNewMessage={handleNewMessage}
+              />
+            </div>
           </div>
         </div>
       </div>
