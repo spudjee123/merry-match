@@ -12,7 +12,6 @@ import Profile from "../user-profile-management/images/Profile.png";
 import exit from "../user-profile-management/images/exit.png";
 
 // import { useAuth } from "../../context/auth";
-// import { useAuth } from "../../context/auth";
 
 function NavUser() {
   // const { logout } = useAuth();

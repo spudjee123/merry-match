@@ -5,7 +5,6 @@ import "./index.css";
 import jwtInterceptor from "./utils/jwtInterceptor.js";
 import { BrowserRouter } from "react-router-dom";
 // import { AuthProvider } from "./context/auth.jsx";
-// import { AuthProvider } from "./context/auth.jsx";
 
 // jwtInterceptor();
 
