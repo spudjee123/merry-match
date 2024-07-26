@@ -31,7 +31,7 @@ profilesRouter.get("/view/:profile_id", async (req, res) => {
   const profile_id = req.params.profile_id;
   try {
     const profileData = await connectionPool.query(
-      `select * from user_profiles where profile_id = $1`,
+      `select * from user_profiles where user_id = $1`,
       [profile_id]
     );
 
