@@ -19,17 +19,14 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
         if (img.file) {
           // ส่งไฟล์และรับ URL ของภาพ
           const uploadResponse = await upload(img.file);
-          // ใช้ URL ที่ได้รับจากการอัปโหลด
-          imgUrl = await upload(img.file);
-        }
+          imgUrl = uploadResponse.data.img;        }
 
         const messageData = {
           room: room,
           author: username,
           message: currentMessage,
           time: new Date().toLocaleTimeString(),
-          // ...(imgUrl && { img: imgUrl }),
-          img: imgUrl 
+          img: imgUrl,        
         };
 
         await socket.emit("send_message", messageData);
@@ -76,7 +73,7 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
         }
       );
       console.log("Upload response:", response.data);
-      return response.data.img; // Adjust according to your API response
+      return response.data
     } catch (error) {
       console.error("Error uploading image:", error);
       throw error;
