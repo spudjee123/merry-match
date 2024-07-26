@@ -12,6 +12,7 @@ import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
 import upload from "./src/middlewares/Multer.js";
+import cloudinary from "./src/utils/cloudinary.js";
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ import Stripe from 'stripe';
 const stripe = new Stripe('sk_test_51PfGepCsaxbmSm5DJmnpDuh8XVSMZVQ0jiSfh7jI0cc4hBdAr6lhXYw97a3VU48TMQz6ElBUcUxqOEUuWTINVTxQ00Qb1hJloP');const endpointSecret = "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9"; 
 
 const app = express();
+
+app.use(cors())
 // chat
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -31,12 +34,11 @@ const io = new Server(server, {
   },
 });
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    // methods: ["GET", "POST"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//   })
+// );
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
@@ -133,32 +135,69 @@ app.post("/admin/create", async (req, res) => {
 });
 
 // user upload img from chat
+// app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ error: "No file uploaded" });
+//   }
+
+//   const imgUrl = `http://localhost:4001/uploads/${req.file.filename}`;
+
+//   const newPackages = {
+//     img: imgUrl,
+//     created_at: new Date(),
+//     updated_at: new Date(),
+//   };
+
+//   try {
+//     await connectionPool.query(
+//       `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
+//       [newPackages.img, newPackages.created_at, newPackages.updated_at]
+//     );
+//     return res.status(201).json({
+//       message: "Create data successfully.",
+//     });
+//   } catch (error) {
+//     console.error("Database insertion error:", error);
+//     return res.status(500).json({
+//       message: "The server has encountered a situation it does not know how to handle.",
+//       error: error.message,
+//     });
+//   }
+// });
 app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-  const imgUrl = `http://localhost:4001/uploads/${req.file.filename}`;
-
-  const newPackages = {
-    img: imgUrl,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
   try {
+    // ส่งไฟล์ไปยัง Cloudinary
+    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: 'ml_default', // เปลี่ยนเป็น upload preset ที่คุณต้องการ
+    });
+
+    // รับ URL ของภาพจาก Cloudinary
+    const imgUrl = uploadResult.secure_url;
+
+    const newPackages = {
+      img: imgUrl,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    // บันทึกข้อมูล URL ของภาพในฐานข้อมูล
     await connectionPool.query(
-      `INSERT INTO packages (img, created_at, updated_at) VALUES ($1, $2, $3)`,
+      `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
       [newPackages.img, newPackages.created_at, newPackages.updated_at]
     );
+
     return res.status(201).json({
       message: "Create data successfully.",
+      data: newPackages, // ส่งกลับข้อมูลที่สร้างใหม่
     });
   } catch (error) {
-    console.error("Database insertion error:", error);
+    console.error("Error uploading image to Cloudinary:", error);
     return res.status(500).json({
-      message: "The server has encountered a situation it does not know how to handle.",
-      error: error.message,
+      message: "Error uploading image to Cloudinary: " + error.message,
     });
   }
 });
@@ -297,6 +336,130 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
     });
   }
 });
+
+//admin upload icon
+// app.post("/uploadsAdmin", upload.fields([{ name: "avatar", maxCount: 2 }]), async (req, res) => {
+//   try {
+//     const uploadResult = await cloudinaryUpload(req.files);
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Uploaded!",
+//       data: uploadResult,
+//     });
+//   } catch (err) {
+//     console.error("Error uploading image to Cloudinary:", err);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error uploading image to Cloudinary: " + err.message,
+//     });
+//   }
+// });
+
+// ยิงreq ไปที่stripeโดยตรง
+app.post('/api/checkout', express.json(),async(req,res)=>{
+  console.log(req.body);
+  const { user, packageName } = req.body
+  if (!user || !packageName) {
+    return res.status(400).json({ error: "Missing user or packageName in request body" });
+  }
+
+  if (!user.name || !packageName.name) {
+    return res.status(400).json({ error: "Missing name in user or packageName" });
+  }
+  // random id 
+  const orderId = uuidv4();
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'thb',
+            product_data: {
+              name: packageName.name,
+            },
+            unit_amount: packageName.price * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `http://localhost:4001/success?id=${orderId}`,
+      cancel_url: `http://localhost:4001/cancel?id=${orderId}`,
+    });
+
+    const orderData = {
+      name: user.name,
+      package_name: packageName.name,
+      order_id : orderId,
+      session_id: session.id,
+      status: session.status
+    }
+
+    const result = await connectionPool.query(`INSERT INTO payment_test (name,package_name,order_id,status,session_id) 
+      VALUES ($1, $2, $3, $4, $5) `, [  
+        user.name,
+        packageName.name,
+        orderId,
+        session.status,
+        session.id,
+      ])
+
+    console.log('Created session:', session);
+
+    res.json({ user, packageName, order: result });
+  } catch (error) {
+    console.error('Error creating session:', error);
+    res.status(500).json({ error: error.message });
+  }
+})
+
+// เช็ค order id ว่า status เป็นยังไง
+app.get("/api/order/:id", async (req, res) => {
+  const { id } = req.params
+  try {
+    const result = await connectionPool.query(`select * from payment_test where order_id = $1 `,[id]);
+    res.json({result})
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server could not read assignment because database connection",
+    });
+  }
+
+});
+
+app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
+  // รับค่า stripe-signature
+  const sig = req.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    // แล้วเอาไปเทียบ
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (err) {
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event ถ้าทำสำเร็จ
+  switch (event.type) {
+    case 'checkout_intent.succeeded':
+      const paymentIntentSucceeded = event.data.object;
+      console.log('paymentIntentSucceeded',paymentIntentSucceeded)
+      // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา จะบอกว่าสำเร็จ
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  res.send();
+});
+
 
 server.listen(port, () => {
   console.log(`Server is running at ${port}`);

@@ -33,6 +33,10 @@ const MatchingChat = () => {
       console.log("Connected to server");
     });
 
+    socket.on("receive_message", (data) => {
+      handleNewMessage(data);
+    });
+
     socket.on("disconnect", () => {
       console.log("Disconnected from server");
     });
@@ -40,6 +44,7 @@ const MatchingChat = () => {
     return () => {
       socket.off("connect");
       socket.off("disconnect");
+      socket.off("receive_message");
     };
   }, []);
 
@@ -173,6 +178,13 @@ const MatchingChat = () => {
                   <div className="font-bold">{message.author}</div>
                   <div>{message.message}</div>
                   <div className="text-xs text-black">{message.time}</div>
+                  {message.img && ( // ตรวจสอบว่า message.img มีค่า
+                    <img
+                      src={message.img}
+                      alt="Uploaded"
+                      // className="mt-2 rounded-lg"
+                    />
+                  )}
                 </div>
               ))}
             </div>
