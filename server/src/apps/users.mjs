@@ -4,7 +4,7 @@ import { transformKeysToCamelCase } from "../utils/utils-functions.mjs";
 
 const usersRouter = Router();
 
-usersRouter.get("/view/:user_id", async (req, res) => {
+usersRouter.get("/:user_id", async (req, res) => {
   const user_id = req.params.user_id;
   try {
     // get data from users, user_profiles and user_statuses tables
@@ -42,7 +42,7 @@ usersRouter.get("/view/:user_id", async (req, res) => {
   }
 });
 
-usersRouter.put("/edit/:user_id", async (req, res) => {
+usersRouter.put("/:user_id", async (req, res) => {
   const user_id = req.params.user_id;
   const newUser = {
     username: req.body.username,
@@ -104,6 +104,25 @@ usersRouter.put("/edit/:user_id", async (req, res) => {
         [profile_id, item, index + 1]
       );
     });
+
+    return res.status(200).json({
+      code: "U000",
+      message: "User and profile updated successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Server could not register because database connection",
+    });
+  }
+});
+
+usersRouter.delete("/:user_id", async (req, res) => {
+  const user_id = req.params.user_id;
+  try {
+    await connectionPool.query("delete from users where user_id = $1", [
+      user_id,
+    ]);
 
     return res.status(200).json({
       code: "U000",
