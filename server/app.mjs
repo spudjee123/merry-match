@@ -12,6 +12,7 @@ import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
 import upload from "./src/middlewares/Multer.js";
+import cloudinary from "./src/utils/cloudinary.js";
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ import Stripe from 'stripe';
 const stripe = new Stripe('sk_test_51PfGepCsaxbmSm5DJmnpDuh8XVSMZVQ0jiSfh7jI0cc4hBdAr6lhXYw97a3VU48TMQz6ElBUcUxqOEUuWTINVTxQ00Qb1hJloP');const endpointSecret = "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9"; 
 
 const app = express();
+
+app.use(cors())
 // chat
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -31,12 +34,11 @@ const io = new Server(server, {
   },
 });
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    // methods: ["GET", "POST"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//   })
+// );
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
@@ -133,32 +135,69 @@ app.post("/admin/create", async (req, res) => {
 });
 
 // user upload img from chat
+// app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ error: "No file uploaded" });
+//   }
+
+//   const imgUrl = `http://localhost:4001/uploads/${req.file.filename}`;
+
+//   const newPackages = {
+//     img: imgUrl,
+//     created_at: new Date(),
+//     updated_at: new Date(),
+//   };
+
+//   try {
+//     await connectionPool.query(
+//       `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
+//       [newPackages.img, newPackages.created_at, newPackages.updated_at]
+//     );
+//     return res.status(201).json({
+//       message: "Create data successfully.",
+//     });
+//   } catch (error) {
+//     console.error("Database insertion error:", error);
+//     return res.status(500).json({
+//       message: "The server has encountered a situation it does not know how to handle.",
+//       error: error.message,
+//     });
+//   }
+// });
 app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-  const imgUrl = `http://localhost:4001/uploads/${req.file.filename}`;
-
-  const newPackages = {
-    img: imgUrl,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
   try {
+    // ส่งไฟล์ไปยัง Cloudinary
+    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: 'ml_default', // เปลี่ยนเป็น upload preset ที่คุณต้องการ
+    });
+
+    // รับ URL ของภาพจาก Cloudinary
+    const imgUrl = uploadResult.secure_url;
+
+    const newPackages = {
+      img: imgUrl,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    // บันทึกข้อมูล URL ของภาพในฐานข้อมูล
     await connectionPool.query(
-      `INSERT INTO packages (img, created_at, updated_at) VALUES ($1, $2, $3)`,
+      `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
       [newPackages.img, newPackages.created_at, newPackages.updated_at]
     );
+
     return res.status(201).json({
       message: "Create data successfully.",
+      data: newPackages, // ส่งกลับข้อมูลที่สร้างใหม่
     });
   } catch (error) {
-    console.error("Database insertion error:", error);
+    console.error("Error uploading image to Cloudinary:", error);
     return res.status(500).json({
-      message: "The server has encountered a situation it does not know how to handle.",
-      error: error.message,
+      message: "Error uploading image to Cloudinary: " + error.message,
     });
   }
 });
@@ -422,7 +461,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
 });
 
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running at ${port}`);
 });
 

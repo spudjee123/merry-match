@@ -17,6 +17,9 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
     if (currentMessage !== "" || img.file) {
       try {
         if (img.file) {
+          // ส่งไฟล์และรับ URL ของภาพ
+          const uploadResponse = await upload(img.file);
+          // ใช้ URL ที่ได้รับจากการอัปโหลด
           imgUrl = await upload(img.file);
         }
 
@@ -25,7 +28,8 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
           author: username,
           message: currentMessage,
           time: new Date().toLocaleTimeString(),
-          ...(imgUrl && { img: imgUrl }),
+          // ...(imgUrl && { img: imgUrl }),
+          img: imgUrl 
         };
 
         await socket.emit("send_message", messageData);
@@ -71,7 +75,8 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
           },
         }
       );
-      return response.data.url; // Adjust according to your API response
+      console.log("Upload response:", response.data);
+      return response.data.img; // Adjust according to your API response
     } catch (error) {
       console.error("Error uploading image:", error);
       throw error;
@@ -92,7 +97,7 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
         <button className="" onClick={sendMessage}>
           <img src={SendChat} alt="" className="lg:h-[50px] lg:w-[50px]" />
         </button>
-        <label htmlFor="file" className="cursor-pointer">
+        <label htmlFor="file" className="cursor-pointer lg:flex lg:justify-center lg:items-center">
           <img src={ChatImg} alt="" className="lg:h-[35px] lg:w-[35px]" />
         </label>
         <input
