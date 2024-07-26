@@ -8,7 +8,7 @@ import edit from "../assets/icons/edit.png";
 import bin from "../assets/icons/bin.png";
 import drag from "../assets/icons/drag.png";
 import search from "../assets/icons/search.png";
-import { useAuth } from "../context/auth";
+// import { useAuth } from "../context/auth";
 
 
 const AdminPageList = () => {
@@ -18,9 +18,9 @@ const AdminPageList = () => {
   const [deletePackageId, setDeletePackageId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-const {state} = useAuth()
+// const {state} = useAuth()
 
-console.log(state);
+// console.log(state);
 
   const navigate = useNavigate();
 
