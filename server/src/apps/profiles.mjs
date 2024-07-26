@@ -1,5 +1,6 @@
 import { Router } from "express";
 import connectionPool from "../utils/db.mjs";
+import { transformKeysToCamelCase } from "../utils/utils-functions.mjs";
 
 const profilesRouter = Router();
 
@@ -30,7 +31,7 @@ profilesRouter.get("/view/:profile_id", async (req, res) => {
   const profile_id = req.params.profile_id;
   try {
     const profileData = await connectionPool.query(
-      `select * from user_profiles where user_id = $1`,
+      `select * from user_profiles where profile_id = $1`,
       [profile_id]
     );
 
@@ -41,14 +42,10 @@ profilesRouter.get("/view/:profile_id", async (req, res) => {
 
     const hobbiesList = hobbiesListData.rows.map((item) => item.hobby_name);
 
-    const profile = {
+    const profile = transformKeysToCamelCase({
       ...profileData.rows[0],
       hobbiesList: hobbiesList,
-    };
-
-    profile.aboutMe = profile.about_me;
-
-    delete profile.about_me;
+    });
 
     console.log(profile);
 
