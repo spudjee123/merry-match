@@ -87,7 +87,7 @@ function Membership() {
       <NavUser />
       <div className="bg-main py-24 sm:py-32 mt-[80px] overflow-x-hidden">
         <div className="max-w-2xl max-lg:ml-[40px] lg:ml-[200px]">
-          <h2 className="text-lg leading-8 text-beige-700 mb-4">
+          
           <h2 className="text-lg leading-8 text-beige-700 mb-4">
             Merry Membership
           </h2>
@@ -99,13 +99,13 @@ function Membership() {
           </p>
         </div>
         <div className="mx-auto mb-[220px] grid justify-center max-w-7xl gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3 mt-12">
-          {filteredPackages.map((item, index) => (
+          
           {filteredPackages.map((item, index) => (
             <div
-              key={index}
+              
               key={index}
               id="package-container"
-              className="card bg-base-100 w-94 shadow-md flex sm:w-[345px]"
+              
               className="card bg-base-100 w-94 shadow-md flex sm:w-[345px]"
             >
               <figure className="max-sm:px--18 pt-2 sm:w-[385px] h-[380px] border-gray-600 bg-white">
@@ -114,28 +114,28 @@ function Membership() {
                   className="card-body items-start text-left max-sm:px-4"
                 >
                   <img
-                    src={item.icons}
+                    
                     src={item.icons}
                     alt="Package"
                     className="h-16 w-16 rounded-[16px] mb-6 mt-8"
                   />
                   <h2 className="card-title text-purple-800 text-2xl">
-                    {item.packages_name}
+                    
                     {item.packages_name}
                   </h2>
                   <h2 className="card-title text-purple-800 text-xl">
                     THB {item.price}.00
                     <span className="text-gray-600 text-base">/Month</span>
                   </h2>
-                  <div className="flex items-center">
+                  
                   <div className="flex items-center">
                     <img src={check} alt="checklist" />
-                    <span>‘Merry’ more than a daily limited </span>
+                    
                     <span>‘Merry’ more than a daily limited </span>
                   </div>
                   <div className="flex items-center">
                     <img src={check} alt="checklist" />
-                    <span>Up to {item.merry_limit} Merry per day</span>
+                    
                     <span>Up to {item.merry_limit} Merry per day</span>
                   </div>
                   <br className="h-2" />
@@ -156,7 +156,9 @@ function Membership() {
         <Footer />
       </div>
     </>
-  );
-}
+  )
+  }
+
+
 
 export default Membership;
