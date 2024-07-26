@@ -56,13 +56,10 @@ stripeRouter.post("/api/checkout", express.json(), async (req, res) => {
   
       console.log("Created session:", session);
   
-      res.redirect({
-        user,
-        packageName,
-        orderId,
+      res.json({
         url: session.url,
-        order: result.rows[0],
-      });
+        sessionId: session.id,
+    });
     } catch (error) {
       console.error("Error creating session:", error);
       res.status(500).json({ error: error.message });
@@ -104,55 +101,55 @@ stripeRouter.post("/api/checkout", express.json(), async (req, res) => {
     }
   });
   
-  // stripeRouter.post(
-  //   "/webhook",
-  //   express.raw({ type: "application/json" }),
-  //   async (req, res) => {
-  //     // รับค่า stripe-signature
-  //     const sig = req.headers["stripe-signature"];
-  //     const playload = req.body;
+  stripeRouter.post(
+    "/webhook",
+    express.raw({ type: "application/json" }),
+    async (req, res) => {
+      // รับค่า stripe-signature
+      const sig = req.headers["stripe-signature"];
+      const playload = req.body;
   
-  //     let event;
+      let event;
   
-  //     try {
-  //       // แล้วเอาไปเทียบ
-  //       event = stripe.webhooks.constructEvent(playload, sig, endpointSecret);
-  //     } catch (err) {
-  //       res.status(400).send(`Webhook Error: ${err.message}`);
-  //       return;
-  //     }
+      try {
+        // แล้วเอาไปเทียบ
+        event = stripe.webhooks.constructEvent(playload, sig, endpointSecret);
+      } catch (err) {
+        res.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+      }
   
-  //     // Handle the event ถ้าทำสำเร็จ
-  //     switch (event.type) {
-  //       case "checkout.session.completed":
-  //         const paymentSucceeded = event.data.object;
-  //         console.log("paymentSucceeded", paymentSucceeded);
-  //         const sessionId = paymentSucceeded.id;
-  //         // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา ถึงจะบอกว่าสำเร็จ
-  //         const status = {
-  //           status: paymentSucceeded.status,
-  //         };
-  //         // จากนั้นหา order จาก session id และ update กลับ
+      // Handle the event ถ้าทำสำเร็จ
+      switch (event.type) {
+        case "checkout.session.completed":
+          const paymentSucceeded = event.data.object;
+          console.log("paymentSucceeded", paymentSucceeded);
+          const sessionId = paymentSucceeded.id;
+          // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา ถึงจะบอกว่าสำเร็จ
+          const status = {
+            status: paymentSucceeded.status,
+          };
+          // จากนั้นหา order จาก session id และ update กลับ
   
-  //         try {
-  //           const result = await connectionPool.query(
-  //             `UPDATE payment_test SET status = $1 WHERE session_id = $2 RETURNING *`,
-  //             [status, sessionId]
-  //           );
-  //           console.log("####result", result.rows[0]);
-  //         } catch (error) {
-  //           console.error("Error updating payment status:", error);
-  //         }
-  //         break;
-  //       // ... handle other event types
-  //       default:
-  //         console.log(`Unhandled event type ${event.type}`);
-  //     }
+          try {
+            const result = await connectionPool.query(
+              `UPDATE payment_test SET status = $1 WHERE session_id = $2 RETURNING *`,
+              [status, sessionId]
+            );
+            console.log("####result", result.rows[0]);
+          } catch (error) {
+            console.error("Error updating payment status:", error);
+          }
+          break;
+        // ... handle other event types
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
   
-  //     // Return a 200 response to acknowledge receipt of the event
-  //     res.send();
-  //   }
-  // );
+      // Return a 200 response to acknowledge receipt of the event
+      res.send();
+    }
+  );
   
   stripeRouter.post(
     "/webhook",
@@ -161,7 +158,7 @@ stripeRouter.post("/api/checkout", express.json(), async (req, res) => {
       const sig = req.headers["stripe-signature"];
       const payload = req.body;
       const endpointSecret =
-    "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9";
+    "whsec_b1676a3a278e80bd13ece9492a5de69c6b07f234d4d044d95f30080ac11a7de1";
   
       if (endpointSecret) {
         let event;

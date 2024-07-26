@@ -4,6 +4,7 @@ import heart from "./images/heart.png";
 import check from "./images/check.png";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 
 // const priceId =
 //   packageName.name === "Basic"
@@ -40,8 +41,6 @@ import axios from "axios";
 
 function Membership() {
   const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const getData = async () => {
     try {
@@ -49,9 +48,6 @@ function Membership() {
       setPackages(result.data.packages);
     } catch (error) {
       console.error("Error fetching packages:", error);
-      setError("Failed to fetch packages.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -63,31 +59,35 @@ function Membership() {
     item.packages_name.toLowerCase()
   );
 
+  
+const orderPayment = {
+  user: { name: "YourUserName" }, packageName: { name: "Basic" },};
+
   const paymentCheckout = async () => {
+    const stripe = await loadStripe(
+      "pk_test_51PfZ62RwhwPMa1TWPdOpfAzf1QLKPwWMYmcLUuQ6Q3zwvT3c1OuhV7G573684JGsZC9Mm1sApO8LtcgFsOWdGYOf00POWiZaJZ"
+    );
     try {
-      const result = await axios.post("http://localhost:4001/api/checkout", {
-        packageName: {
-          name: packageName.name,
-        },
-      });
-      const {url} = result.data
+      const result = await axios.post(
+        "http://localhost:4001/api/checkout",
+        orderPayment
+      );
+      const { url, sessionId } = result.data;
       window.location.href = url
 
+      // const sessionId = result.data.sessionId;
+      stripe.redirectToCheckout({sessionId:sessionId});
+      
     } catch (error) {
       console.error("Error to payment checkout package:", error);
     }
   };
-
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <>
       <NavUser />
       <div className="bg-main py-24 sm:py-32 mt-[80px] overflow-x-hidden">
         <div className="max-w-2xl max-lg:ml-[40px] lg:ml-[200px]">
-          
           <h2 className="text-lg leading-8 text-beige-700 mb-4">
             Merry Membership
           </h2>
@@ -99,13 +99,10 @@ function Membership() {
           </p>
         </div>
         <div className="mx-auto mb-[220px] grid justify-center max-w-7xl gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3 mt-12">
-          
           {filteredPackages.map((item, index) => (
             <div
-              
               key={index}
               id="package-container"
-              
               className="card bg-base-100 w-94 shadow-md flex sm:w-[345px]"
             >
               <figure className="max-sm:px--18 pt-2 sm:w-[385px] h-[380px] border-gray-600 bg-white">
@@ -114,28 +111,26 @@ function Membership() {
                   className="card-body items-start text-left max-sm:px-4"
                 >
                   <img
-                    
                     src={item.icons}
                     alt="Package"
                     className="h-16 w-16 rounded-[16px] mb-6 mt-8"
                   />
                   <h2 className="card-title text-purple-800 text-2xl">
-                    
                     {item.packages_name}
                   </h2>
                   <h2 className="card-title text-purple-800 text-xl">
                     THB {item.price}.00
                     <span className="text-gray-600 text-base">/Month</span>
                   </h2>
-                  
+
                   <div className="flex items-center">
                     <img src={check} alt="checklist" />
-                    
+
                     <span>‘Merry’ more than a daily limited </span>
                   </div>
                   <div className="flex items-center">
                     <img src={check} alt="checklist" />
-                    
+
                     <span>Up to {item.merry_limit} Merry per day</span>
                   </div>
                   <br className="h-2" />
@@ -143,7 +138,10 @@ function Membership() {
                   <div className="card-actions">
                     <button
                       id="choose-btn"
-                      className="btn hover:bg-red-100 bg-red-100 border-red-100 text-red-600 rounded-[99px] w-[311px] h-[48px] leading-6 text-base mb-12" onClick={() => {paymentCheckout(item.packages_name)}}
+                      className="btn hover:bg-red-100 bg-red-100 border-red-100 text-red-600 rounded-[99px] w-[311px] h-[48px] leading-6 text-base mb-12"
+                      onClick={() => {
+                        paymentCheckout(item.packages_name);
+                      }}
                     >
                       Choose package
                     </button>
@@ -156,9 +154,7 @@ function Membership() {
         <Footer />
       </div>
     </>
-  )
-  }
-
-
+  );
+}
 
 export default Membership;
