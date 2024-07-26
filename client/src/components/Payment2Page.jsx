@@ -2,21 +2,20 @@ import NavUser from "../pages/user-profile-management/navUser";
 import Success from "../assets/icons/successpay2.png";
 import IconPremium from "../assets/icons/iconpay2.png";
 import Footer from "./Footer";
-import { useLocation } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Payment2Page = () => {
-  const location = useLocation();
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const sessionId = params.get('session_id');
+  const navigate = useNavigate();
 
-    // ดำเนินการกับ sessionId เช่น ส่งไปยังเซิร์ฟเวอร์เพื่อดึงข้อมูลการชำระเงิน
-    console.log('Session ID:', sessionId);
+  const handleBackToHome = () => {
+    navigate("/home-login");
+  };
 
-    // คุณสามารถแสดงข้อมูลหรือดำเนินการเพิ่มเติมที่นี่
-  }, [location.search]);
+  const handleCheckPackage = () => {
+    navigate("/user/Membership");
+  };
+
   return (
     <section className="bg-white h-full w-full">
       <div>
@@ -86,12 +85,12 @@ const Payment2Page = () => {
         </div>
         <div className="mt-[50px] flex justify-between mb-[120px] gap-5">
           <div>
-            <button className="bg-[#FFE1EA] text-[#C70039] rounded-full py-[15px] px-[25px] font-bold">
+            <button className="bg-[#FFE1EA] text-[#C70039] rounded-full py-[15px] px-[25px] font-bold" onClick={handleBackToHome}>
               Back to home
             </button>
           </div>
           <div>
-            <button className="bg-[#C70039] text-[#FFE1EA] rounded-full py-[15px] px-[35px] font-bold">
+            <button className="bg-[#C70039] text-[#FFE1EA] rounded-full py-[15px] px-[35px] font-bold" onClick={handleCheckPackage}>
               Check Membership
             </button>
           </div>
@@ -112,12 +111,12 @@ const Payment2Page = () => {
           </div>
           <div className="lg:flex lg:gap-8 lg:mt-[100px]">
             <div>
-              <button className="bg-[#FFE1EA] text-[#C70039] rounded-full py-[15px] px-[25px] font-bold">
+              <button className="bg-[#FFE1EA] text-[#C70039] rounded-full py-[15px] px-[25px] font-bold" onClick={handleBackToHome}>
                 Back to home
               </button>
             </div>
             <div>
-              <button className="bg-[#C70039] text-[#FFE1EA] rounded-full py-[15px] px-[35px] font-bold">
+              <button className="bg-[#C70039] text-[#FFE1EA] rounded-full py-[15px] px-[35px] font-bold" onClick={handleCheckPackage}>
                 Check Membership
               </button>
             </div>

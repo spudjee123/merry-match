@@ -21,11 +21,13 @@ import NonUserRoutes from "./routes/non-user-routes.jsx";
 import UserRoutes from "./routes/user-routes.jsx";
 import AdminRoutes from "./routes/admin-routes.jsx";
 
+
 function App() {
   // const { isAuthenticated, state } = useAuth();
   return (
     <>
-      {/* {!isAuthenticated ? (
+      {/* {(!isAuthenticated) ? (
+      {/* {(!isAuthenticated) ? (
         <NonUserRoutes />
       ) : state.user.role === "admin" ? (
         <AdminRoutes />
@@ -45,8 +47,8 @@ function App() {
         <Route path="/user/:userId/merry-list" element={<MerryListPage />} />
         <Route path="/membership" element={<Membership />} />
         <Route path="/matching" element={<MatchingPage />} />
-        <Route path="/user/membership" element={<MerryMembership />} />
-        <Route path="/user/paymentone" element={<PayMentOne />} />
+        <Route path="/user/Membership" element={<MerryMembership />} />
+        <Route path="/user/payment1" element={<PayMentOne />} />
         <Route path="/user/payment2" element={<Payment2Page />} />
       </Routes>
     </>

@@ -12,7 +12,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     {/* <AuthProvider> */}
     <BrowserRouter>
+      {/* <AuthProvider> */}
         <App />
+      {/* </AuthProvider> */}
     </BrowserRouter>
     {/* </AuthProvider> */}
   </React.StrictMode>
