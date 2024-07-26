@@ -9,6 +9,7 @@ import uploadImg from "./src/controllers/Upload.js";
 import authRouter from "./src/apps/auth.mjs";
 import dotenv from "dotenv";
 import { protect } from "./src/middlewares/protect.mjs";
+import usersRouter from "./src/apps/users.mjs";
 import profilesRouter from "./src/apps/profiles.mjs";
 import http from "http";
 import { Server } from "socket.io";
@@ -73,6 +74,7 @@ app.use("/auth", authRouter);
 
 // app.use(protect);
 app.use("/payments", stripeRouter);
+app.use("/users", usersRouter);
 app.use("/profiles", profilesRouter);
 
 // app.use(protect);

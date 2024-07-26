@@ -30,12 +30,12 @@ usersRouter.get("/view/:user_id", async (req, res) => {
 
     delete user.about_me;
 
-    console.log(profile);
+    delete user.password;
 
     return res.status(200).json({
       code: "U000",
-      message: "Get profile successfully",
-      data: profile,
+      message: "Get user successfully",
+      data: user,
     });
   } catch (error) {
     console.log(error);
