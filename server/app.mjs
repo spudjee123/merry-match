@@ -1,12 +1,10 @@
 import express from "express";
 import connectionPool from "./src/utils/db.mjs";
-import registerRouter from "../server/src/routes/register.mjs";
-import loginRouter from "../server/src/routes/login.mjs";
 import stripeRouter from "../server/src/routes/payment.mjs";
 import supabase from "./lib/supabase.js";
 import cors from "cors";
 import uploadImg from "./src/controllers/Upload.js";
-import authRouter from "./src/apps/auth.mjs";
+import authRouter from "./src/routes/auth.mjs";
 import dotenv from "dotenv";
 import { protect } from "./src/middlewares/protect.mjs";
 import usersRouter from "./src/apps/users.mjs";

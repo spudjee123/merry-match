@@ -1,5 +1,5 @@
 import { Router } from "express";
-import connectionPool from "../utils/db.mjs";
+import connectionPool from "../../utils/db.mjs";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -39,13 +39,14 @@ loginRouter.post("/", async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.status(200).json({code: "U000", message: "Login successfully", token });
+    res
+      .status(200)
+      .json({ code: "U000", message: "Login successfully", token });
   } catch (error) {
     return res.status(500).json({
       message: "Server could not login because of a database error",
     });
   }
-
 });
 
 export default loginRouter;

@@ -89,7 +89,19 @@ function RegisterForm() {
 
     if (step === 3) {
       try {
-        register({ ...userInfo, hobbiesList: [...hobbiesList] });
+        console.log(userInfo);
+        const formData = new FormData();
+        for (let key in userInfo) {
+          if (key !== "images") {
+            formData.append(key, userInfo[key]);
+          }
+        }
+
+        for (let key in userInfo.images) {
+          formData.append("image", userInfo.images[key]);
+        }
+
+        register(formData);
       } catch (error) {
         console.error("Error submitting form:", error);
         setErrors({ submit: "There was an error submitting the form" });

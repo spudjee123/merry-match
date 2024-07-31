@@ -19,8 +19,8 @@ function jwtInterceptor() {
     },
     (error) => {
       if (
-        error.response.status === 401 &&
-        error.response.statatusText === "Unauthorized"
+        error.response?.status === 401 &&
+        error.response?.statatusText === "Unauthorized"
       ) {
         localStorage.removeItem("token");
         localStorage.replace("/");

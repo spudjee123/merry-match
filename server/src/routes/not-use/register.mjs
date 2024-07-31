@@ -1,5 +1,5 @@
 import { application, Router } from "express";
-import connectionPool from "../utils/db.mjs";
+import connectionPool from "../../utils/db.mjs";
 import bcrypt from "bcrypt";
 import express from "express";
 import multer from "multer";

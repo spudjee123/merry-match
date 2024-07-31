@@ -9,22 +9,30 @@ usersRouter.get("/:user_id", async (req, res) => {
   try {
     // get data from users, user_profiles and user_statuses tables
     const userData = await connectionPool.query(
-      `select * from users u inner join user_profiles p on u.user_id = p.user_id inner join user_statuses s on u.user_id = s.user_id where u.user_id = $1`,
+      "select u.email, u.username, p.* from users u inner join user_profiles p on u.user_id = p.user_id where u.user_id = $1",
       [user_id]
     );
 
     const userInfo = userData.rows[0];
 
     const hobbiesListData = await connectionPool.query(
-      `select hobby_name from user_hobbies where profile_id = $1 order by hobby_order asc`,
+      `select hobby_name from user_hobbies where profile_id = $1`,
       [userInfo.profile_id]
     );
 
     const hobbiesList = hobbiesListData.rows.map((item) => item.hobby_name);
 
+    const imagesData = await connectionPool.query(
+      `select image_url from user_images where profile_id = $1`,
+      [userInfo.profile_id]
+    );
+
+    const images = imagesData.rows.map((item) => item.image_url);
+
     const user = transformKeysToCamelCase({
       ...userInfo,
       hobbiesList: hobbiesList,
+      images: images,
     });
 
     delete user.password;
@@ -98,10 +106,10 @@ usersRouter.put("/:user_id", async (req, res) => {
 
     const [{ profile_id }] = insertProfileID.rows;
 
-    hobbiesList.forEach(async (item, index) => {
+    hobbiesList.forEach(async (item) => {
       await connectionPool.query(
-        `insert into user_hobbies (profile_id, hobby_name, hobby_order) values ($1,$2,$3) `,
-        [profile_id, item, index + 1]
+        `insert into user_hobbies (profile_id, hobby_name) values ($1,$2) `,
+        [profile_id, item]
       );
     });
 

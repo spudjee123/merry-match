@@ -2,10 +2,16 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import connectionPool from "../utils/db.mjs";
+import multer from "multer";
+import cloudinaryProfileUplaod from "../utils/upload-profile.mjs";
 
 const authRouter = Router();
 
-authRouter.post("/register", async (req, res) => {
+const multerUpload = multer({ dest: "uploads-profile/" });
+const imageUpload = multerUpload.fields([{ name: "image", maxCount: 5 }]);
+
+authRouter.post("/register", imageUpload, async (req, res) => {
+  console.log(req.body);
   const user = {
     username: req.body.username,
     email: req.body.email,
@@ -23,7 +29,7 @@ authRouter.post("/register", async (req, res) => {
     meetprefer: req.body.meetprefer,
   };
 
-  const hobbiesList = req.body.hobbiesList;
+  const hobbiesList = req.body.hobbiesList.split(",");
 
   try {
     if ((!user.username && !user.email) || !user.password) {
@@ -73,12 +79,21 @@ authRouter.post("/register", async (req, res) => {
 
     const [{ profile_id }] = insertProfileID.rows;
 
-    console.log("hello");
-
-    hobbiesList.forEach(async (item, index) => {
+    hobbiesList.forEach(async (item) => {
       await connectionPool.query(
-        `insert into user_hobbies (profile_id, hobby_name, hobby_order) values ($1,$2,$3) `,
-        [profile_id, item, index + 1]
+        `insert into user_hobbies (profile_id, hobby_name) values ($1,$2) `,
+        [profile_id, item]
+      );
+    });
+
+    const images = await cloudinaryProfileUplaod(req.files);
+
+    console.log(images);
+
+    images.forEach(async (image, index) => {
+      await connectionPool.query(
+        "insert into user_images (profile_id, image_order, image_url, public_id) values ($1,$2,$3,$4)",
+        [profile_id, index + 1, image.url, image.publicId]
       );
     });
 
@@ -101,7 +116,6 @@ authRouter.post("/register", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   try {
-    console.log("hello");
     if (!req.body.username || !req.body.password) {
       return res.status(400).json({
         code: "U002",

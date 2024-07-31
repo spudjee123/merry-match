@@ -25,8 +25,6 @@ function AuthProvider(props) {
     user: getDataFromToken(),
   });
 
-  const navigate = useNavigate();
-
   const login = async (data) => {
     try {
       setState({ ...state, error: null, loading: true });
@@ -51,32 +49,20 @@ function AuthProvider(props) {
         error: error,
         loading: false,
       });
+      if (error.response.status === 404) {
+        alert("Username or password is invalid");
+      }
     }
   };
 
   // register the user
   const register = async (data) => {
     try {
+      console.log(data);
       setState({ ...state, error: null, loading: true });
-      await axios.post("http://localhost:4001/auth/register", data);
-      setState({ ...state, loading: false });
-      alert("Form submitted successfully!");
-      navigate("/login");
-    } catch (error) {
-      console.log(error);
-      setState({
-        ...state,
-        error: error.response.data.message,
-        loading: false,
+      await axios.post("http://localhost:4001/auth/register", data, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-    }
-  };
-
-  // register the user
-  const register = async (data) => {
-    try {
-      setState({ ...state, error: null, loading: true });
-      await axios.post("http://localhost:4001/auth/register", data);
       setState({ ...state, loading: false });
       alert("Form submitted successfully!");
       navigate("/login");
@@ -84,7 +70,7 @@ function AuthProvider(props) {
       console.log(error);
       setState({
         ...state,
-        error: error.response.data.message,
+        error: error,
         loading: false,
       });
     }
