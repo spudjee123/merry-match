@@ -14,15 +14,17 @@ import useUsers from "../../hooks/use-users.jsx";
 
 function EditProfileForm() {
   const { state } = useAuth();
-  const { getUser, userInfo, setUserInfo } = useUsers();
-
-  console.log(state.user.user_id);
+  const { getUser, putUser, deleteUser, userInfo, setUserInfo } = useUsers();
 
   const [hobbiesList, setHobbiesList] = useState([]);
   const [hobby, setHobby] = useState("");
   const [location, setLocation] = useState("");
   const [cityList, setCityList] = useState([]);
-  const [isSecondImage, setIsSecondImage] = useState(false);
+
+  const [oldImages, setOldImages] = useState([]);
+
+  const [imageOrder, setImageOrder] = useState(0);
+  const [maxImage, setMaxImage] = useState(4);
   const [isMobilePreview, setIsMobilePreview] = useState(false);
   const locationDB = countryDB.data.map((item) => item.country_name);
   const sexDB = ["male", "female", "other"];
@@ -35,11 +37,37 @@ function EditProfileForm() {
     "24-7 eleven",
     "keep donut",
   ];
-  const [images, setImages] = useState(["", "", "", "", ""]);
 
   useEffect(() => {
     getUser(state.user.user_id);
   }, []);
+
+  const handleUpdate = (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    for (let key in userInfo) {
+      if (key !== "images") {
+        formData.append(key, userInfo[key]);
+        console.log(key);
+      }
+    }
+
+    for (let image of userInfo.images) {
+      if (!image.url) {
+        formData.append("image", image);
+      } else {
+        console.log(image);
+        formData.append(`oldImage`, JSON.stringify(image));
+      }
+    }
+    alert("putting");
+    putUser(state.user.user_id, formData);
+  };
+
+  const handleDelete = (event) => {
+    event.preventDefault();
+    deleteUser(state.user.user_id);
+  };
 
   const handleChange = (event) => {
     setUserInfo({ ...userInfo, [event.target.name]: event.target.value });
@@ -48,18 +76,32 @@ function EditProfileForm() {
   console.log(userInfo);
 
   const getImageSrc = () => {
-    if (isSecondImage) {
-      if (typeof userInfo.images[1] === "object") {
-        return URL.createObjectURL(userInfo.images[1]);
-      } else {
-        return userInfo.images[1];
+    for (let i = 0; i < maxImage; i += 1) {
+      if (imageOrder === i) {
+        if (!userInfo.images[i]) {
+          return "";
+        }
+        if (userInfo.images[i]?.url) {
+          return userInfo.images[i].url;
+        } else {
+          return URL.createObjectURL(userInfo.images[i]);
+        }
       }
-    } else {
-      if (typeof userInfo.images[0] === "object") {
-        return URL.createObjectURL(userInfo.images[0]);
-      } else {
-        return userInfo.images[0];
-      }
+    }
+    return "";
+  };
+
+  const handleBackImage = (event) => {
+    event.preventDefault();
+    if (imageOrder > 0) {
+      setImageOrder(imageOrder - 1);
+    }
+  };
+
+  const handleNextImage = (event) => {
+    event.preventDefault();
+    if (imageOrder < maxImage - 1) {
+      setImageOrder(imageOrder + 1);
     }
   };
 
@@ -71,10 +113,6 @@ function EditProfileForm() {
     );
     setUserInfo({ ...userInfo, location });
   }, [location]);
-
-  // useEffect(() => {
-  //   setUserInfo({ ...userInfo, images, hobbiesList });
-  // }, [images, hobbiesList]);
 
   console.log(userInfo);
 
@@ -107,6 +145,11 @@ function EditProfileForm() {
                 className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
                 onClick={(event) => {
                   event.preventDefault();
+                  const imageCount = userInfo.images.filter(
+                    (item) => item
+                  ).length;
+                  setImageOrder(0);
+                  setMaxImage(imageCount);
                   setUserInfo({
                     ...userInfo,
                     images: [
@@ -124,6 +167,7 @@ function EditProfileForm() {
                 type="submit"
                 id="update-btn"
                 className="  px-6 py-3 bg-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary"
+                onClick={handleUpdate}
               >
                 Update Profile
               </button>
@@ -142,7 +186,7 @@ function EditProfileForm() {
                     id="dateOfBirth"
                     className="h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900"
                     type="date"
-                    value={userInfo.birthdate ?? ""}
+                    value={(userInfo.birthdate ?? "").split("T")[0] ?? ""}
                     name="birthdate"
                     onChange={handleChange}
                     required
@@ -321,7 +365,7 @@ function EditProfileForm() {
                 <label htmlFor="hobby">Hobbies / Interests (Maximum 10):</label>
 
                 <div className=" flex flex-wrap p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900">
-                  {hobbiesList.map((item, index) => {
+                  {userInfo.hobbiesList.map((item, index) => {
                     return (
                       <div
                         className=" flex h-full bg-purple-100 px-2 py-1 rounded-md text-purple-600 gap-2"
@@ -332,7 +376,12 @@ function EditProfileForm() {
                           type="button"
                           id={"delete-hobby-btn " + index}
                           onClick={() => {
-                            setHobbiesList(hobbiesList.toSpliced(index, 1));
+                            const newHobbiesList = userInfo.hobbiesList;
+                            newHobbiesList.splice(index, 1);
+                            setUserInfo({
+                              ...userInfo,
+                              hobbiesList: newHobbiesList,
+                            });
                           }}
                         >
                           X
@@ -351,7 +400,11 @@ function EditProfileForm() {
                     onKeyDown={(event) => {
                       if (event.key === "Enter") {
                         event.preventDefault();
-                        setHobbiesList([...hobbiesList, hobby]);
+                        const newHobbiesList = [...userInfo.hobbiesList, hobby];
+                        setUserInfo({
+                          ...userInfo,
+                          hobbiesList: newHobbiesList,
+                        });
                         setHobby("");
                       }
                     }}
@@ -372,6 +425,7 @@ function EditProfileForm() {
                   maxLength="150"
                   name="aboutMe"
                   onChange={handleChange}
+                  value={userInfo.aboutMe}
                   required
                 />
               </div>
@@ -398,6 +452,8 @@ function EditProfileForm() {
                         src={
                           typeof item === "string"
                             ? item
+                            : item.url
+                            ? item.url
                             : URL.createObjectURL(item)
                         }
                         className=" w-[167px] h-[167px] rounded-2xl object-cover"
@@ -446,6 +502,11 @@ function EditProfileForm() {
               className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
               onClick={(event) => {
                 event.preventDefault();
+                const imageCount = userInfo.images.filter(
+                  (item) => item
+                ).length;
+                setImageOrder(0);
+                setMaxImage(imageCount);
                 setUserInfo({
                   ...userInfo,
                   images: [
@@ -463,6 +524,7 @@ function EditProfileForm() {
               type="submit"
               id="update-btn"
               className=" px-6 py-3 bg-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary"
+              onClick={handleUpdate}
             >
               Update Profile
             </button>
@@ -506,6 +568,7 @@ function EditProfileForm() {
                   <button
                     id="confirm-delete-btn"
                     className=" bg-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
+                    onClick={handleDelete}
                   >
                     Yes, I want to delete
                   </button>
@@ -538,7 +601,7 @@ function EditProfileForm() {
                     <img
                       src={getImageSrc()}
                       className=" w-[478px] h-[478px] object-cover rounded-[32px]"
-                      alt={"preview photo " + isSecondImage ? "1" : "0"}
+                      alt={"preview photo " + imageOrder}
                     />
                   </div>
                   <div className=" h-12 flex justify-between items-center text-gray-700 relative ">
@@ -561,17 +624,14 @@ function EditProfileForm() {
                       </button>
                     </div>
                     <p className=" w-[72px] flex justify-center items-center">
-                      {isSecondImage ? "2" : "1"}
-                      <span className=" text-gray-600">/2</span>
+                      {imageOrder + 1}
+                      <span className=" text-gray-600">/{maxImage}</span>
                     </p>
                     <div className=" flex">
                       <button
                         type="button"
                         id="back-preview-image-btn"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setIsSecondImage(false);
-                        }}
+                        onClick={handleBackImage}
                         className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
@@ -584,10 +644,7 @@ function EditProfileForm() {
                       <button
                         type="button"
                         id="next-preview-image-btn"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setIsSecondImage(true);
-                        }}
+                        onClick={handleNextImage}
                         className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
@@ -652,7 +709,7 @@ function EditProfileForm() {
                       Hobbies and Interests
                     </h2>
                     <div className=" flex flex-wrap gap-3">
-                      {hobbiesList.map((item, index) => (
+                      {userInfo.hobbiesList.map((item, index) => (
                         <div
                           key={index}
                           className=" px-4 py-2 rounded-xl border border-purple-300 text-purple-600"
@@ -674,7 +731,7 @@ function EditProfileForm() {
               <img
                 src={getImageSrc()}
                 className=" w-full aspect-[26/21] object-cover rounded-b-[32px]"
-                alt={"preview photo " + isSecondImage ? "1" : "0"}
+                alt={"preview photo " + (imageOrder + 1)}
               />
               <button className=" bg-dark absolute w-12 h-12 flex justify-center items-center rounded-full top-2 left-2 shadow-primary">
                 <img
@@ -710,17 +767,14 @@ function EditProfileForm() {
                 </button>
               </div>
               <p className=" w-[72px] flex justify-center items-center z-20">
-                {isSecondImage ? "2" : "1"}
-                <span className=" text-gray-600">/2</span>
+                {imageOrder + 1}
+                <span className=" text-gray-600">/{maxImage}</span>
               </p>
               <div className=" flex z-20">
                 <button
                   type="button"
                   id="back-preview-image-btn"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setIsSecondImage(false);
-                  }}
+                  onClick={handleBackImage}
                   className=" w-12 h-12 rounded-xl flex justify-center items-center"
                 >
                   <img
@@ -733,10 +787,7 @@ function EditProfileForm() {
                 <button
                   type="button"
                   id="next-preview-image-btn"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setIsSecondImage(true);
-                  }}
+                  onClick={handleNextImage}
                   className=" w-12 h-12 rounded-xl flex justify-center items-center"
                 >
                   <img
@@ -799,7 +850,7 @@ function EditProfileForm() {
                 Hobbies and Interests
               </h2>
               <div className=" flex flex-wrap gap-3">
-                {hobbiesList.map((item, index) => (
+                {userInfo.hobbiesList.map((item, index) => (
                   <div
                     key={index}
                     className=" px-4 py-2 rounded-xl border border-purple-300 text-purple-600"

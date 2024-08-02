@@ -1,8 +1,13 @@
 import { Router } from "express";
 import connectionPool from "../utils/db.mjs";
 import { transformKeysToCamelCase } from "../utils/utils-functions.mjs";
+import multer from "multer";
+import cloudinaryProfileUplaod from "../utils/upload-profile.mjs";
 
 const usersRouter = Router();
+
+const multerUpload = multer({ dest: "uploads-profile/" });
+const imageUpload = multerUpload.fields([{ name: "image", maxCount: 5 }]);
 
 usersRouter.get("/:user_id", async (req, res) => {
   const user_id = req.params.user_id;
@@ -23,11 +28,15 @@ usersRouter.get("/:user_id", async (req, res) => {
     const hobbiesList = hobbiesListData.rows.map((item) => item.hobby_name);
 
     const imagesData = await connectionPool.query(
-      `select image_url from user_images where profile_id = $1`,
+      `select image_url, public_id from user_images where profile_id = $1`,
       [userInfo.profile_id]
     );
 
-    const images = imagesData.rows.map((item) => item.image_url);
+    const images = imagesData.rows.map((item) => {
+      const url = item.image_url;
+      const public_id = item.public_id;
+      return { url: url, publicId: public_id };
+    });
 
     const user = transformKeysToCamelCase({
       ...userInfo,
@@ -50,7 +59,7 @@ usersRouter.get("/:user_id", async (req, res) => {
   }
 });
 
-usersRouter.put("/:user_id", async (req, res) => {
+usersRouter.put("/:user_id", imageUpload, async (req, res) => {
   const user_id = req.params.user_id;
   const newUser = {
     username: req.body.username,
@@ -68,7 +77,7 @@ usersRouter.put("/:user_id", async (req, res) => {
     aboutMe: req.body.aboutMe,
   };
 
-  const hobbiesList = req.body.hobbiesList;
+  const hobbiesList = req.body.hobbiesList.split(",");
 
   try {
     const duplicatedUserData = await connectionPool.query(
@@ -82,6 +91,8 @@ usersRouter.put("/:user_id", async (req, res) => {
         message: "Username is already used",
       });
     }
+
+    console.log(newUser.username);
 
     await connectionPool.query(
       `update users set username = $1, updated_at = $2 where user_id = $3`,
@@ -106,10 +117,53 @@ usersRouter.put("/:user_id", async (req, res) => {
 
     const [{ profile_id }] = insertProfileID.rows;
 
+    await connectionPool.query(
+      "delete from user_hobbies where profile_id = $1",
+      [profile_id]
+    );
+
     hobbiesList.forEach(async (item) => {
       await connectionPool.query(
         `insert into user_hobbies (profile_id, hobby_name) values ($1,$2) `,
         [profile_id, item]
+      );
+    });
+
+    // console.log(req.body.oldImage);
+
+    // console.log(JSON.parse(req.body.oldImage[0]));
+
+    console.log("req.body.oldImage", req.body.oldImage);
+
+    const oldImagesData =
+      typeof req.body.oldImage === "string"
+        ? [req.body.oldImage]
+        : typeof req.body.oldImage === "object"
+        ? req.body.oldImage
+        : [];
+
+    const oldImages = oldImagesData.map((image) => {
+      const imageJson = JSON.parse(image);
+      return { url: imageJson.url, publicId: imageJson.publicId };
+    });
+
+    const newImages = await cloudinaryProfileUplaod(req.files);
+
+    console.log("old image", oldImages);
+
+    const images = [...oldImages, ...newImages];
+
+    await connectionPool.query(
+      "delete from user_images where profile_id = $1",
+      [profile_id]
+    );
+
+    console.log("images are", images);
+
+    images.forEach(async (image, index) => {
+      await connectionPool.query(
+        "insert into user_images (profile_id, image_order, image_url, public_id) values ($1,$2,$3,$4)",
+        [profile_id, index + 1, image.url, image.publicId]
       );
     });
 
