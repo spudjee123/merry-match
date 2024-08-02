@@ -94,10 +94,14 @@ function NavUser() {
                 </a>
               </li>
               <li id="list-4">
-                <a>
+                <button
+                  onClick={() => {
+                    navigate("/complaint");
+                  }}
+                >
                   <img src={Vector} alt="vector" className="w-[16px]" />
                   Compliant
-                </a>
+                </button>
               </li>
               <li id="list-5">
                 <button
@@ -207,10 +211,14 @@ function NavUser() {
               </a>
             </li>
             <li id="list-4">
-              <a>
+              <button
+                onClick={() => {
+                  navigate("/complaint");
+                }}
+              >
                 <img src={Vector} alt="vector" className="w-[16px]" />
                 Compliant
-              </a>
+              </button>
             </li>
             <li id="list-5">
               <button

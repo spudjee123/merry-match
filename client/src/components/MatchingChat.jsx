@@ -7,7 +7,7 @@ import Heart from "../assets/images/heartmatchingpage.png";
 import ImgUser2 from "../assets/images/mockupimguser2.png";
 import ImgUser3 from "../assets/images/mockupimguser3.png";
 import Avatar from "../assets/images/avatarmatchingpage.png";
-import Nav from "../nav";
+import NavUser from "../pages/user-profile-management/navUser";
 import { io } from "socket.io-client";
 import Chat from "./Chat";
 
@@ -51,7 +51,7 @@ const MatchingChat = () => {
   return (
     <section className="bg-[#200009] w-full h-screen">
       <div className="lg:z-1000 lg:relative">
-        <Nav />
+        <NavUser />
       </div>
       {/* mobile view */}
       <div className="w-screen h-screen relative lg:hidden">
@@ -180,7 +180,7 @@ const MatchingChat = () => {
                     <div className="font-bold">{message.author}</div>
                     <div>{message.message}</div>
                     <div className="text-xs text-black">{message.time}</div>
-                    {message.img && ( 
+                    {message.img && (
                       <img
                         src={message.img}
                         alt="Uploaded"
