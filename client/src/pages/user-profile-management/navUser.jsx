@@ -11,12 +11,12 @@ import Vector from "../user-profile-management/images/Vector.png";
 import Profile from "../user-profile-management/images/Profile.png";
 import exit from "../user-profile-management/images/exit.png";
 
-// import { useAuth } from "../../context/auth";
+import { useAuth } from "../../context/auth";
 
 function NavUser() {
-  // const { logout } = useAuth();
+  const { logout } = useAuth();
   return (
-    <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
+    <div className="navbar h-[70px] bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
         <a>
           <img
@@ -108,8 +108,8 @@ function NavUser() {
         </div>
       </div>
       {/* ขนาดจอใหญ่ อันใหม่*/}
-      <div className="max-w-full px-0 sm:px-2 lg:px-8 bg-white h-[100px] flex items-center justify-center  flex-wrap  ">
-        <a className="sm:px-1 btn btn-ghost text-xl px--18 lg:flex-none lg:[calc(100%-320px)]">
+      <div>
+        <a className="sm:px-1 text-xl px--18 lg:flex-none lg:[calc(100%-320px)]">
           <img
             src={logo}
             alt="logo"
@@ -205,7 +205,7 @@ function NavUser() {
             <li id="list-5">
               <button
                 onClick={() => {
-                  // logout();
+                  logout();
                 }}
               >
                 <img src={exit} alt="logout" className="w-[16px]" />

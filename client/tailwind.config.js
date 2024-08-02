@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./index.html", "./src/*", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -55,20 +55,6 @@ export default {
         },
         white: "#FFFFFF",
         black: "#000000",
-        "color-red-utility": "#AF2758",
-        "color-red-100": "#FFE1EA",
-        "color-red-500": "#C70039",
-        "color-red-600": "#95002B",
-        "color-gray-200": "#F1F2F6",
-        "color-gray-600": "#9AA1B9",
-        "color-gray-400": "#D6D9E4",
-        "color-gray-700": "#646D89",
-        "color-gray-800": "#424C6B",
-        "color-gray-900": "#2A2E3F",
-        "color-purple-100": "#F4EBF2",
-        "color-purple-500": "#A62D82",
-        "color-purple-600": "#7D2262",
-        "color-beige-700": "#7B4429",
       },
       dropShadow: {
         primary: "2px 2px 12px rgba(64, 50, 133, 0.16)",
@@ -84,6 +70,85 @@ export default {
       backgroundColor: {
         main: "#FCFCFE",
         dark: "#160404",
+      },
+      fontFamily: {
+        nunito: ["Nunito"],
+      },
+      fontSize: {
+        headline1: [
+          "60px",
+          {
+            lineHeight: "69px",
+            letterSpacing: "-2%",
+            fontWeight: "900",
+          },
+        ],
+        headline2: [
+          "46px",
+          {
+            lineHeight: "57.5px",
+            letterSpacing: "-2%",
+            fontWeight: "800",
+          },
+        ],
+        headline3: [
+          "32px",
+          {
+            lineHeight: "40px",
+            letterSpacing: "-1%",
+            fontWeight: "700",
+          },
+        ],
+        headline4: [
+          "24px",
+          {
+            lineHeight: "30px",
+            letterSpacing: "-2%",
+            fontWeight: "700",
+          },
+        ],
+        body1: [
+          "20px",
+          {
+            lineHeight: "30px",
+            fontWeight: "600",
+          },
+        ],
+        body2: [
+          "16px",
+          {
+            lineHeight: "24px",
+            fontWeight: "400",
+          },
+        ],
+        body3: [
+          "16px",
+          {
+            lineHeight: "24px",
+            fontWeight: "500",
+          },
+        ],
+        body4: [
+          "14px",
+          {
+            lineHeight: "21px",
+            fontWeight: "500",
+          },
+        ],
+        body5: [
+          "12px",
+          {
+            lineHeight: "18px",
+            fontWeight: "500",
+          },
+        ],
+        tagline: [
+          "14px",
+          {
+            lineHeight: "21px",
+            fontWeight: "600",
+          },
+        ],
       },
     },
   },

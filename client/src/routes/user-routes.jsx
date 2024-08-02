@@ -7,6 +7,12 @@ import MerryMembership from "../components/merrymembership";
 import PayMentOne from "../components/payment1";
 import Payment2Page from "../components/Payment2Page";
 import { Routes, Route } from "react-router-dom";
+import MatchingChat from "../components/MatchingChat"
+import ComplaintPage from "../components/ComplaintPage";
+
+
+
+
 
 function UserRoutes() {
   return (
@@ -19,6 +25,8 @@ function UserRoutes() {
       <Route path="/Membership" element={<MerryMembership />} />
       <Route path="/paymentone" element={<PayMentOne />} />
       <Route path="/payment2" element={<Payment2Page />} />
+      <Route path="/matchingchat" element={<MatchingChat />} />
+      <Route path="/complaint" element={<ComplaintPage />} />
     </Routes>
   );
 }

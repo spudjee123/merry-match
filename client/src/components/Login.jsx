@@ -3,14 +3,14 @@ import ImgCercle from "../assets/images/cercleloginpage.png";
 import Nav from "../pages/non-user/nav";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-// import { useAuth } from "../context/auth";
+import { useAuth } from "../context/auth";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({
     usernameOrEmail: "",
     password: "",
   });
-  // const { login, state } = useAuth();
+  const { login, state } = useAuth();
   const [errors, setErrors] = useState({});
 
   const handleLogin = async (event) => {
@@ -30,10 +30,10 @@ const Login = () => {
 
     try {
       console.log(userInfo);
-      // login({
-      //   username: userInfo.usernameOrEmail,
-      //   password: userInfo.password,
-      // });
+      login({
+        username: userInfo.usernameOrEmail,
+        password: userInfo.password,
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       setErrors({ submit: "There was an error submitting the form" });

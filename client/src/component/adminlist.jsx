@@ -8,6 +8,8 @@ import edit from "../assets/icons/edit.png";
 import bin from "../assets/icons/bin.png";
 import drag from "../assets/icons/drag.png";
 import search from "../assets/icons/search.png";
+// import { useAuth } from "../context/auth";
+
 
 const AdminPageList = () => {
   const [packages, setPackages] = useState([]);
@@ -16,6 +18,9 @@ const AdminPageList = () => {
   const [deletePackageId, setDeletePackageId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+// const {state} = useAuth()
+
+// console.log(state);
 
   const navigate = useNavigate();
 
@@ -73,7 +78,7 @@ const AdminPageList = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <section className="w-[90%] px-4 py-4 bg-white border-b border-gray-300 mx-auto">
+    <section className="lg:w-[85%] px-4 py-4 bg-white border-b border-gray-300 mx-auto">
       <div className="flex flex-col lg:flex-row justify-between items-center">
         <div className="text-slate-800 text-2xl font-bold leading-[30px] mb-4 lg:mb-0">
           Merry Package

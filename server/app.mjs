@@ -9,10 +9,14 @@ import cors from "cors";
 import uploadImg from "./src/controllers/Upload.js";
 import authRouter from "./src/routes/auth.mjs";
 import dotenv from "dotenv";
-// import { cloudinaryUpload } from "./src/controllers/Upload.js";
+import http from "http";
+import { Server } from "socket.io";
+import upload from "./src/middlewares/Multer.js";
+import cloudinary from "./src/utils/cloudinary.js";
 
 dotenv.config();
 
+import { validate as isUuid } from 'uuid';
 
 import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe';
@@ -20,9 +24,45 @@ import Stripe from 'stripe';
 const stripe = new Stripe('sk_test_51PfGepCsaxbmSm5DJmnpDuh8XVSMZVQ0jiSfh7jI0cc4hBdAr6lhXYw97a3VU48TMQz6ElBUcUxqOEUuWTINVTxQ00Qb1hJloP');const endpointSecret = "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9"; 
 
 const app = express();
+
+app.use(cors())
+// chat
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//   })
+// );
+
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("Join_room", (data) => {
+    socket.join(data);
+    // Check id to join room
+    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  });
+
+  socket.on("send_message", (data) => {
+    // check detail chat room, id, author,message,time
+    // console.log("Message sent from server:", data);
+    socket.to(data.room).emit("receive_message", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", socket.id);
+  });
+});
+
 const port = 4001;
 
-app.use(cors());
 app.use(express.json());
 app.use("/register", registerRouter);
 app.use("/profile", profileRouter);
@@ -95,18 +135,77 @@ app.post("/admin/create", async (req, res) => {
   }
 });
 
-//admin can read
-// app.get("/admin/get", async (req, res) => {
-// let result;
-// try {
-//   result = await connectionPool.query(`select*from packages`);
-//   return res.status(200).json({ data: result.rows });
-// } catch {
-//   return res.status(500).json({
-//     message:
-//       "The server has encountered a situation it does not know how to handle.",
-//   });
-// }
+// user upload img from chat
+// app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).json({ error: "No file uploaded" });
+//   }
+
+//   const imgUrl = `http://localhost:4001/uploads/${req.file.filename}`;
+
+//   const newPackages = {
+//     img: imgUrl,
+//     created_at: new Date(),
+//     updated_at: new Date(),
+//   };
+
+//   try {
+//     await connectionPool.query(
+//       `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
+//       [newPackages.img, newPackages.created_at, newPackages.updated_at]
+//     );
+//     return res.status(201).json({
+//       message: "Create data successfully.",
+//     });
+//   } catch (error) {
+//     console.error("Database insertion error:", error);
+//     return res.status(500).json({
+//       message: "The server has encountered a situation it does not know how to handle.",
+//       error: error.message,
+//     });
+//   }
+// });
+app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  try {
+    // ส่งไฟล์ไปยัง Cloudinary
+    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: 'ml_default', // เปลี่ยนเป็น upload preset ที่คุณต้องการ
+    });
+
+    // รับ URL ของภาพจาก Cloudinary
+    const imgUrl = uploadResult.secure_url;
+
+    const newPackages = {
+      img: imgUrl,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    // บันทึกข้อมูล URL ของภาพในฐานข้อมูล
+    await connectionPool.query(
+      `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
+      [newPackages.img, newPackages.created_at, newPackages.updated_at]
+    );
+
+    return res.status(201).json({
+      message: "Create data successfully.",
+      data: {
+        img: imgUrl,
+        created_at: newPackages.created_at,
+        updated_at: newPackages.updated_at,
+      }, // ส่งกลับข้อมูลที่สร้างใหม่
+    });
+  } catch (error) {
+    console.error("Error uploading image to Cloudinary:", error);
+    return res.status(500).json({
+      message: "Error uploading image to Cloudinary: " + error.message,
+    });
+  }
+});
 
 //ดึงข้อมูลจาก supabase เพื่อดู
 app.get("/admin/get", async (req, res) => {
@@ -122,32 +221,6 @@ app.get("/admin/get", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-//admin can read by id
-// app.get("/admin/get/:package_id", async (req, res) => {
-//   const packagesId = req.params.package_id;
-//   try {
-//     const getPackageId = await connectionPool.query(
-//       `select * from packages where package_id=$1`,
-//       [packagesId]
-//     );
-//     const packages = getPackageId.rows[0];
-//     if (!packages) {
-//       return res.status(404).json({
-//         message: `Server could not find a package id: ${packagesId}`,
-//       });
-//     }
-//     return res.status(200).json({
-//       message: "Ok Successfully",
-//       data: packages,
-//     });
-//   } catch {
-//     return res.status(500).json({
-//       message:
-//         "The server has encountered a situation it does not know how to handle.",
-//     });
-//   }
-// });
 
 app.get("/admin/get/:package_id", async (req, res) => {
   const packageId = req.params.package_id;
@@ -185,70 +258,13 @@ app.get("/admin/get/:package_id", async (req, res) => {
   }
 });
 
-//admin can update
-// app.put("/admin/edit/:package_id", async (req, res) => {
-//   const packagesId = req.params.package_id;
-//   const { packages_name, merry_limit, icons, detail } = req.body;
-//   const updatePackages = {
-//     ...req.body,
-//     updated_at: new Date(),
-//   };
-
-//   if (!packages_name || !merry_limit || !icons) {
-//     return res.status(400).json({
-//       message: "Missing or invalid request data.",
-//     });
-//   }
-
-//   try {
-//     const resultPackages = await connectionPool.query(
-//       `select*from packages where package_id=$1`,
-//       [packagesId]
-//     );
-
-//     if (resultPackages.rows.length === 0) {
-//       return res.status(404).json({
-//         message: `The server cannot find the requested resource. In the browser, this means the ${packagesId} is not recognized.`,
-//       });
-//     }
-
-//     await connectionPool.query(
-//       `update packages set packages_name =$2,
-//       merry_limit=$3,
-//       icons=$4,
-//       detail=$5,
-//       updated_at=$6
-//       where package_id=$1
-//       `,
-//       [
-//         packagesId,
-//         updatePackages.packages_name,
-//         updatePackages.merry_limit,
-//         updatePackages.icons,
-//         updatePackages.detail || null,
-//         updatePackages.updated_at,
-//       ]
-//     );
-
-//     return res.status(200).json({
-//       message: "Successfully updated the data in merry match.",
-//     });
-//   } catch (error) {
-//     console.error("Database insertion error:", error);
-//     return res.status(500).json({
-//       message:
-//         "The server has encountered a situation it does not know how to handle.",
-//       error: error.message,
-//     });
-//   }
-// });
 app.put("/admin/edit/:package_id", async (req, res) => {
   const packageId = req.params.package_id;
   const { packages_name, merry_limit, icons, detail } = req.body;
 
   if (!packageId || !packages_name || !merry_limit || !icons) {
     return res.status(400).json({
-      message: "Invalid input, all fields except 'detail' are required",
+      message: "Invalid input, all fields except detail are required",
     });
   }
 
@@ -294,27 +310,6 @@ app.put("/admin/edit/:package_id", async (req, res) => {
     });
   }
 });
-
-//admin can delete
-// app.delete("/admin/delete/:package_id", async (req, res) => {
-//   const packagesId = req.params.package_id;
-//   try {
-//     await connectionPool.query(`delete from packages where package_id=$1`, [
-//       packagesId,
-//     ]);
-
-//     return res.status(200).json({
-//       message: `Successfully delete the package id: ${packagesId}`,
-//     });
-//   } catch (error) {
-//     console.error("Database deletion error:", error);
-//     return res.status(500).json({
-//       message:
-//         "The server has encountered a situation it does not know how to handle.",
-//       error: error.message,
-//     });
-//   }
-// });
 
 app.delete("/admin/delete/:package_id", async (req, res) => {
   const packageId = req.params.package_id;
@@ -471,7 +466,99 @@ app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
 });
 
 
-app.listen(port, () => {
+//user create complaint
+app.post("/user/complaint", async (req, res) => {
+  const { user_id, name, issue, description, status } = req.body;
+
+  if (!user_id || !name || !issue || !description) {
+    return res.status(400).json({
+      message: "Missing or invalid request data.",
+    });
+  }
+
+  const newComplaint = {
+    ...req.body,
+    status: status || null,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  try {
+    await connectionPool.query(
+      `insert into user_complaint (user_id,name,issue,description,status,created_at) values ($1,$2,$3,$4,$5,$6)`,
+      [
+        newComplaint.user_id,
+        newComplaint.name,
+        newComplaint.issue,
+        newComplaint.description,
+        newComplaint.status,
+        newComplaint.created_at,
+      ]
+    );
+    return res.status(201).json({
+      message: "Create complaint successfully.",
+    });
+  } catch (error) {
+    console.error("Database insertion error:", error);
+    return res.status(500).json({
+      message:
+        "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});
+
+// เทส get package name for noon
+stripeRouter.get("/api/order/:order_id", async (req, res) => {
+  const orderId = req.params.order_id; 
+
+  // ตรวจสอบฟอร์แมตของ UUID
+  if (!isUuid(orderId)) {
+    return res.status(400).json({
+      message: "Invalid order ID format. Order ID must be a valid UUID.",
+    });
+  }
+
+  console.log("Order ID:", orderId); // พิมพ์ orderId เพื่อตรวจสอบ
+
+  try {
+    const { data, error } = await supabase
+      .from('payment_test')
+      .select('package_name')
+      .eq('order_id', orderId)
+      .maybeSingle();
+
+    console.log("Data:", data); // พิมพ์ข้อมูลที่ดึงมาเพื่อตรวจสอบ
+
+    if (error) {
+      return res.status(500).json({
+        message: "There was an error retrieving the data from the database.",
+        error: error.message,
+      });
+    }
+
+    if (!data) {
+      return res.status(404).json({
+        message: `No package found with order ID: ${orderId}`,
+      });
+    }
+
+    return res.status(200).json({
+      data: data,
+    });
+  } catch (error) {
+    console.error("Server error:", error); // พิมพ์ข้อผิดพลาดจากเซิร์ฟเวอร์
+    return res.status(500).json({
+      message: "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});
+
+
+
+
+server.listen(port, () => {
   console.log(`Server is running at ${port}`);
 });
 
