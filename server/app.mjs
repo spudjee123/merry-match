@@ -1,14 +1,14 @@
 import express from "express";
 import connectionPool from "./src/utils/db.mjs";
-import registerRouter from "../server/src/routes/register.mjs";
-import profileRouter from "../server/src/routes/profile.mjs";
-import loginRouter from "../server/src/routes/login.mjs";
-import stripeRouter from "../server/src/routes/payment.mjs"
+import stripeRouter from "../server/src/routes/payment.mjs";
 import supabase from "./lib/supabase.js";
 import cors from "cors";
 import uploadImg from "./src/controllers/Upload.js";
 import authRouter from "./src/routes/auth.mjs";
 import dotenv from "dotenv";
+import { protect } from "./src/middlewares/protect.mjs";
+import usersRouter from "./src/routes/users.mjs";
+import profilesRouter from "./src/routes/profiles.mjs";
 import http from "http";
 import { Server } from "socket.io";
 import upload from "./src/middlewares/Multer.js";
@@ -16,16 +16,20 @@ import cloudinary from "./src/utils/cloudinary.js";
 
 dotenv.config();
 
-import { validate as isUuid } from 'uuid';
+import { validate as isUuid } from "uuid";
 
-import { v4 as uuidv4 } from 'uuid';
-import Stripe from 'stripe';
+import { v4 as uuidv4 } from "uuid";
+import Stripe from "stripe";
 // keyนี้สำหรับtest
-const stripe = new Stripe('sk_test_51PfGepCsaxbmSm5DJmnpDuh8XVSMZVQ0jiSfh7jI0cc4hBdAr6lhXYw97a3VU48TMQz6ElBUcUxqOEUuWTINVTxQ00Qb1hJloP');const endpointSecret = "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9"; 
+const stripe = new Stripe(
+  "sk_test_51PfGepCsaxbmSm5DJmnpDuh8XVSMZVQ0jiSfh7jI0cc4hBdAr6lhXYw97a3VU48TMQz6ElBUcUxqOEUuWTINVTxQ00Qb1hJloP"
+);
+const endpointSecret =
+  "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9";
 
 const app = express();
 
-app.use(cors())
+app.use(cors());
 // chat
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -64,11 +68,14 @@ io.on("connection", (socket) => {
 const port = 4001;
 
 app.use(express.json());
-app.use("/register", registerRouter);
-app.use("/profile", profileRouter);
-app.use("/login", loginRouter);
 app.use("/auth", authRouter);
-app.use("/", stripeRouter)
+
+// app.use(protect);
+app.use("/payments", stripeRouter);
+app.use("/users", usersRouter);
+app.use("/profiles", profilesRouter);
+
+// app.use(protect);
 
 //เรียกใช้ api สำหรับ ยิง postman to cloudinary
 app.use("/api/admin", uploadImg);
@@ -78,20 +85,20 @@ app.get("/test", (req, res) => {
 });
 
 // get all user
-app.get("/users", async (req, res) => {
-  let result;
-  try {
-    const auth = req.headers["authorization"];
-    console.log("authorization", auth);
+// app.get("/users", async (req, res) => {
+//   let result;
+//   try {
+//     const auth = req.headers["authorization"];
+//     console.log("authorization", auth);
 
-    result = await connectionPool.query(`select * from users`);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server could not read assignment because database connection",
-    });
-  }
-  return res.status(200).json({ data: result.rows });
-});
+//     result = await connectionPool.query(`select * from users`);
+//   } catch (error) {
+//     return res.status(500).json({
+//       message: "Server could not read assignment because database connection",
+//     });
+//   }
+//   return res.status(200).json({ data: result.rows });
+// });
 
 //admin can create
 app.post("/admin/create", async (req, res) => {
@@ -173,7 +180,7 @@ app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
   try {
     // ส่งไฟล์ไปยัง Cloudinary
     const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      upload_preset: 'ml_default', // เปลี่ยนเป็น upload preset ที่คุณต้องการ
+      upload_preset: "ml_default", // เปลี่ยนเป็น upload preset ที่คุณต้องการ
     });
 
     // รับ URL ของภาพจาก Cloudinary
@@ -362,26 +369,30 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
 // });
 
 // ยิงreq ไปที่stripeโดยตรง
-app.post('/api/checkout', express.json(),async(req,res)=>{
+app.post("/api/checkout", express.json(), async (req, res) => {
   console.log(req.body);
-  const { user, packageName } = req.body
+  const { user, packageName } = req.body;
   if (!user || !packageName) {
-    return res.status(400).json({ error: "Missing user or packageName in request body" });
+    return res
+      .status(400)
+      .json({ error: "Missing user or packageName in request body" });
   }
 
   if (!user.name || !packageName.name) {
-    return res.status(400).json({ error: "Missing name in user or packageName" });
+    return res
+      .status(400)
+      .json({ error: "Missing name in user or packageName" });
   }
-  // random id 
+  // random id
   const orderId = uuidv4();
 
   try {
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ["card"],
       line_items: [
         {
           price_data: {
-            currency: 'thb',
+            currency: "thb",
             product_data: {
               name: packageName.name,
             },
@@ -390,7 +401,7 @@ app.post('/api/checkout', express.json(),async(req,res)=>{
           quantity: 1,
         },
       ],
-      mode: 'payment',
+      mode: "payment",
       success_url: `http://localhost:4001/success?id=${orderId}`,
       cancel_url: `http://localhost:4001/cancel?id=${orderId}`,
     });
@@ -398,46 +409,45 @@ app.post('/api/checkout', express.json(),async(req,res)=>{
     const orderData = {
       name: user.name,
       package_name: packageName.name,
-      order_id : orderId,
+      order_id: orderId,
       session_id: session.id,
-      status: session.status
-    }
+      status: session.status,
+    };
 
-    const result = await connectionPool.query(`INSERT INTO payment_test (name,package_name,order_id,status,session_id) 
-      VALUES ($1, $2, $3, $4, $5) `, [  
-        user.name,
-        packageName.name,
-        orderId,
-        session.status,
-        session.id,
-      ])
+    const result = await connectionPool.query(
+      `INSERT INTO payment_test (name,package_name,order_id,status,session_id) 
+      VALUES ($1, $2, $3, $4, $5) `,
+      [user.name, packageName.name, orderId, session.status, session.id]
+    );
 
-    console.log('Created session:', session);
+    console.log("Created session:", session);
 
     res.json({ user, packageName, order: result });
   } catch (error) {
-    console.error('Error creating session:', error);
+    console.error("Error creating session:", error);
     res.status(500).json({ error: error.message });
   }
-})
+});
 
 // เช็ค order id ว่า status เป็นยังไง
 app.get("/api/order/:id", async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   try {
-    const result = await connectionPool.query(`select * from payment_test where order_id = $1 `,[id]);
-    res.json({result})
+    const result = await connectionPool.query(
+      `select * from payment_test where order_id = $1 `,
+      [id]
+    );
+    res.json({ result });
   } catch (error) {
     return res.status(500).json({
       message: "Server could not read assignment because database connection",
     });
   }
-
 });
 
-app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
+app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
   // รับค่า stripe-signature
-  const sig = req.headers['stripe-signature'];
+  const sig = req.headers["stripe-signature"];
 
   let event;
 
@@ -451,9 +461,9 @@ app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
 
   // Handle the event ถ้าทำสำเร็จ
   switch (event.type) {
-    case 'checkout_intent.succeeded':
+    case "checkout_intent.succeeded":
       const paymentIntentSucceeded = event.data.object;
-      console.log('paymentIntentSucceeded',paymentIntentSucceeded)
+      console.log("paymentIntentSucceeded", paymentIntentSucceeded);
       // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา จะบอกว่าสำเร็จ
       break;
     // ... handle other event types
@@ -464,7 +474,6 @@ app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
   // Return a 200 response to acknowledge receipt of the event
   res.send();
 });
-
 
 //user create complaint
 app.post("/user/complaint", async (req, res) => {
@@ -510,7 +519,7 @@ app.post("/user/complaint", async (req, res) => {
 
 // เทส get package name for noon
 stripeRouter.get("/api/order/:order_id", async (req, res) => {
-  const orderId = req.params.order_id; 
+  const orderId = req.params.order_id;
 
   // ตรวจสอบฟอร์แมตของ UUID
   if (!isUuid(orderId)) {
@@ -523,9 +532,9 @@ stripeRouter.get("/api/order/:order_id", async (req, res) => {
 
   try {
     const { data, error } = await supabase
-      .from('payment_test')
-      .select('package_name')
-      .eq('order_id', orderId)
+      .from("payment_test")
+      .select("package_name")
+      .eq("order_id", orderId)
       .maybeSingle();
 
     console.log("Data:", data); // พิมพ์ข้อมูลที่ดึงมาเพื่อตรวจสอบ
@@ -549,16 +558,13 @@ stripeRouter.get("/api/order/:order_id", async (req, res) => {
   } catch (error) {
     console.error("Server error:", error); // พิมพ์ข้อผิดพลาดจากเซิร์ฟเวอร์
     return res.status(500).json({
-      message: "The server has encountered a situation it does not know how to handle.",
+      message:
+        "The server has encountered a situation it does not know how to handle.",
       error: error.message,
     });
   }
 });
 
-
-
-
 server.listen(port, () => {
   console.log(`Server is running at ${port}`);
 });
-

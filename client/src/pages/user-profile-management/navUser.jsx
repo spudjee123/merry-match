@@ -10,11 +10,13 @@ import Box from "../user-profile-management/images/Box.png";
 import Vector from "../user-profile-management/images/Vector.png";
 import Profile from "../user-profile-management/images/Profile.png";
 import exit from "../user-profile-management/images/exit.png";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/auth";
 
 function NavUser() {
   const { logout } = useAuth();
+  const navigate = useNavigate();
   return (
     <div className="navbar h-[70px] bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
@@ -42,10 +44,10 @@ function NavUser() {
               className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow "
             >
               <li>
-                <Link>Start Matching</Link>
+                <button>Start Matching</button>
               </li>
               <li>
-                <Link>Merry Member</Link>
+                <button>Merry Member</button>
               </li>
             </ul>
           </div>
@@ -76,10 +78,14 @@ function NavUser() {
                 </a>
               </li>
               <li id="list-2">
-                <a>
+                <button
+                  onClick={() => {
+                    navigate("/merry-list");
+                  }}
+                >
                   <img src={like} alt="heart" className="w-[16px]" />
                   Merry list
-                </a>
+                </button>
               </li>
               <li id="list-3">
                 <a>
@@ -119,15 +125,15 @@ function NavUser() {
       </div>
       <div className="flex-none hidden md:flex space-x-6 content-start gap-6 ">
         <div className="dropdown dropdown-end  md:flex space-x-6 content-start gap-6 ">
-          <Link
-            to={"/matching"}
+          <button
+            onClick={() => navigate("/matching")}
             className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
           >
             Start Matching
-          </Link>
-          <Link className="text-red-800 content-center md:text-[12px] lg:text-[18px]">
+          </button>
+          <button className="text-red-800 content-center md:text-[12px] lg:text-[18px]">
             Merry Member
-          </Link>
+          </button>
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
@@ -185,10 +191,14 @@ function NavUser() {
               </a>
             </li>
             <li id="list-2">
-              <a>
+              <button
+                onClick={() => {
+                  navigate("/merry-list");
+                }}
+              >
                 <img src={like} alt="heart" className="w-[16px]" />
                 Merry list
-              </a>
+              </button>
             </li>
             <li id="list-3">
               <a href="/membership">

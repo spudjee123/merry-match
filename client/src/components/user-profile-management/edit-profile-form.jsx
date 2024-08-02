@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/auth.jsx";
 import * as countryDB from "../../assets/test-data/Countrydata.json";
 import exit_icon from "../../assets/icons/cancel-icon.png";
 import back_icon from "../../assets/icons/back-vector-icon.png";
@@ -8,13 +9,22 @@ import reject_icon from "../../assets/icons/reject-icon.png";
 import love_icon from "../../assets/icons/love-icon.png";
 import preview_exit_icon from "../../assets/icons/preview-exit-icon.png";
 
+import getAge from "../../utils/get-age";
+import useUsers from "../../hooks/use-users.jsx";
+
 function EditProfileForm() {
+  const { state } = useAuth();
+  const { getUser, putUser, deleteUser, userInfo, setUserInfo } = useUsers();
+
   const [hobbiesList, setHobbiesList] = useState([]);
   const [hobby, setHobby] = useState("");
   const [location, setLocation] = useState("");
-  const [city, setCity] = useState("");
   const [cityList, setCityList] = useState([]);
-  const [isSecondImage, setIsSecondImage] = useState(false);
+
+  const [oldImages, setOldImages] = useState([]);
+
+  const [imageOrder, setImageOrder] = useState(0);
+  const [maxImage, setMaxImage] = useState(4);
   const [isMobilePreview, setIsMobilePreview] = useState(false);
   const locationDB = countryDB.data.map((item) => item.country_name);
   const sexDB = ["male", "female", "other"];
@@ -27,16 +37,85 @@ function EditProfileForm() {
     "24-7 eleven",
     "keep donut",
   ];
-  const [images, setImages] = useState(["", "", "", "", ""]);
 
-  console.log(images);
+  useEffect(() => {
+    getUser(state.user.user_id);
+  }, []);
+
+  const handleUpdate = (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    for (let key in userInfo) {
+      if (key !== "images") {
+        formData.append(key, userInfo[key]);
+        console.log(key);
+      }
+    }
+
+    for (let image of userInfo.images) {
+      if (!image.url) {
+        formData.append("image", image);
+      } else {
+        console.log(image);
+        formData.append(`oldImage`, JSON.stringify(image));
+      }
+    }
+    alert("putting");
+    putUser(state.user.user_id, formData);
+  };
+
+  const handleDelete = (event) => {
+    event.preventDefault();
+    deleteUser(state.user.user_id);
+  };
+
+  const handleChange = (event) => {
+    setUserInfo({ ...userInfo, [event.target.name]: event.target.value });
+  };
+
+  console.log(userInfo);
+
+  const getImageSrc = () => {
+    for (let i = 0; i < maxImage; i += 1) {
+      if (imageOrder === i) {
+        if (!userInfo.images[i]) {
+          return "";
+        }
+        if (userInfo.images[i]?.url) {
+          return userInfo.images[i].url;
+        } else {
+          return URL.createObjectURL(userInfo.images[i]);
+        }
+      }
+    }
+    return "";
+  };
+
+  const handleBackImage = (event) => {
+    event.preventDefault();
+    if (imageOrder > 0) {
+      setImageOrder(imageOrder - 1);
+    }
+  };
+
+  const handleNextImage = (event) => {
+    event.preventDefault();
+    if (imageOrder < maxImage - 1) {
+      setImageOrder(imageOrder + 1);
+    }
+  };
+
   useEffect(() => {
     setCityList(
       countryDB.data
         .filter((item) => item.country_name === location)[0]
         ?.states?.map((item) => item.state_name) ?? []
     );
+    setUserInfo({ ...userInfo, location });
   }, [location]);
+
+  console.log(userInfo);
+
   const inputClassName =
     "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-white";
   const formGroupClassName = "flex flex-col gap-1 w-full";
@@ -66,13 +145,21 @@ function EditProfileForm() {
                 className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
                 onClick={(event) => {
                   event.preventDefault();
-                  setImages([
-                    ...images.filter((item) => item),
-                    ...images.filter((item) => !item),
-                  ]);
+                  const imageCount = userInfo.images.filter(
+                    (item) => item
+                  ).length;
+                  setImageOrder(0);
+                  setMaxImage(imageCount);
+                  setUserInfo({
+                    ...userInfo,
+                    images: [
+                      ...userInfo.images.filter((item) => item),
+                      ...userInfo.images.filter((item) => !item),
+                    ],
+                  });
                   document.getElementById("preview").showModal();
                 }}
-                disabled={images.filter((item) => item).length < 2}
+                disabled={userInfo.images.filter((item) => item).length < 2}
               >
                 Preview Profile
               </button>
@@ -80,6 +167,7 @@ function EditProfileForm() {
                 type="submit"
                 id="update-btn"
                 className="  px-6 py-3 bg-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary"
+                onClick={handleUpdate}
               >
                 Update Profile
               </button>
@@ -98,6 +186,9 @@ function EditProfileForm() {
                     id="dateOfBirth"
                     className="h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900"
                     type="date"
+                    value={(userInfo.birthdate ?? "").split("T")[0] ?? ""}
+                    name="birthdate"
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -109,6 +200,9 @@ function EditProfileForm() {
                     className={inputClassName}
                     type="text"
                     maxLength="50"
+                    value={userInfo.name ?? ""}
+                    name="name"
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -117,10 +211,18 @@ function EditProfileForm() {
               <div className={formGroupRowClassName}>
                 <div className={formGroupClassName}>
                   <label htmlFor="city">City</label>
-                  <select id="city" className={inputClassName}>
-                    <option selected>select one</option>
+                  <select
+                    id="city"
+                    className={inputClassName}
+                    value={userInfo.city ?? ""}
+                    name="city"
+                    onChange={handleChange}
+                  >
+                    <option value={""}>select one</option>
                     {cityList.map((item, index) => (
-                      <option key={index}>{item}</option>
+                      <option value={item} key={index}>
+                        {item}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -130,13 +232,17 @@ function EditProfileForm() {
                   <select
                     id="location"
                     className={inputClassName}
+                    name="location"
                     onChange={(event) => {
                       setLocation(event.target.value);
                     }}
+                    value={userInfo.location ?? ""}
                   >
-                    <option selected>select one</option>
+                    <option value={""}>select one</option>
                     {locationDB.map((item, index) => (
-                      <option key={index}>{item}</option>
+                      <option value={item} key={index}>
+                        {item}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -153,6 +259,8 @@ function EditProfileForm() {
                       "h-12 p-3 pr-4 gap-2 rounded-lg border border-gray-400 text-gray-900 bg-gray-200"
                     }
                     type="email"
+                    name="email"
+                    value={userInfo.email ?? ""}
                     disabled
                   />
                 </div>
@@ -162,8 +270,10 @@ function EditProfileForm() {
                   <input
                     id="username"
                     className={inputClassName}
+                    value={userInfo.username ?? ""}
+                    name="username"
+                    onChange={handleChange}
                     type="text"
-                    maxLength="6"
                     required
                   />
                 </div>
@@ -179,20 +289,36 @@ function EditProfileForm() {
               <div className={formGroupRowClassName}>
                 <div className={formGroupClassName}>
                   <label htmlFor="sexPrefer">Sexual preferences:</label>
-                  <select id="sexPrefer" className={inputClassName}>
-                    <option selected>select one</option>
+                  <select
+                    id="sexPrefer"
+                    className={inputClassName}
+                    name="sexprefer"
+                    value={userInfo.sexprefer ?? ""}
+                    onChange={handleChange}
+                  >
+                    <option value={""}>select one</option>
                     {sexDB.map((item, index) => (
-                      <option key={index}>{item}</option>
+                      <option value={item} key={index}>
+                        {item}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div className={formGroupClassName}>
                   <label htmlFor="sexIden">Sexual identities:</label>
-                  <select id="sexIden" className={inputClassName}>
-                    <option selected>select one</option>
+                  <select
+                    id="sexIden"
+                    className={inputClassName}
+                    value={userInfo.sexident ?? ""}
+                    name="sexident"
+                    onChange={handleChange}
+                  >
+                    <option value={""}>select one</option>
                     {sexDB.map((item, index) => (
-                      <option key={index}>{item}</option>
+                      <option value={item} key={index}>
+                        {item}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -201,20 +327,36 @@ function EditProfileForm() {
               <div className={formGroupRowClassName}>
                 <div className={formGroupClassName}>
                   <label htmlFor="meeting">Meeting interest:</label>
-                  <select id="meeting" className={inputClassName}>
-                    <option selected>select one</option>
+                  <select
+                    id="meeting"
+                    className={inputClassName}
+                    value={userInfo.meetprefer ?? ""}
+                    name="meetprefer"
+                    onChange={handleChange}
+                  >
+                    <option value={""}>select one</option>
                     {meetingDB.map((item, index) => (
-                      <option key={index}>{item}</option>
+                      <option value={item} key={index}>
+                        {item}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div className={formGroupClassName}>
                   <label htmlFor="racePrefer">Racial preferences:</label>
-                  <select id="racePrefer" className={inputClassName}>
-                    <option selected>select one</option>
+                  <select
+                    id="racePrefer"
+                    className={inputClassName}
+                    name="racialprefer"
+                    value={userInfo.racialprefer ?? ""}
+                    onChange={handleChange}
+                  >
+                    <option value={""}>select one</option>
                     {raceDB.map((item, index) => (
-                      <option key={index}>{item}</option>
+                      <option value={item} key={index}>
+                        {item}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -223,7 +365,7 @@ function EditProfileForm() {
                 <label htmlFor="hobby">Hobbies / Interests (Maximum 10):</label>
 
                 <div className=" flex flex-wrap p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900">
-                  {hobbiesList.map((item, index) => {
+                  {userInfo.hobbiesList.map((item, index) => {
                     return (
                       <div
                         className=" flex h-full bg-purple-100 px-2 py-1 rounded-md text-purple-600 gap-2"
@@ -234,7 +376,12 @@ function EditProfileForm() {
                           type="button"
                           id={"delete-hobby-btn " + index}
                           onClick={() => {
-                            setHobbiesList(hobbiesList.toSpliced(index, 1));
+                            const newHobbiesList = userInfo.hobbiesList;
+                            newHobbiesList.splice(index, 1);
+                            setUserInfo({
+                              ...userInfo,
+                              hobbiesList: newHobbiesList,
+                            });
                           }}
                         >
                           X
@@ -253,7 +400,11 @@ function EditProfileForm() {
                     onKeyDown={(event) => {
                       if (event.key === "Enter") {
                         event.preventDefault();
-                        setHobbiesList([...hobbiesList, hobby]);
+                        const newHobbiesList = [...userInfo.hobbiesList, hobby];
+                        setUserInfo({
+                          ...userInfo,
+                          hobbiesList: newHobbiesList,
+                        });
                         setHobby("");
                       }
                     }}
@@ -272,6 +423,9 @@ function EditProfileForm() {
                   className="p-3 pr-4 gap-2 rounded-lg border border-gray-400 bg-white text-gray-900"
                   rows="4"
                   maxLength="150"
+                  name="aboutMe"
+                  onChange={handleChange}
+                  value={userInfo.aboutMe}
                   required
                 />
               </div>
@@ -287,7 +441,7 @@ function EditProfileForm() {
               </p>
             </article>
             <div className=" flex flex-wrap gap-2 lg:gap-6 lg:justify-center">
-              {images.map((item, index) => (
+              {userInfo.images.map((item, index) => (
                 <div
                   key={index}
                   className=" w-[167px] h-[167px] bg-gray-200 rounded-2xl"
@@ -295,7 +449,13 @@ function EditProfileForm() {
                   {item ? (
                     <div className="relative w-full h-full">
                       <img
-                        src={URL.createObjectURL(item)}
+                        src={
+                          typeof item === "string"
+                            ? item
+                            : item.url
+                            ? item.url
+                            : URL.createObjectURL(item)
+                        }
                         className=" w-[167px] h-[167px] rounded-2xl object-cover"
                         alt={"uploaded photo " + index}
                       />
@@ -303,10 +463,10 @@ function EditProfileForm() {
                         type="button"
                         id={"remove-image-btn " + index}
                         onClick={() => {
-                          const newImages = [...images];
+                          const newImages = [...userInfo.images];
                           newImages.splice(index, 1);
                           newImages.push("");
-                          setImages(newImages);
+                          setUserInfo({ ...userInfo, images: newImages });
                         }}
                         className="absolute top-[-4px] right-[-4px] bg-red-utility w-6 h-6 rounded-full text-white"
                       >
@@ -323,9 +483,9 @@ function EditProfileForm() {
                         type="file"
                         onChange={(event) => {
                           event.preventDefault();
-                          const newImages = [...images];
+                          const newImages = [...userInfo.images];
                           newImages[index] = event.target.files[0];
-                          setImages(newImages);
+                          setUserInfo({ ...userInfo, images: newImages });
                         }}
                         className=" w-full h-full opacity-0"
                       />
@@ -342,13 +502,21 @@ function EditProfileForm() {
               className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
               onClick={(event) => {
                 event.preventDefault();
-                setImages([
-                  ...images.filter((item) => item),
-                  ...images.filter((item) => !item),
-                ]);
+                const imageCount = userInfo.images.filter(
+                  (item) => item
+                ).length;
+                setImageOrder(0);
+                setMaxImage(imageCount);
+                setUserInfo({
+                  ...userInfo,
+                  images: [
+                    ...userInfo.images.filter((item) => item),
+                    ...userInfo.images.filter((item) => !item),
+                  ],
+                });
                 setIsMobilePreview(true);
               }}
-              disabled={images.filter((item) => item).length < 2}
+              disabled={userInfo.images.filter((item) => item).length < 2}
             >
               Preview Profile
             </button>
@@ -356,6 +524,7 @@ function EditProfileForm() {
               type="submit"
               id="update-btn"
               className=" px-6 py-3 bg-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary"
+              onClick={handleUpdate}
             >
               Update Profile
             </button>
@@ -399,6 +568,7 @@ function EditProfileForm() {
                   <button
                     id="confirm-delete-btn"
                     className=" bg-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
+                    onClick={handleDelete}
                   >
                     Yes, I want to delete
                   </button>
@@ -429,13 +599,9 @@ function EditProfileForm() {
                 <div className=" w-[478px] ">
                   <div className=" h-[478px] relative">
                     <img
-                      src={
-                        images[0] && images[1]
-                          ? URL.createObjectURL(images[isSecondImage ? 1 : 0])
-                          : ""
-                      }
+                      src={getImageSrc()}
                       className=" w-[478px] h-[478px] object-cover rounded-[32px]"
-                      alt={"preview photo " + isSecondImage ? "1" : "0"}
+                      alt={"preview photo " + imageOrder}
                     />
                   </div>
                   <div className=" h-12 flex justify-between items-center text-gray-700 relative ">
@@ -458,17 +624,14 @@ function EditProfileForm() {
                       </button>
                     </div>
                     <p className=" w-[72px] flex justify-center items-center">
-                      {isSecondImage ? "2" : "1"}
-                      <span className=" text-gray-600">/2</span>
+                      {imageOrder + 1}
+                      <span className=" text-gray-600">/{maxImage}</span>
                     </p>
                     <div className=" flex">
                       <button
                         type="button"
                         id="back-preview-image-btn"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setIsSecondImage(false);
-                        }}
+                        onClick={handleBackImage}
                         className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
@@ -481,10 +644,7 @@ function EditProfileForm() {
                       <button
                         type="button"
                         id="next-preview-image-btn"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setIsSecondImage(true);
-                        }}
+                        onClick={handleNextImage}
                         className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
@@ -500,7 +660,10 @@ function EditProfileForm() {
                 <div className=" w-[478px] flex flex-col gap-10 items-end text-gray-900 leading-6">
                   <article className=" w-[418px]">
                     <h1 className=" text-[46px] leading-[57.5px] font-extrabold mb-2">
-                      {"John Snow"} <span className=" text-gray-700">{26}</span>
+                      {userInfo.name}{" "}
+                      <span className=" text-gray-700">
+                        {getAge(userInfo.birthdate)}
+                      </span>
                     </h1>
                     <div className=" flex gap-4">
                       <img
@@ -510,7 +673,7 @@ function EditProfileForm() {
                         alt="location icon"
                       />
                       <p className=" text-xl leading-[30px] font-semibold">
-                        {"Bangkok, Thailand"}
+                        {userInfo.city}, {userInfo.location}
                       </p>
                     </div>
                   </article>
@@ -518,19 +681,19 @@ function EditProfileForm() {
                   <section className=" grid grid-cols-2 w-[418px] leading-6 py-2 gap-y-4">
                     <p className=" flex items-center">Sexual identities</p>
                     <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                      {"Male"}
+                      {userInfo.sexident}
                     </p>
                     <p className=" flex items-center">Sexual preferences</p>
                     <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                      {"Female"}
+                      {userInfo.sexprefer}
                     </p>
                     <p className=" flex items-center">Racial preferences</p>
                     <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                      {"Asian"}
+                      {userInfo.racialprefer}
                     </p>
                     <p className=" flex items-center">Meeting interests</p>
                     <p className=" text-xl leading-[30px] font-semibold text-gray-700">
-                      {"Friends"}
+                      {userInfo.meetprefer}
                     </p>
                   </section>
 
@@ -538,7 +701,7 @@ function EditProfileForm() {
                     <h2 className=" mb-4 text-2xl font-bold lead-[30px]">
                       About me
                     </h2>
-                    <p>{"I know nothing...but you"}</p>
+                    <p>{userInfo.aboutMe}</p>
                   </article>
 
                   <article className=" w-[418px]">
@@ -546,7 +709,7 @@ function EditProfileForm() {
                       Hobbies and Interests
                     </h2>
                     <div className=" flex flex-wrap gap-3">
-                      {hobbiesList.map((item, index) => (
+                      {userInfo.hobbiesList.map((item, index) => (
                         <div
                           key={index}
                           className=" px-4 py-2 rounded-xl border border-purple-300 text-purple-600"
@@ -564,15 +727,11 @@ function EditProfileForm() {
       ) : (
         <section>
           <div className="  ">
-            <div className="relative">
+            <div className="relative mt-28">
               <img
-                src={
-                  images[0] && images[1]
-                    ? URL.createObjectURL(images[isSecondImage ? 1 : 0])
-                    : ""
-                }
+                src={getImageSrc()}
                 className=" w-full aspect-[26/21] object-cover rounded-b-[32px]"
-                alt={"preview photo " + isSecondImage ? "1" : "0"}
+                alt={"preview photo " + (imageOrder + 1)}
               />
               <button className=" bg-dark absolute w-12 h-12 flex justify-center items-center rounded-full top-2 left-2 shadow-primary">
                 <img
@@ -608,17 +767,14 @@ function EditProfileForm() {
                 </button>
               </div>
               <p className=" w-[72px] flex justify-center items-center z-20">
-                {isSecondImage ? "2" : "1"}
-                <span className=" text-gray-600">/2</span>
+                {imageOrder + 1}
+                <span className=" text-gray-600">/{maxImage}</span>
               </p>
               <div className=" flex z-20">
                 <button
                   type="button"
                   id="back-preview-image-btn"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setIsSecondImage(false);
-                  }}
+                  onClick={handleBackImage}
                   className=" w-12 h-12 rounded-xl flex justify-center items-center"
                 >
                   <img
@@ -631,10 +787,7 @@ function EditProfileForm() {
                 <button
                   type="button"
                   id="next-preview-image-btn"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setIsSecondImage(true);
-                  }}
+                  onClick={handleNextImage}
                   className=" w-12 h-12 rounded-xl flex justify-center items-center"
                 >
                   <img
@@ -650,7 +803,10 @@ function EditProfileForm() {
           <div className="flex flex-col px-4 py-6 gap-6 items-center text-gray-900 leading-6">
             <article className=" w-full">
               <h1 className=" text-[46px] leading-[57.5px] font-extrabold mb-2">
-                {"John Snow"} <span className=" text-gray-700">{26}</span>
+                {userInfo.name}{" "}
+                <span className=" text-gray-700">
+                  {getAge(userInfo.birthdate)}
+                </span>
               </h1>
               <div className=" flex gap-4">
                 <img
@@ -660,25 +816,33 @@ function EditProfileForm() {
                   alt="location icon"
                 />
                 <p className=" text-xl leading-[30px] font-semibold">
-                  {"Bangkok, Thailand"}
+                  {userInfo.city}, {userInfo.location}
                 </p>
               </div>
             </article>
 
             <section className=" grid grid-cols-2 w-full py-2 gap-y-4">
               <p className=" flex items-center">Sexual identities</p>
-              <p className=" font-semibold text-gray-700">{"Male"}</p>
+              <p className=" font-semibold text-gray-700">
+                {userInfo.sexident}
+              </p>
               <p className=" flex items-center">Sexual preferences</p>
-              <p className=" font-semibold text-gray-700">{"Female"}</p>
+              <p className=" font-semibold text-gray-700">
+                {userInfo.sexprefer}
+              </p>
               <p className=" flex items-center">Racial preferences</p>
-              <p className=" font-semibold text-gray-700">{"Asian"}</p>
+              <p className=" font-semibold text-gray-700">
+                {userInfo.racialprefer}
+              </p>
               <p className=" flex items-center">Meeting interests</p>
-              <p className=" font-semibold text-gray-700">{"Friends"}</p>
+              <p className=" font-semibold text-gray-700">
+                {userInfo.meetprefer}
+              </p>
             </section>
 
             <article className=" w-full ">
               <h2 className=" mb-4 text-2xl font-bold lead-[30px]">About me</h2>
-              <p>{"I know nothing...but you"}</p>
+              <p>{userInfo.aboutMe}</p>
             </article>
 
             <article className=" w-full">
@@ -686,7 +850,7 @@ function EditProfileForm() {
                 Hobbies and Interests
               </h2>
               <div className=" flex flex-wrap gap-3">
-                {hobbiesList.map((item, index) => (
+                {userInfo.hobbiesList.map((item, index) => (
                   <div
                     key={index}
                     className=" px-4 py-2 rounded-xl border border-purple-300 text-purple-600"

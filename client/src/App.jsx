@@ -18,7 +18,7 @@ import PayMentOne from "./components/payment1.jsx";
 import Payment2Page from "./components/Payment2Page.jsx";
 import ComplainList from "./component/complainlist.jsx";
 import SeeComplaintDetail from "./component/seecomplaint.jsx";
-import MatchingChat from "../src/components/MatchingChat.jsx"
+import MatchingChat from "../src/components/MatchingChat.jsx";
 import ComplaintPage from "./components/ComplaintPage.jsx";
 import { useAuth } from "./context/auth.jsx";
 import NonUserRoutes from "./routes/non-user-routes.jsx";
@@ -28,18 +28,17 @@ import AdminRoutes from "./routes/admin-routes.jsx";
 function App() {
   const { isAuthenticated, state } = useAuth();
 
-console.log(state);
+  console.log(state);
 
   return (
     <>
-     
-       {(!isAuthenticated) ? (
+      {!isAuthenticated ? (
         <NonUserRoutes />
       ) : state.user.role === "admin" ? (
         <AdminRoutes />
       ) : (
         <UserRoutes />
-      )} 
+      )}
 
       {/*<Routes>
         <Route path="/" element={<LandingPage />} />

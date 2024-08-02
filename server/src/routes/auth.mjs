@@ -2,15 +2,20 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import connectionPool from "../utils/db.mjs";
+import multer from "multer";
+import cloudinaryProfileUplaod from "../utils/upload-profile.mjs";
 
 const authRouter = Router();
 
-authRouter.post("/register", async (req, res) => {
+const multerUpload = multer({ dest: "uploads-profile/" });
+const imageUpload = multerUpload.fields([{ name: "image", maxCount: 5 }]);
+
+authRouter.post("/register", imageUpload, async (req, res) => {
+  console.log(req.body);
   const user = {
     username: req.body.username,
     email: req.body.email,
     password: req.body.password,
-    createdAt: new Date(),
   };
 
   const userProfile = {
@@ -23,6 +28,8 @@ authRouter.post("/register", async (req, res) => {
     racialprefer: req.body.racialprefer,
     meetprefer: req.body.meetprefer,
   };
+
+  const hobbiesList = req.body.hobbiesList.split(",");
 
   try {
     if ((!user.username && !user.email) || !user.password) {
@@ -49,14 +56,14 @@ authRouter.post("/register", async (req, res) => {
     user.password = await bcrypt.hash(user.password, salt);
 
     const insertID = await connectionPool.query(
-      `insert into users (username, email, password, "createdAt") values ($1,$2,$3,$4) returning user_id`,
-      [user.username, user.email, user.password, user.createdAt]
+      `insert into users (username, email, password) values ($1,$2,$3) returning user_id`,
+      [user.username, user.email, user.password]
     );
 
     const [{ user_id }] = insertID.rows;
 
-    await connectionPool.query(
-      "insert into user_profiles (user_id, name, birthdate, location, city, sexident, sexprefer, racialprefer, meetprefer) values ($1,$2,$3,$4,$5,$6,$7,$8, $9)",
+    const insertProfileID = await connectionPool.query(
+      "insert into user_profiles (user_id, name, birthdate, location, city, sexident, sexprefer, racialprefer, meetprefer) values ($1,$2,$3,$4,$5,$6,$7,$8, $9) returning profile_id",
       [
         user_id,
         userProfile.name,
@@ -68,6 +75,31 @@ authRouter.post("/register", async (req, res) => {
         userProfile.racialprefer,
         userProfile.meetprefer,
       ]
+    );
+
+    const [{ profile_id }] = insertProfileID.rows;
+
+    hobbiesList.forEach(async (item) => {
+      await connectionPool.query(
+        `insert into user_hobbies (profile_id, hobby_name) values ($1,$2) `,
+        [profile_id, item]
+      );
+    });
+
+    const images = await cloudinaryProfileUplaod(req.files);
+
+    console.log(images);
+
+    images.forEach(async (image, index) => {
+      await connectionPool.query(
+        "insert into user_images (profile_id, image_order, image_url, public_id) values ($1,$2,$3,$4)",
+        [profile_id, index + 1, image.url, image.publicId]
+      );
+    });
+
+    await connectionPool.query(
+      `insert into user_statuses (user_id, merry_counts) values ($1,$2)`,
+      [user_id, 20]
     );
 
     return res.json({
@@ -94,7 +126,7 @@ authRouter.post("/login", async (req, res) => {
       "select * from users where username=$1 or email =$1",
       [req.body.username]
     );
-    console.log(userData);
+
     if (!userData.rowCount) {
       return res.status(404).json({
         code: "U001",
@@ -115,15 +147,44 @@ authRouter.post("/login", async (req, res) => {
       });
     }
 
-    if (user.role === "user") {
-      const nameData = await connectionPool.query(
-        "select name from user_profiles where user_id = $1",
-        [user.user_id]
-      );
-      const [{ name }] = nameData.rows;
-      user.name = name;
+    const nameData = await connectionPool.query(
+      "select name from user_profiles where user_id = $1",
+      [user.user_id]
+    );
+    const [{ name }] = nameData.rows;
+    user.name = name;
+    const packageData = await connectionPool.query(
+      `select p.packages_name, p.merry_limit from user_statuses s inner join packages p on s.package_id = p.package_id  where s.user_id = $1`,
+      [user.user_id]
+    );
+
+    if (packageData.rowCount) {
+      const [{ package_name, merry_limit }] = packageData.rows;
+      user.packageName = package_name;
+      user.merryLimit = merry_limit;
+    } else {
+      user.merryLimit = 50;
     }
 
+    const currentDate = new Date();
+    const lastLogin = user.last_login;
+
+    if (currentDate.toDateString() !== lastLogin.toDateString()) {
+      connectionPool.query(
+        `update user_statuses set merry_counts = $1 where user_id = $2`,
+        [user.merryLimit, user.user_id]
+      );
+    }
+
+    await connectionPool.query(
+      `update users set "last_login" = $1 where user_id = $2`,
+      [currentDate, user.user_id]
+    );
+
+    user.lastLogin = currentDate;
+
+    delete user.last_login;
+    delete user.merryLimit;
     //not export user password (hash)
     delete user.password;
 
@@ -132,7 +193,6 @@ authRouter.post("/login", async (req, res) => {
       code: "U000",
       message: "Login successfully",
       token,
-      user,
     });
   } catch (error) {
     console.log(error);
