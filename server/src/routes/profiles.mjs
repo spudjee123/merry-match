@@ -7,7 +7,7 @@ const profilesRouter = Router();
 profilesRouter.get("/", async (req, res) => {
   try {
     const profilesListData = await connectionPool.query(
-      `select p.profile_id, p.name, p.birthdate, p.location, p.city, p.sexident, p.sexprefer, p.racialprefer,p.meetprefer from users u inner join user_profiles p on u.user_id = p.user_id inner join user_images i on p.user `
+      `select u.user_id, p.profile_id, p.name, p.birthdate, p.location, p.city, p.sexident, p.sexprefer, p.racialprefer,p.meetprefer, i.image_url, i.image_order from users u inner join user_profiles p on u.user_id = p.user_id inner join user_images i on p.profile_id = i.profile_id where i.image_order = 1 `
     );
 
     const profilesList = profilesListData.rows;
