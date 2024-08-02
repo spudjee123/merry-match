@@ -15,7 +15,7 @@ const AdminPageSidebar = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white border-r border-gray-300 flex-col justify-start items-start gap-10 inline-flex">
+    <div className=" min-h-screen bg-white border-r border-gray-300 flex-col justify-start items-start gap-10 inline-flex">
       <div className="self-stretch h-[135px] p-6 flex-col justify-end items-center flex mt-5">
         <button onClick={handleClick}>
           <img src={logo} alt="Logo" />
