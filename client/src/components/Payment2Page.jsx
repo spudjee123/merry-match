@@ -5,16 +5,18 @@ import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Payment2Page = () => {
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
-    navigate("/");
+    navigate("/home-login");
   };
 
   const handleCheckPackage = () => {
-    navigate("/check/embership");
+    navigate("/user/Membership");
   };
 
   const [packages, setPackages] = useState([]);
