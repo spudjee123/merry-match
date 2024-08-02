@@ -1,98 +1,34 @@
-import React, { useState } from "react";
-import ImgUser1 from "../assets/images/mockupimguser1.png";
-import LikeButton from "../assets/images/likebutton.png";
-import DislikeButton from "../assets/images/dislikebutton.png";
-import SeeProfile from "../assets/images/seeprofile.png";
+import React from "react";
 import Heart from "../assets/images/heartmatchingpage.png";
 import ImgUser2 from "../assets/images/mockupimguser2.png";
 import ImgUser3 from "../assets/images/mockupimguser3.png";
 import Avatar from "../assets/images/avatarmatchingpage.png";
-import location from "../assets/images/location.png";
-import filter from "../assets/images/filter.png";
-import TinderCard from "react-tinder-card";
-import Nav from "../pages/non-user/nav";
-import MatchingAdvanced from "./MatchingAdvance";
+import NavUser from "../pages/user-profile-management/navUser";
+import Cardtinder from "./tinder/cardtinder";
+import RangeSlider from "./tinder/rangeslider";
 
 const MatchingPage = () => {
-  const [isHidden, setIsHidden] = useState(true);
-  const [minAge, setMinAge] = useState(18);
-  const [maxAge, setMaxAge] = useState(80);
-
-  const toggleDiv = () => setIsHidden(!isHidden);
-
-  const onSwipe = (direction) => {
-    console.log(`You swiped: ${direction}`);
-  };
-
-  const onCardLeftScreen = (myIdentifier) => {
-    console.log(`${myIdentifier} left the screen`);
-  };
-
-  const handleMinAgeChange = (e) => {
-    const value =
-      e.target.value === "" ? 0 : Math.min(Number(e.target.value), maxAge);
-    setMinAge(value);
-  };
-
-  const handleMaxAgeChange = (e) => {
-    const value =
-      e.target.value === "" ? 0 : Math.max(Number(e.target.value), minAge);
-    setMaxAge(value);
-  };
-
   return (
     <section>
-      <Nav />
+      <NavUser />
 
       {/* Mobile and iPad view */}
       <div className="lg:hidden bg-[#160404] h-screen overflow-x-hidden">
-        <img
-          src={ImgUser1}
-          className="mt-[115px] object-cover w-full rounded-b-3xl z-1 relative"
-        />
-        <div className="h-[30%] w-full absolute top-[46%] bg-gradient-to-t from-purple-900 to-transparent opacity-90 rounded-b-3xl z-2"></div>
-        <div className="absolute z-10 top-[65%] w-full flex flex-col items-center">
-          <div className="w-[90%] flex justify-between">
-            <p className="text-[45px] text-white ">Daeny 24</p>
-            <img src={SeeProfile} className="w-[60px] h-[60px] mt-2" />
-          </div>
-          <div className="w-[90%] flex">
-            <img src={location} className="mt-[6px] w-[15px] h-[20px]" />
-            <p className="text-[20px] ml-2 text-[#D6D9E4]">Bangkok, Thailand</p>
-          </div>
-          <div className="flex">
-            <button>
-              <img src={DislikeButton} className="cursor-pointer" />
-            </button>
-            <button>
-              <img src={LikeButton} className="cursor-pointer" />
-            </button>
-          </div>
-          <div className="mt-[15%] w-[90%] flex justify-between">
-            <div className="flex">
-              <img src={filter} className="w-[25px]" />
-              <p className="ml-2 text-[#D6D9E4]">Filter</p>
-            </div>
-            <p>
-              Merry limit today <span className="text-[#FF1659]">2/20</span>
-            </p>
-          </div>
-        </div>
+        <Cardtinder />
       </div>
 
       {/* Desktop view */}
-      <div className="bg-white mt-[115px] flex overflow-x-hidden max-lg:hidden">
+      <div className="bg-white mt-[70px] flex overflow-x-hidden max-lg:hidden">
         {/* Left View */}
         <div className="lg:w-[25%] border-2 flex flex-col items-center">
           <div className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center">
             <div className="lg:h-[80%] lg:w-[95%] lg:bg-[#F6F7FC] lg:rounded-xl lg:border lg:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
-              <img src={Heart} alt="" />
+              <img src={Heart} alt="Heart Icon" />
               <h2 className="lg:text-[#95002B] lg:text-[20px] lg:font-bold">
                 Discover New Match
               </h2>
               <p className="lg:text-[#646D89] lg:text-[12px]">
-                Start finding and Merry to get to know and connect with new
-                friends!
+                Start finding and connect with new friends!
               </p>
             </div>
           </div>
@@ -102,8 +38,8 @@ const MatchingPage = () => {
                 Merry Match!
               </h2>
               <div className="lg:flex lg:gap-5 lg:mt-[10px]">
-                <img src={ImgUser2} alt="ImgUser2" />
-                <img src={ImgUser3} alt="ImgUser3" />
+                <img src={ImgUser2} alt="User 2" />
+                <img src={ImgUser3} alt="User 3" />
               </div>
             </div>
           </div>
@@ -113,7 +49,7 @@ const MatchingPage = () => {
                 Chat with Merry Match
               </h2>
               <div className="lg:flex lg:mt-[15px] lg:gap-5">
-                <img src={Avatar} alt="" />
+                <img src={Avatar} alt="Avatar" />
                 <div>
                   <h1 className="lg:text-[16px] lg:text-[#2A2E3F]">Ygritte</h1>
                   <p className="lg:text-[12px] lg:text-[#646D89]">
@@ -126,20 +62,8 @@ const MatchingPage = () => {
         </div>
 
         {/* Middle View */}
-        <div className="lg:w-[55%] bg-[#160404] border-2 flex justify-center items-center">
-          <MatchingAdvanced />
-          {/* <TinderCard
-            onSwipe={onSwipe}
-            onCardLeftScreen={() => onCardLeftScreen("fooBar")}
-            preventSwipe={["right", "left"]}
-          >
-            <div className="bg-[#160404] p-4 rounded shadow">
-              <img src={ImgUser1} alt="User1" />
-            </div>
-            <div className="bg-[#160404] p-4 rounded shadow">
-              <img src={ImgUser2} alt="User2" />
-            </div>
-          </TinderCard> */}
+        <div className="lg:w-[55%] bg-[#160404]">
+          <Cardtinder />
         </div>
 
         {/* Right View */}
@@ -192,79 +116,9 @@ const MatchingPage = () => {
 
           {/* Age Range */}
           <div className="mt-[25%]">
-            <p className="text-black text-lg ml-4">Age Range</p>
-            <div className="relative w-[90%] mt-4 ml-4">
-              <div className="">
-                <input
-                  type="range"
-                  step="1"
-                  min={18}
-                  max={maxAge}
-                  value={minAge}
-                  onChange={handleMinAgeChange}
-                  className={`absolute pointer-events-auto appearance-none z-20 h-2 w-[50%] opacity-0 cursor-pointer`}
-                />
-                <input
-                  type="range"
-                  step="1"
-                  min={minAge}
-                  max={80}
-                  value={maxAge}
-                  onChange={handleMaxAgeChange}
-                  className={`absolute pointer-events-auto appearance-none z-20 h-2 w-[50%] right-0 opacity-0 cursor-pointer`}
-                />
-                <div className="relative z-10 h-2 ">
-                  <div className="absolute z-10 left-0 right-0 bottom-0 top-0 h-1 rounded-md bg-gray-200 "></div>
-                  <div
-                    className="absolute z-20 top-0 bottom-0 rounded-md flex h-1 bg-purple-500"
-                    style={{
-                      right: `${(1 - (maxAge - 18) / 80) * 100}%`,
-                      left: `${((minAge - 18) / 80) * 100}%`,
-                    }}
-                  ></div>
-                  <div
-                    className="absolute z-30 w-5 h-5 top-0 left-0 bg-purple-300 border-[3px] border-purple-500 rounded-full -mt-2 -ml-1"
-                    style={{
-                      left: `${((minAge - 18) / 80) * 100}%`,
-                    }}
-                  ></div>
-                  <div
-                    className="absolute z-30 w-5 h-5 bg-purple-300 border-[3px] right-0 border-purple-500 rounded-full -mt-2 -mr-3"
-                    style={{
-                      right: `${(1 - (maxAge - 18) / 80) * 100}%`,
-                    }}
-                  ></div>
-                </div>
-              </div>
-              <div className="flex justify-between items-center py-5">
-                <input
-                  type="text"
-                  // maxLength="5"
-                  value={minAge}
-                  onChange={(e) =>
-                    handleMinAgeChange({
-                      target: {
-                        value: Math.max(parseInt(e.target.value) || 0),
-                      },
-                    })
-                  }
-                  className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-[110px] h-[60px] text-start"
-                />
-                <p className="text-black">-</p>
-                <input
-                  type="text"
-                  // maxLength="5"
-                  value={maxAge}
-                  onChange={(e) =>
-                    handleMaxAgeChange({
-                      target: {
-                        value: Math.min(parseInt(e.target.value) || 0, 80),
-                      },
-                    })
-                  }
-                  className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-[110px] h-[60px] text-start"
-                />
-              </div>
+            <p className="text-black text-lg ml-3">Age Range</p>
+            <div className="flex justify-center">
+              <RangeSlider />
             </div>
           </div>
           <div className="flex m-6 justify-between">
