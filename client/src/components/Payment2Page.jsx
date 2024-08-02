@@ -10,11 +10,11 @@ const Payment2Page = () => {
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
-    navigate("/home-login");
+    navigate("/");
   };
 
   const handleCheckPackage = () => {
-    navigate("/user/Membership");
+    navigate("/check/embership");
   };
 
   const [packages, setPackages] = useState([]);

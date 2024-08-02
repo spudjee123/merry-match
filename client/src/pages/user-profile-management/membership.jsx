@@ -5,7 +5,9 @@ import check from "./images/check.png";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
+import { useAuth } from "../../context/auth";
 
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 // const priceId =
 //   packageName.name === "Basic"
 //     ? process.env.STRIPE_PRICE_ID_BASIC
@@ -41,6 +43,9 @@ import { loadStripe } from "@stripe/stripe-js";
 
 function Membership() {
   const [packages, setPackages] = useState([]);
+  const  { state } = useAuth() 
+  const userName = state.user?.name
+  console.log(state)
 
   const getData = async () => {
     try {
@@ -59,13 +64,13 @@ function Membership() {
     item.packages_name.toLowerCase()
   );
 
-  
-const orderPayment = {
-  user: { name: "YourUserName" }, packageName: { name: "Basic" },};
-
-  const paymentCheckout = async () => {
+  const paymentCheckout = async (packageName) => {
+    const orderPayment = {
+      user: { name: userName },
+      packageName: { name: packageName },
+    };
     const stripe = await loadStripe(
-      "pk_test_51PfZ62RwhwPMa1TWPdOpfAzf1QLKPwWMYmcLUuQ6Q3zwvT3c1OuhV7G573684JGsZC9Mm1sApO8LtcgFsOWdGYOf00POWiZaJZ"
+      import.meta.env.VITE_STRIPE_PUBLIC_KEY
     );
     try {
       const result = await axios.post(
