@@ -1,6 +1,8 @@
 import PackageListPage from "../component/packagelist";
 import AddPackagePage from "../component/addpackage";
 import EditPackage from "../component/editpackage";
+import ComplainList from "../component/complainlist.jsx";
+import SeeComplaintDetail from "../component/seecomplaint.jsx";
 import { Routes, Route } from "react-router-dom";
 
 function AdminRoutes() {
@@ -9,6 +11,8 @@ function AdminRoutes() {
       <Route path="/package/add" element={<AddPackagePage />} />
       <Route path="/package/view" element={<PackageListPage />} />
       <Route path="/package/edit/:package_id" element={<EditPackage />} />
+      <Route path="/complaint/list" element={<ComplainList />} />
+      <Route path="/complaint/see" element={<SeeComplaintDetail />} />
     </Routes>
   );
 }
