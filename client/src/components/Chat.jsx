@@ -51,6 +51,7 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
 
   // function for uploading img
   const handleImg = (e) => {
+    console.log("File selected:", e.target.files[0]);
     if (e.target.files[0]) {
       setImg({
         file: e.target.files[0],

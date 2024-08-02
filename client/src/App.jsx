@@ -17,26 +17,31 @@ import MerryMembership from "./components/merrymembership.jsx";
 import PayMentOne from "./components/payment1.jsx";
 import Payment2Page from "./components/Payment2Page.jsx";
 import MatchingChat from "../src/components/MatchingChat.jsx"
+import ComplaintPage from "./components/ComplaintPage.jsx";
 
 
-// import { useAuth } from "./context/auth.jsx";
-// import NonUserRoutes from "./routes/non-user-routes.jsx";
-// import UserRoutes from "./routes/user-routes.jsx";
-// import AdminRoutes from "./routes/admin-routes.jsx";
+import { useAuth } from "./context/auth.jsx";
+import NonUserRoutes from "./routes/non-user-routes.jsx";
+import UserRoutes from "./routes/user-routes.jsx";
+import AdminRoutes from "./routes/admin-routes.jsx";
 
 function App() {
-  // const { isAuthenticated, state } = useAuth();
+  const { isAuthenticated, state } = useAuth();
+
+console.log(state);
+
   return (
     <>
-      {/* {(!isAuthenticated) ? (
-      {/* {(!isAuthenticated) ? (
+     
+       {(!isAuthenticated) ? (
         <NonUserRoutes />
       ) : state.user.role === "admin" ? (
         <AdminRoutes />
       ) : (
         <UserRoutes />
-      )} */}
-      <Routes>
+      )} 
+
+      {/*<Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/package/add" element={<AddPackagePage />} />
         <Route path="/package/view" element={<PackageListPage />} />
@@ -53,8 +58,8 @@ function App() {
         <Route path="/user/payment1" element={<PayMentOne />} />
         <Route path="/user/payment2" element={<Payment2Page />} />
         <Route path="/user/matchingchat" element={<MatchingChat />} />
-
-      </Routes>
+        <Route path="/user/complaint" element={<ComplaintPage />} />
+      </Routes> */}
     </>
   );
 }

@@ -16,6 +16,7 @@ import cloudinary from "./src/utils/cloudinary.js";
 
 dotenv.config();
 
+import { validate as isUuid } from 'uuid';
 
 import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe';
@@ -135,35 +136,6 @@ app.post("/admin/create", async (req, res) => {
 });
 
 // user upload img from chat
-// app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
-//   if (!req.file) {
-//     return res.status(400).json({ error: "No file uploaded" });
-//   }
-
-//   const imgUrl = `http://localhost:4001/uploads/${req.file.filename}`;
-
-//   const newPackages = {
-//     img: imgUrl,
-//     created_at: new Date(),
-//     updated_at: new Date(),
-//   };
-
-//   try {
-//     await connectionPool.query(
-//       `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
-//       [newPackages.img, newPackages.created_at, newPackages.updated_at]
-//     );
-//     return res.status(201).json({
-//       message: "Create data successfully.",
-//     });
-//   } catch (error) {
-//     console.error("Database insertion error:", error);
-//     return res.status(500).json({
-//       message: "The server has encountered a situation it does not know how to handle.",
-//       error: error.message,
-//     });
-//   }
-// });
 app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -463,6 +435,98 @@ app.post('/webhook', express.raw({type: 'application/json'}), (req, res) => {
   // Return a 200 response to acknowledge receipt of the event
   res.send();
 });
+
+
+//user create complaint
+app.post("/user/complaint", async (req, res) => {
+  const { user_id, name, issue, description, status } = req.body;
+
+  if (!user_id || !name || !issue || !description) {
+    return res.status(400).json({
+      message: "Missing or invalid request data.",
+    });
+  }
+
+  const newComplaint = {
+    ...req.body,
+    status: status || null,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  try {
+    await connectionPool.query(
+      `insert into user_complaint (user_id,name,issue,description,status,created_at) values ($1,$2,$3,$4,$5,$6)`,
+      [
+        newComplaint.user_id,
+        newComplaint.name,
+        newComplaint.issue,
+        newComplaint.description,
+        newComplaint.status,
+        newComplaint.created_at,
+      ]
+    );
+    return res.status(201).json({
+      message: "Create complaint successfully.",
+    });
+  } catch (error) {
+    console.error("Database insertion error:", error);
+    return res.status(500).json({
+      message:
+        "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});
+
+// เทส get package name for noon
+stripeRouter.get("/api/order/:order_id", async (req, res) => {
+  const orderId = req.params.order_id; 
+
+  // ตรวจสอบฟอร์แมตของ UUID
+  if (!isUuid(orderId)) {
+    return res.status(400).json({
+      message: "Invalid order ID format. Order ID must be a valid UUID.",
+    });
+  }
+
+  console.log("Order ID:", orderId); // พิมพ์ orderId เพื่อตรวจสอบ
+
+  try {
+    const { data, error } = await supabase
+      .from('payment_test')
+      .select('package_name')
+      .eq('order_id', orderId)
+      .maybeSingle();
+
+    console.log("Data:", data); // พิมพ์ข้อมูลที่ดึงมาเพื่อตรวจสอบ
+
+    if (error) {
+      return res.status(500).json({
+        message: "There was an error retrieving the data from the database.",
+        error: error.message,
+      });
+    }
+
+    if (!data) {
+      return res.status(404).json({
+        message: `No package found with order ID: ${orderId}`,
+      });
+    }
+
+    return res.status(200).json({
+      data: data,
+    });
+  } catch (error) {
+    console.error("Server error:", error); // พิมพ์ข้อผิดพลาดจากเซิร์ฟเวอร์
+    return res.status(500).json({
+      message: "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});
+
+
 
 
 server.listen(port, () => {

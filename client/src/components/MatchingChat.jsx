@@ -50,7 +50,7 @@ const MatchingChat = () => {
 
   return (
     <section className="bg-[#200009] w-full h-screen">
-      <div>
+      <div className="lg:z-1000 lg:relative">
         <Nav />
       </div>
       {/* mobile view */}
@@ -164,8 +164,8 @@ const MatchingChat = () => {
         {/* right container */}
         <div className="bg-[#200009] lg:w-[80%] lg:flex lg:flex-col lg:justify-end lg:items-end">
           {/* chat box */}
-          <div className="lg:w-full lg:mx-auto">
-            <div className="lg:w-[90%] mx-auto flex flex-col">
+          <div className="lg:w-full lg:mx-auto lg:overflow-hidden">
+            <div className="lg:w-[90%] mx-auto flex flex-col lg:h-[670px] lg:overflow-y-auto">
               {messages.map((message, index) => {
                 console.log(message); // ตรวจสอบค่าของ message
                 return (

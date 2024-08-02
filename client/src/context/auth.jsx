@@ -6,6 +6,9 @@ import { jwtDecode } from "jwt-decode";
 const AuthContext = createContext();
 
 function AuthProvider(props) {
+
+  const navigate = useNavigate();
+
   //get data from token on local storage
   const getDataFromToken = () => {
     const token = localStorage.getItem("token");
@@ -45,7 +48,7 @@ function AuthProvider(props) {
       console.log(error);
       setState({
         ...state,
-        error: error.response.data.message,
+        error: error,
         loading: false,
       });
     }

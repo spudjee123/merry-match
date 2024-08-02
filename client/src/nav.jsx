@@ -58,7 +58,7 @@ function Nav() {
         </div>
       </div>
       {/* ขนาดจอใหญ่ */}
-      <nav className="max-w-full px-4 sm:px-6 lg:px-8 bg-white h-[100px] flex items-center justify-center  flex-wrap ">
+      <nav className="max-w-full px-4 sm:px-6 lg:px-8 bg-white h-[70px] flex items-center justify-center  flex-wrap ">
         <div className="flex flex-rows flex-wrap w-full justify-between place-content-center">
           <div className="hidden md:flex space-x-6 content-start gap-6 ">
             <Link
