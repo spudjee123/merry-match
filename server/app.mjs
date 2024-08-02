@@ -368,111 +368,83 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
 //   }
 // });
 
-// ยิงreq ไปที่stripeโดยตรง
-app.post("/api/checkout", express.json(), async (req, res) => {
-  console.log(req.body);
-  const { user, packageName } = req.body;
-  if (!user || !packageName) {
-    return res
-      .status(400)
-      .json({ error: "Missing user or packageName in request body" });
-  }
-
-  if (!user.name || !packageName.name) {
-    return res
-      .status(400)
-      .json({ error: "Missing name in user or packageName" });
-  }
-  // random id
-  const orderId = uuidv4();
-
+app.post('/merry', async (req, res) => {
+  const inputUser = { ...req.body }
+  console.log(inputUser)
   try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "thb",
-            product_data: {
-              name: packageName.name,
-            },
-            unit_amount: packageName.price * 100,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `http://localhost:4001/success?id=${orderId}`,
-      cancel_url: `http://localhost:4001/cancel?id=${orderId}`,
-    });
-
-    const orderData = {
-      name: user.name,
-      package_name: packageName.name,
-      order_id: orderId,
-      session_id: session.id,
-      status: session.status,
-    };
-
     const result = await connectionPool.query(
-      `INSERT INTO payment_test (name,package_name,order_id,status,session_id) 
-      VALUES ($1, $2, $3, $4, $5) `,
-      [user.name, packageName.name, orderId, session.status, session.id]
+      `INSERT INTO match_friend (user_id, friend_id, updated_at) VALUES ($1, $2,$3)RETURNING *`,
+      [inputUser.user_id, inputUser.friend_id, new Date()]
     );
-
-    console.log("Created session:", session);
-
-    res.json({ user, packageName, order: result });
+    res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("Error creating session:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// เช็ค order id ว่า status เป็นยังไง
-app.get("/api/order/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const result = await connectionPool.query(
-      `select * from payment_test where order_id = $1 `,
-      [id]
-    );
-    res.json({ result });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Server could not read assignment because database connection",
+// update status table match_friend
+app.post('/match', async (req, res) => {
+  const { user_id, friend_id } = req.body;
+
+  if (!user_id || !friend_id) {
+    return res.status(400).json({
+      message: "Missing or invalid request data.",
     });
+  }
+
+  try {
+    // ตรวจสอบว่ามีคู่ friend_id และ user_id ที่สลับกันอยู่ในฐานข้อมูลหรือไม่
+    const checkResult = await connectionPool.query(
+      'SELECT * FROM match_friend WHERE user_id = $1 AND friend_id = $2',
+      [friend_id, user_id]
+    );
+
+    if (checkResult.rows.length > 0) {
+      // อัพเดทสถานะเมื่อพบคู่ที่สลับกัน
+      await connectionPool.query(
+        'UPDATE match_friend SET status = $1, updated_at = $2 WHERE user_id = $3 AND friend_id = $4',
+        ['match', new Date(), friend_id, user_id]
+      );
+      return res.status(200).json({ message: "Updated status to 'match'." });
+    } else {
+      // เพิ่มข้อมูลใหม่ในกรณีที่ไม่พบคู่ที่สลับกัน
+      const result = await connectionPool.query(
+        'INSERT INTO match_friend (user_id, friend_id) VALUES ($1, $2) RETURNING *',
+        [user_id, friend_id]
+      );
+      return res.status(201).json(result.rows[0]);
+    }
+  } catch (error) {
+    console.error("Database error:", error);
+    return res.status(500).json({ error: error.message });
   }
 });
 
-app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
-  // รับค่า stripe-signature
-  const sig = req.headers["stripe-signature"];
+// จบทุกสิ่งทุกอย่าง เหมือนไม่มีอะไรเกิดขึ้น
+app.post('/unmatch', async (req, res) => {
+  const { user_id, friend_id } = req.body;
 
-  let event;
+  if (!user_id || !friend_id) {
+    return res.status(400).json({
+      message: "Missing or invalid request data.",
+    });
+  }
 
   try {
-    // แล้วเอาไปเทียบ
-    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-  } catch (err) {
-    res.status(400).send(`Webhook Error: ${err.message}`);
-    return;
-  }
+    const result = await connectionPool.query(
+      'DELETE FROM match_friend WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1) RETURNING *',
+      [user_id, friend_id]
+    );
 
-  // Handle the event ถ้าทำสำเร็จ
-  switch (event.type) {
-    case "checkout_intent.succeeded":
-      const paymentIntentSucceeded = event.data.object;
-      console.log("paymentIntentSucceeded", paymentIntentSucceeded);
-      // Then define and call a function to handle the event payment_intent.succeeded ได้Data objออกมา จะบอกว่าสำเร็จ
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Friendship not found' });
+    }
 
-  // Return a 200 response to acknowledge receipt of the event
-  res.send();
+    res.status(200).json({ message: 'Successfully unfriended', data: result.rows[0] });
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 //user create complaint
