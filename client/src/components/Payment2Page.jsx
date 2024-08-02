@@ -5,18 +5,16 @@ import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import axios from "axios";
 
 const Payment2Page = () => {
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
-    navigate("/home-login");
+    navigate("/");
   };
 
   const handleCheckPackage = () => {
-    navigate("/user/Membership");
+    navigate("/check/membership");
   };
 
   const [packages, setPackages] = useState([]);
@@ -139,7 +137,10 @@ const Payment2Page = () => {
       {/* display lg up */}
       <div className="hidden lg:max-w-[800px] lg:flex lg:mx-auto lg:mt-[100px] lg:mb-[300px] 2xl:max-w-[1200px]">
         {filteredPackages.map((item, index) => (
-          <div key={index} className="hidden lg:max-w-[800px] lg:flex lg:mx-auto lg:mt-[100px] lg:mb-[300px] 2xl:max-w-[1200px]">
+          <div
+            key={index}
+            className="hidden lg:max-w-[800px] lg:flex lg:mx-auto lg:mt-[100px] lg:mb-[300px] 2xl:max-w-[1200px]"
+          >
             <div className="lg:pt-[100px] lg:w-[70%] lg:mx-auto 2xl:w-[60%]">
               <div className="lg:h-[80px] lg:w-[80px]">
                 <img src={Success} alt="" />
@@ -179,9 +180,12 @@ const Payment2Page = () => {
                   <img src={item.icons} alt="" />
                 </div>
                 <div className="mt-[10px]">
-                  <h2 className="text-white text-[32px] font-bold">{item.packages_name}</h2>
+                  <h2 className="text-white text-[32px] font-bold">
+                    {item.packages_name}
+                  </h2>
                   <p className="text-white text-[26px]">
-                  THB {item.price}.00 <span className="text-[16px]">/Mouth</span>
+                    THB {item.price}.00{" "}
+                    <span className="text-[16px]">/Mouth</span>
                   </p>
                 </div>
                 <div className="mt-[15px]">
@@ -197,7 +201,9 @@ const Payment2Page = () => {
                     <span className="h-[20px] w-[20px]">
                       <img src={Success} alt="" />
                     </span>
-                    <p className="text-white">Up to {item.merry_limit} Merry per day</p>
+                    <p className="text-white">
+                      Up to {item.merry_limit} Merry per day
+                    </p>
                   </div>
                 </div>
                 <div className="w-[95%] mx-auto mb-[40px]">

@@ -19,7 +19,7 @@ function UserRoutes() {
       <Route path="/merry-list" element={<MerryListPage />} />
       <Route path="/membership" element={<Membership />} />
       <Route path="/matching" element={<MatchingPage />} />
-      <Route path="/check/embership" element={<MerryMembership />} />
+      <Route path="/check/membership" element={<MerryMembership />} />
       <Route path="/paymentone" element={<PayMentOne />} />
       <Route path="/success" element={<Payment2Page />} />
       <Route path="/matchingchat" element={<MatchingChat />} />
