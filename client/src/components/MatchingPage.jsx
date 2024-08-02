@@ -18,7 +18,7 @@ const MatchingPage = () => {
       </div>
 
       {/* Desktop view */}
-      <div className="bg-white mt-[115px] flex overflow-x-hidden max-lg:hidden">
+      <div className="bg-white mt-[70px] flex overflow-x-hidden max-lg:hidden">
         {/* Left View */}
         <div className="lg:w-[25%] border-2 flex flex-col items-center">
           <div className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center">
