@@ -9,7 +9,6 @@ import Payment2Page from "../components/Payment2Page";
 import { Routes, Route } from "react-router-dom";
 import MatchingChat from "../components/MatchingChat"
 import ComplaintPage from "../components/ComplaintPage";
-import TestComplaintPage from "../component/TestComplaintPage";
 
 
 
@@ -28,8 +27,6 @@ function UserRoutes() {
       <Route path="/payment2" element={<Payment2Page />} />
       <Route path="/matchingchat" element={<MatchingChat />} />
       <Route path="/complaint" element={<ComplaintPage />} />
-      <Route path="/test" element={<TestComplaintPage />} />
-
     </Routes>
   );
 }
