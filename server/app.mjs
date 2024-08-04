@@ -87,20 +87,19 @@ app.get("/test", (req, res) => {
 });
 
 // get all user
-// app.get("/users", async (req, res) => {
-//   let result;
-//   try {
-//     const auth = req.headers["authorization"];
-//     console.log("authorization", auth);
+app.get("/users", async (req, res) => {
+  let result;
+  try {
+    const auth = req.headers["authorization"];
 
-//     result = await connectionPool.query(`select * from users`);
-//   } catch (error) {
-//     return res.status(500).json({
-//       message: "Server could not read assignment because database connection",
-//     });
-//   }
-//   return res.status(200).json({ data: result.rows });
-// });
+    result = await connectionPool.query(`select profile_id,name,image_url from user_profiles`);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server could not read assignment because database connection",
+    });
+  }
+  return res.status(200).json({ data: result.rows });
+});
 
 //admin can create
 app.post("/admin/create", async (req, res) => {
