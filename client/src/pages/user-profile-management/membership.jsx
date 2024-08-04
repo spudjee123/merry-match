@@ -91,7 +91,7 @@ function Membership() {
   return (
     <>
       <NavUser />
-      <div className="bg-main py-24 sm:py-32 mt-[80px] overflow-x-hidden">
+      <div className="bg-main py-24 sm:py-32 mt-[50px] overflow-x-hidden">
         <div className="max-w-2xl max-lg:ml-[40px] lg:ml-[200px]">
           <h2 className="text-lg leading-8 text-beige-700 mb-4">
             Merry Membership
