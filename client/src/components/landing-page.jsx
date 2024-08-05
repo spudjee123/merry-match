@@ -11,31 +11,33 @@ import emojilove from "../assets/images/emojilove.png";
 import containervertical from "../assets/images/containervertical.png";
 import Nav from "../pages/non-user/nav";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 export function LandingPage() {
+  const navigate = useNavigate();
   return (
     <div className="bg-[#160404] pt-[180px] overflow-x-hidden">
       <Nav />
       {/* Section 1 */}
       <div className="relative flex flex-col lg:flex-row-reverse lg:gap-6 lg:justify-center items-center">
         {/* Background Circles and Images */}
-        <div className="absolute max-lg:hidden">
-          <div className="w-[67px] h-[67px] bg-[#411032] rounded-full absolute left-[-10px] top-[120px]" />
+        <div className="max-lg:hidden">
+          <div className="w-[67px] h-[67px] bg-[#411032] rounded-full absolute top-[100px] left-[-15px]" />
           <div className="w-[60px] h-[60px] bg-[#32000E] rounded-full absolute right-[100px] top-[379px]" />
           <div className="w-2 h-2 bg-yellow-900 rounded-full absolute right-[250px] top-[481px]" />
-          <div className="w-2 h-2 bg-rose-400 rounded-full absolute left-[127px] top-[75px]   " />
+          <div className="w-2 h-2 bg-rose-400 rounded-full absolute left-[127px] top-[50px]   " />
           <div className="w-7 h-7 absolute right-[150px] top-[410px]">
-            <img className="w-full h-full" src={emojismile} />
+            <img className="w-full h-full " src={emojismile} />
           </div>
-          <div className="w-7 h-7 absolute right-[550px] top-[100px]">
-            <img className="w-full h-full" src={heart} />
+          <div className="w-7 h-7 absolute left-[55%] top-[100px]">
+            <img className="w-full h-full " src={heart} />
           </div>
         </div>
 
         {/* Main Image */}
-        <div className="relative h-[209px] w-screen lg:w-[357px] lg:h-[758px] z-10">
+        <div className="relative h-[209px] w-screen lg:w-[357px] lg:h-[758px]">
           <img
-            className="absolute w-[217.77px] h-[305px] lg:w-[357px] lg:h-[500px] lg:top-[-144px] max-lg:top-[-96px] max-lg:left-[-30px] z-10"
+            className="absolute w-[250px] h-[305px] lg:w-[357px] lg:h-[500px] lg:top-[-144px] max-lg:top-[-96px] max-lg:left-[-30px]"
             src={female1}
           />
         </div>
@@ -50,7 +52,12 @@ export function LandingPage() {
             new people in your area! <br />
             Don’t forget to get Merry with us
           </p>
-          <button className="px-6 py-3 bg-rose-700 rounded-full shadow text-base font-bold leading-normal font-['Nunito']">
+          <button
+            onClick={() => {
+              navigate("/login");
+            }}
+            className="px-6 py-3 bg-rose-700 rounded-full hover:bg-[#FFE1EA] hover:text-[#95002B] shadow text-base font-bold leading-normal font-['Nunito']"
+          >
             Start matching!
           </button>
         </div>
@@ -66,7 +73,7 @@ export function LandingPage() {
       {/* Section 2 */}
       <section
         id="section-two"
-        className=" relative z-10 flex flex-col lg:flex-row lg:justify-center gap-[82px] lg:gap-[25px] lg:pb-20 pt-10 lg:pt-[105px] items-center bg-[#160404]"
+        className=" relative z-10 flex flex-col lg:flex-row lg:justify-center gap-[82px] lg:gap-[25px] lg:pb-20 pt-10 lg:pt-[150px] items-center bg-[#160404]"
       >
         <div className="w-[500px] max-lg:w-[330px]">
           <h2 className="text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
@@ -95,7 +102,7 @@ export function LandingPage() {
       {/* Section 3 */}
       <section
         id="section-three"
-        className="flex flex-col items-center bg-[#160404] pt-20 pb-[88px] lg:pt-[196.38px] lg:pb-[81px]"
+        className="flex flex-col items-center bg-[#160404] pt-20 pb-[88px] lg:pt-[150px] lg:pb-[81px]"
       >
         <h2 className="w-[300px] text-center text-pink-400 text-[46px] font-extrabold leading-[57.50px] font-['Nunito']">
           How to Merry
@@ -143,13 +150,17 @@ export function LandingPage() {
               Let’s start <br className="xl:hidden" /> finding <br /> and
               matching someone new
             </div>
-            <button className="px-6 py-3 bg-rose-100 rounded-full font-bold leading-normal font-['Nunito'] text-red-600">
+            <button
+              onClick={() => {
+                navigate("/login");
+              }}
+              className="px-6 py-3 bg-rose-100 rounded-full hover:bg-[#E4E6ED] font-bold leading-normal font-['Nunito'] text-red-600"
+            >
               Start Matching!
             </button>
           </div>
         </div>
       </section>
-      {/* <div className="max-lg:absolute max-lg:top-[1200px]"> */}
       <div className="">
         <Footer />
       </div>
