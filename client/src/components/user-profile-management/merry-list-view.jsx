@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import * as userProfilesTest from "../../assets/test-data/user-profiles-data.json";
 import merryRedIcon from "../../assets/icons/user-profile-management/merry-list/merry-red-icon.png";
@@ -16,12 +16,32 @@ import backIcon from "../../assets/icons/back-vector-icon.png";
 import exitIcon from "../../assets/icons/cancel-icon.png";
 import exitPreviewIcon from "../../assets/icons/preview-exit-icon.png";
 
+import useProfiles from "../../hooks/use-profiles";
+
+import getAge from "../../utils/get-age.jsx";
+
 function MerryListView() {
   console.log(userProfilesTest.data);
   const [isSecondImage, setIsSecondImage] = useState(false);
   const [currentView, setCurrentView] = useState({});
   const [isMobilePreview, setIsMobilePreview] = useState(false);
   const date = new Date();
+
+  const { profile, profilesList, getProfileById, getProfiles } = useProfiles();
+
+  useEffect(() => {
+    getProfiles();
+  }, []);
+
+  console.log(profilesList);
+  console.log(profile);
+
+  console.log("profile", profile);
+  console.log("currrent", currentView);
+
+  useEffect(() => {
+    setCurrentView(profile);
+  }, [profile]);
 
   return (
     <>
@@ -63,7 +83,7 @@ function MerryListView() {
               <div className=" text-right">
                 <p className=" text-gray-700">
                   Merry limit today
-                  <span className=" text-red-400 ">{`${2}/${20}`}</span>
+                  <span className=" text-red-400 ">{` ${2}/${20}`}</span>
                 </p>
                 <p className=" text-xs leading-[18px] text-gray-600">
                   Reset in {24 - date.getHours()}h...
@@ -71,14 +91,17 @@ function MerryListView() {
               </div>
             </div>
           </header>
-          <section className=" flex flex-wrap gap-x-3 gap-y-6">
-            {userProfilesTest.data.map((item, index) => (
+          <section className=" flex flex-col gap-x-3 gap-y-6">
+            {profilesList.map((item, index) => (
               <article className=" border-b border-b-gray px-4 pt-4 pb-6 flex-1 flex flex-col lg:flex-row lg:justify-between">
                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 ">
                   <header className=" flex justify-between gap-2">
                     <div className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] flex justify-center items-center rounded-3xl overflow-hidden relative">
-                      <img src={item.images[1]} />
-                      {item.status === "match" ? (
+                      <img
+                        className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] object-cover"
+                        src={item.image_url}
+                      />
+                      {item.user_id === "match" ? (
                         <p className=" text-purple-600 bg-purple-100 pl-[10px] px-[1px] pr-[6px] rounded-tr-lg absolute left-0 bottom-0 text-xs font-medium max-lg:hidden">
                           Merry today
                         </p>
@@ -86,11 +109,13 @@ function MerryListView() {
                     </div>
                     <div className=" lg:hidden flex flex-col items-end gap-6">
                       <img
-                        src={item.status === "match" ? matchIcon : notMatchIcon}
+                        src={
+                          item.user_id === "match" ? matchIcon : notMatchIcon
+                        }
                         className=" h-8"
                       />
                       <div className=" flex gap-3">
-                        {item.status === "match" ? (
+                        {item.user_id === "match" ? (
                           <button
                             className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                             id="chat-btn"
@@ -102,7 +127,8 @@ function MerryListView() {
                           className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                           id="view-btn"
                           onClick={() => {
-                            setCurrentView(item);
+                            getProfileById(item.user_id);
+                            setCurrentView(profile);
                             setIsMobilePreview(true);
                           }}
                         >
@@ -121,7 +147,9 @@ function MerryListView() {
                     <div className=" flex gap-4 items-center">
                       <h2 className=" flex gap-2 text-2xl leading-[30px] font-bold ">
                         {item.name.split(" ")[0]}
-                        <span className=" text-gray-700">{26}</span>
+                        <span className=" text-gray-700">
+                          {getAge(item.birthdate)}
+                        </span>
                       </h2>
                       <p className=" flex whitespace-nowrap gap-2 items-center text-gray-700">
                         <img src={locationIcon} className=" w-4 h-4" />
@@ -151,11 +179,11 @@ function MerryListView() {
 
                 <aside className=" max-lg:hidden flex flex-col items-end gap-6">
                   <img
-                    src={item.status === "match" ? matchIcon : notMatchIcon}
+                    src={item.user_id === "match" ? matchIcon : notMatchIcon}
                     className=" h-8"
                   />
                   <div className=" flex gap-3">
-                    {item.status === "match" ? (
+                    {item.user_id === "match" ? (
                       <button
                         className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                         id="chat-btn"
@@ -167,7 +195,8 @@ function MerryListView() {
                       className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                       id="view-btn"
                       onClick={() => {
-                        setCurrentView(item);
+                        getProfileById(item.user_id);
+                        setCurrentView(profile);
                         document.getElementById("preview").showModal();
                       }}
                     >
@@ -202,8 +231,8 @@ function MerryListView() {
                       src={
                         !currentView.images
                           ? ""
-                          : currentView.images[1] && currentView.images[2]
-                          ? currentView.images[isSecondImage ? 2 : 1]
+                          : currentView.images[0] && currentView.images[1]
+                          ? currentView.images[isSecondImage ? 1 : 0]
                           : ""
                       }
                       className=" w-[478px] h-[478px] object-cover rounded-[32px]"
@@ -273,7 +302,9 @@ function MerryListView() {
                   <article className=" w-[418px]">
                     <h1 className=" text-[46px] leading-[57.5px] font-extrabold mb-2">
                       {currentView.name}{" "}
-                      <span className=" text-gray-700">{26}</span>
+                      <span className=" text-gray-700">
+                        {getAge(currentView.birthdate)}
+                      </span>
                     </h1>
                     <div className=" flex gap-4">
                       <img
@@ -311,7 +342,7 @@ function MerryListView() {
                     <h2 className=" mb-4 text-2xl font-bold lead-[30px]">
                       About me
                     </h2>
-                    <p>{"I know nothing...but you"}</p>
+                    <p>{currentView.aboutMe}</p>
                   </article>
 
                   <article className=" w-[418px]">
@@ -319,7 +350,7 @@ function MerryListView() {
                       Hobbies and Interests
                     </h2>
                     <div className=" flex flex-wrap gap-3">
-                      {(currentView.hobbies || []).map((item, index) => (
+                      {(currentView.hobbiesList || []).map((item, index) => (
                         <div
                           key={index}
                           className=" px-4 py-2 rounded-xl border border-purple-300 text-purple-600"
@@ -473,7 +504,7 @@ function MerryListView() {
                   Hobbies and Interests
                 </h2>
                 <div className=" flex flex-wrap gap-3">
-                  {currentView.hobbies.map((item, index) => (
+                  {currentView.hobbiesList.map((item, index) => (
                     <div
                       key={index}
                       className=" px-4 py-2 rounded-xl border border-purple-300 text-purple-600"
