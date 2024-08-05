@@ -1,75 +1,120 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef,useEffect } from "react";
 import TinderCard from "react-tinder-card";
 import DislikeButton from "../../assets/images/dislikebutton.png";
 import LikeButton from "../../assets/images/likebutton.png";
-import richard from "../../assets/images/richard.jpg";
-import erlich from "../../assets/images/erlich.jpg";
-import monica from "../../assets/images/monica.jpg";
-import jared from "../../assets/images/jared.jpg";
-import dinesh from "../../assets/images/dinesh.jpg";
 import arrowleft from "../../assets/images/arrowleft.png";
 import arrowright from "../../assets/images/arrowright.png";
 import location from "../../assets/images/location.png";
 import filter from "../../assets/images/filter.png";
 import SeeProfile from "./seeprofile";
 import RangeSlider from "./rangeslider";
-
-const db = [
-  { name: "Richard Hendricks", url: richard },
-  { name: "Erlich Bachman", url: erlich },
-  { name: "Monica Hall", url: monica },
-  { name: "Jared Dunn", url: jared },
-  { name: "Dinesh Chugtai", url: dinesh },
-];
+import axios from 'axios'
+import { useAuth } from "../../context/auth";
 
 function Cardtinder() {
-  const [currentIndex, setCurrentIndex] = useState(db.length - 1);
+  const [userData, setUserData] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(-1);
   const currentIndexRef = useRef(currentIndex);
+  const  { state } = useAuth()
+  const userId = state.user?.user_id
+  console.log(state)
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get("http://localhost:4001/profiles");
+        console.log(result)
+        const users = result.data.data.map(user => ({
+          user_id: user.user_id,
+          name: user.name,
+          url: user.image_url 
+        }));
+        setUserData(users);
+        setCurrentIndex(users.length - 1);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+//  ตอนที่ปัดไปปัดมา จะจำข้อมูลuserไว้ ทำให้ปัดปุ๊บมาปั๊บ
   const childRefs = useMemo(
     () =>
-      Array(db.length)
+      Array(userData.length)
         .fill(0)
         .map(() => React.createRef()),
-    []
+        // สร้างrefใหม่ในเเต่ละการ์ด ว่าข้อมูลการ์ดนี้ของคนนี้
+    [userData.length]
   );
-
+// ตอนปัดการ์ด จะให้มีการอัพเดตindexก็คือค่าval
   const updateCurrentIndex = (val) => {
     setCurrentIndex(val);
     currentIndexRef.current = val;
+    // .cerrent เข้าถึงการ์ดที่อยู่ในตำแหน่ง currentIndex
   };
-
+// หลังจากปัดให้ลด CurrentIndex เพื่อไปการ์ดถัดไป
   const swiped = (direction, nameToDelete, index) => {
     console.log(`You swiped: ${direction}`);
-    setCurrentIndex(index - 1);
-  };
-
-  const onCardLeftScreen = (myIdentifier) => {
-    console.log(`${myIdentifier} left the screen`);
-  };
-
-  const canSwipe = currentIndex >= 0 && currentIndex < db.length;
-
-  const swipe = async (dir) => {
-    if (canSwipe && currentIndex < db.length) {
-      await childRefs[currentIndex].current.swipe(dir);
+    if (index === 0) {
+      updateCurrentIndex(userData.length - 1); // ตรงนี้ไปใบสุดท้าย
+    } else {
+      updateCurrentIndex(index - 1);
     }
   };
 
+  const onCardLeftScreen = (myIdentifier) => {
+    if (currentIndex >= 0 && currentIndex < userData.length) {
+      const currentUser = userData[currentIndex-1];
+      console.log(`${myIdentifier} left the screen. Current user: ${currentUser.name} Current user id: ${currentUser.user_id}`);
+    } else {
+      console.log(`${myIdentifier} left the screen. Current user: index out of bounds`);
+    }
+  };
+
+  const canSwipe = currentIndex >= 0 && currentIndex < userData.length;
+// ค่าdir คือทิศทางการปัด 
+  const swipe = async (dir) => {
+    if (canSwipe) {
+      await childRefs[currentIndex].current.swipe(dir);
+    }
+  };
+//ตรงลูกศร กลับไปการ์ดเเรก
   const goBack = () => {
-    if (currentIndex < db.length - 1) {
+    if (currentIndex === userData.length - 1) {
+      updateCurrentIndex(0)
+    } else {
       const newIndex = currentIndex + 1;
       updateCurrentIndex(newIndex);
     }
   };
-
+//ตรงลูกศร ปัดไปการ์ดสุดท้าย
   const goForward = () => {
-    if (currentIndex > 0) {
+    if (currentIndex === 0) {
+      updateCurrentIndex(userData.length-1);
+    }else{
       const newIndex = currentIndex - 1;
       updateCurrentIndex(newIndex);
     }
   };
 
+ const matchUser = async() =>{
+  if (currentIndex >= 0 && currentIndex < userData.length){
+    const currentUser = userData[currentIndex-1];
+    const userMatch ={
+    user_id: userId,
+    friend_id: currentUser.user_id
+  }
+  try{
+     await axios.post(
+      "http://localhost:4001/merry",userMatch
+    )
+  }catch(error){
+   alert("Error to match user", error);
+  }}
+ } 
+
+ 
   return (
     <section>
       {/* Mobile and iPad view */}
@@ -79,14 +124,14 @@ function Cardtinder() {
             <TinderCard
               ref={childRefs[currentIndex]}
               className="swipe"
-              key={db[currentIndex].name}
+              key={userData[currentIndex].name}
               onSwipe={(dir) =>
-                swiped(dir, db[currentIndex].name, currentIndex)
+                swiped(dir, userData[currentIndex].name, currentIndex)
               }
-              onCardLeftScreen={() => onCardLeftScreen(db[currentIndex].name)}
+              onCardLeftScreen={() => onCardLeftScreen(userData[currentIndex].name)}
             >
               <div
-                style={{ backgroundImage: `url(${db[currentIndex].url})` }}
+                style={{ backgroundImage: `url(${userData[currentIndex].url})` }}
                 className="card bg-cover bg-center mt-[10%] w-screen h-screen rounded-3xl shadow-lg"
               >
                 <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-70 rounded-b-3xl z-2"></div>
@@ -95,7 +140,7 @@ function Cardtinder() {
                     <div className="text-white w-full flex items-center justify-between">
                       <div className="">
                         <h1 className="text-[25px]">
-                          {db[currentIndex].name} 24
+                          {userData[currentIndex].name} 24
                         </h1>
                         <p className="flex flex-row text-[20px]">
                           <img
@@ -118,46 +163,46 @@ function Cardtinder() {
         {/* Desktop view */}
         <div className="cardContainer flex justify-center max-lg:hidden z-[0]">
           {currentIndex >= 0 && (
-            <TinderCard
-              ref={childRefs[currentIndex]}
-              className="swipe"
-              key={db[currentIndex].name}
-              onSwipe={(dir) =>
-                swiped(dir, db[currentIndex].name, currentIndex)
-              }
-              onCardLeftScreen={() => onCardLeftScreen(db[currentIndex].name)}
-            >
-              <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-80 rounded-b-3xl z-20"></div>
-              <div
-                style={{ backgroundImage: `url(${db[currentIndex].url})` }}
-                className="bg-cover mt-[15%] w-[580px] h-[580px] rounded-3xl relative"
-              >
-                <div className="w-full h-full flex justify-center absolute p-4 pb-10 z-40">
-                  <div className="w-[90%] h-full flex flex-row items-end justify-between">
-                    <div className="text-white text-[25px] flex justify-center items-center">
-                      <div className="">{db[currentIndex].name} 24</div>
-                      <SeeProfile />
-                    </div>
-                    <div className="mb-6">
-                      <button onClick={goBack}>
-                        <img
-                          src={arrowleft}
-                          className="mr-6 w-[16px] h-[16px]"
-                          alt="Previous"
-                        />
-                      </button>
-                      <button onClick={goForward}>
-                        <img
-                          src={arrowright}
-                          className="w-[16px] h-[16px]"
-                          alt="Next"
-                        />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TinderCard>
+             <TinderCard
+             ref={childRefs[currentIndex]}
+             className="swipe"
+             key={userData[currentIndex].name}
+             onSwipe={(dir) =>
+               swiped(dir, userData[currentIndex].name, currentIndex)
+             }
+             onCardLeftScreen={() => onCardLeftScreen(userData[currentIndex].name)}
+           >
+             <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-80 rounded-b-3xl z-20"></div>
+             <div
+                style={{ backgroundImage: `url(${userData[currentIndex].url})` }}
+               className="bg-cover mt-[15%] w-[580px] h-[580px] rounded-3xl relative"
+             >
+               <div className="w-full h-full flex justify-center absolute p-4 pb-10 z-40">
+                 <div className="w-[90%] h-full flex flex-row items-end justify-between">
+                   <div className="text-white text-[25px] flex justify-center items-center">
+                     <div className="">{userData[currentIndex].name} 24</div>
+                     <SeeProfile />
+                   </div>
+                   <div className="mb-6">
+                     <button onClick={goBack}>
+                       <img
+                         src={arrowleft}
+                         className="mr-6 w-[16px] h-[16px]"
+                         alt="Previous"
+                       />
+                     </button>
+                     <button onClick={goForward}>
+                       <img
+                         src={arrowright}
+                         className="w-[16px] h-[16px]"
+                         alt="Next"
+                       />
+                     </button>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </TinderCard>
           )}
         </div>
 
@@ -170,7 +215,7 @@ function Cardtinder() {
           </button>
           <button
             className={`p-2 rounded ${!canSwipe ? "" : ""}`}
-            onClick={() => swipe("right")}
+            onClick={matchUser}
           >
             <img src={LikeButton} alt="Like" />
           </button>
