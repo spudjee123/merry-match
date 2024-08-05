@@ -7,39 +7,12 @@ import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../../context/auth";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 // const priceId =
 //   packageName.name === "Basic"
 //     ? process.env.STRIPE_PRICE_ID_BASIC
 //     : packageName.name === "Platinum"
 //     ? process.env.STRIPE_PRICE_ID_PLATINUM
 //     : process.env.STRIPE_PRICE_ID_PREMIUM;
-// const packages = [
-//   {
-//     name: "Basic",
-//     price: "THB 59.00",
-//     merry: "  Merry’ more than a daily limited",
-//     limit: "Up to 25 Merry per day",
-//     imageUrl:
-//       "https://i.pinimg.com/564x/76/1f/96/761f967889d8efff2590ed79af6667e8.jpg",
-//   },
-//   {
-//     name: "Platinum",
-//     price: "THB 99.00",
-//     merry: "  Merry’ more than a daily limited ",
-//     limit: "Up to 45 Merry per day",
-//     imageUrl:
-//       "https://i.pinimg.com/564x/76/1f/96/761f967889d8efff2590ed79af6667e8.jpg",
-//   },
-//   {
-//     name: "Basic",
-//     price: "THB 59.00",
-//     merry: "‘Merry’ more than a daily limited",
-//     limit: "Up to 25 Merry per day",
-//     imageUrl:
-//       "https://i.pinimg.com/564x/76/1f/96/761f967889d8efff2590ed79af6667e8.jpg",
-//   },
-// ];
 
 function Membership() {
   const [packages, setPackages] = useState([]);
