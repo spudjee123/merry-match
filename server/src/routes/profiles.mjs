@@ -28,29 +28,34 @@ profilesRouter.get("/", async (req, res) => {
 });
 
 profilesRouter.get("/:user_id", async (req, res) => {
-  const profile_id = req.params.profile_id;
+  const user_id = req.params.user_id;
   try {
     const profileData = await connectionPool.query(
-      `select * from user_profiles where profile_id = $1`,
-      [profile_id]
+      `select * from user_profiles where user_id = $1`,
+      [user_id]
     );
 
+    const profile = transformKeysToCamelCase(profileData.rows[0]);
+
+    const profile_id = profile.profile_id;
+
     const hobbiesListData = await connectionPool.query(
-      `select hobby_name from user_hobbies where profile_id = $1 order by  hobby_order asc`,
+      `select hobby_name from user_hobbies where profile_id = $1`,
       [profile_id]
     );
 
     const hobbiesList = hobbiesListData.rows.map((item) => item.hobby_name);
 
-    const profile = transformKeysToCamelCase({
-      ...profileData.rows[0],
-      hobbiesList: hobbiesList,
-    });
+    const imagesData = await connectionPool.query(
+      `select image_url from user_images where profile_id = $1 order by image_order asc `,
+      [profile_id]
+    );
+    const images = imagesData.rows.map((item) => item.image_url);
 
     return res.status(200).json({
       code: "U000",
       message: "Get profile successfully",
-      data: profile,
+      data: { ...profile, hobbiesList, images },
     });
   } catch (error) {
     console.log(error);

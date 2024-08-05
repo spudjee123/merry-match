@@ -5,9 +5,9 @@ export function transformKeysToCamelCase(obj) {
       .map((word, index) =>
         word === "id"
           ? "_" + word
-          : // : word.includes("url")
-          // ? word.toUpperCase()
-          index
+          : word === "url" && index
+          ? "URL"
+          : index
           ? word[0].toUpperCase() + word.slice(1)
           : word
       )
