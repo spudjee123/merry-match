@@ -9,11 +9,15 @@ import filter from "../../assets/images/filter.png";
 import SeeProfile from "./seeprofile";
 import RangeSlider from "./rangeslider";
 import axios from 'axios'
+import { useAuth } from "../../context/auth";
 
 function Cardtinder() {
   const [userData, setUserData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const currentIndexRef = useRef(currentIndex);
+  const  { state } = useAuth()
+  const userId = state.user?.user_id
+  console.log(state)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +25,7 @@ function Cardtinder() {
         const result = await axios.get("http://localhost:4001/profiles");
         console.log(result)
         const users = result.data.data.map(user => ({
+          user_id: user.user_id,
           name: user.name,
           url: user.image_url 
         }));
@@ -59,8 +64,12 @@ function Cardtinder() {
   };
 
   const onCardLeftScreen = (myIdentifier) => {
-    const currentUser = userData[currentIndex-1];
-    console.log(`${myIdentifier} left the screen. Current user: ${currentUser.name}`);
+    if (currentIndex >= 0 && currentIndex < userData.length) {
+      const currentUser = userData[currentIndex-1];
+      console.log(`${myIdentifier} left the screen. Current user: ${currentUser.name} Current user id: ${currentUser.user_id}`);
+    } else {
+      console.log(`${myIdentifier} left the screen. Current user: index out of bounds`);
+    }
   };
 
   const canSwipe = currentIndex >= 0 && currentIndex < userData.length;
@@ -89,6 +98,23 @@ function Cardtinder() {
     }
   };
 
+ const matchUser = async() =>{
+  if (currentIndex >= 0 && currentIndex < userData.length){
+    const currentUser = userData[currentIndex-1];
+    const userMatch ={
+    user_id: userId,
+    friend_id: currentUser.user_id
+  }
+  try{
+     await axios.post(
+      "http://localhost:4001/merry",userMatch
+    )
+  }catch(error){
+   alert("Error to match user", error);
+  }}
+ } 
+
+ 
   return (
     <section>
       {/* Mobile and iPad view */}
@@ -189,7 +215,7 @@ function Cardtinder() {
           </button>
           <button
             className={`p-2 rounded ${!canSwipe ? "" : ""}`}
-            onClick={() => swipe("right")}
+            onClick={matchUser}
           >
             <img src={LikeButton} alt="Like" />
           </button>
