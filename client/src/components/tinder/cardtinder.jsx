@@ -14,10 +14,13 @@ import { useAuth } from "../../context/auth";
 function Cardtinder() {
   const [userData, setUserData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
+  const [currentUser,setCurrentUser] =  useState({name: '',user_id:''})
   const currentIndexRef = useRef(currentIndex);
   const  { state } = useAuth()
   const userId = state.user?.user_id
   console.log(state)
+  console.log('cerrentIndexRef',currentIndexRef)
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,8 +68,8 @@ function Cardtinder() {
 
   const onCardLeftScreen = (myIdentifier) => {
     if (currentIndex >= 0 && currentIndex < userData.length) {
-      const currentUser = userData[currentIndex-1];
-      console.log(`${myIdentifier} left the screen. Current user: ${currentUser.name} Current user id: ${currentUser.user_id}`);
+      setCurrentUser(userData[currentIndex-1]) ;
+      console.log(`${myIdentifier} left the screen.`);
     } else {
       console.log(`${myIdentifier} left the screen. Current user: index out of bounds`);
     }
@@ -100,14 +103,14 @@ function Cardtinder() {
 
  const matchUser = async() =>{
   if (currentIndex >= 0 && currentIndex < userData.length){
-    const currentUser = userData[currentIndex-1];
     const userMatch ={
     user_id: userId,
     friend_id: currentUser.user_id
   }
+  console.log(userMatch)
   try{
      await axios.post(
-      "http://localhost:4001/merry",userMatch
+      "http://localhost:4001/merry/match",userMatch
     )
   }catch(error){
    alert("Error to match user", error);

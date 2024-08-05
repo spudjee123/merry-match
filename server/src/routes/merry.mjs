@@ -40,7 +40,7 @@ merryRouter.post('/', async (req, res) => {
         // อัพเดทสถานะเมื่อพบคู่ที่สลับกัน
         await connectionPool.query(
           'UPDATE match_friend SET status = $1, updated_at = $2 WHERE user_id = $3 AND friend_id = $4',
-          ['match', new Date(), friend_id, user_id]
+          ['match', new Date(), user_id,friend_id ]
         );
         return res.status(200).json({ message: "Updated status to 'match'." });
       } else {

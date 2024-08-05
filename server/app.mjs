@@ -19,15 +19,6 @@ dotenv.config();
 
 import { validate as isUuid } from "uuid";
 
-import { v4 as uuidv4 } from "uuid";
-import Stripe from "stripe";
-// keyนี้สำหรับtest
-const stripe = new Stripe(
-  "sk_test_51PfGepCsaxbmSm5DJmnpDuh8XVSMZVQ0jiSfh7jI0cc4hBdAr6lhXYw97a3VU48TMQz6ElBUcUxqOEUuWTINVTxQ00Qb1hJloP"
-);
-const endpointSecret =
-  "whsec_455009c349ca77c55f93710bc9f3fec27e6d5242361f7c8ae317517e597db8f9";
-
 const app = express();
 
 app.use(cors());
