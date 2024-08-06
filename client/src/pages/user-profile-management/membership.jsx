@@ -38,6 +38,7 @@ function Membership() {
   );
 
   const paymentCheckout = async (packageName) => {
+    localStorage.setItem('selectedPackageName', packageName);
     const orderPayment = {
       user: { name: userName },
       packageName: { name: packageName },
@@ -47,7 +48,7 @@ function Membership() {
     );
     try {
       const result = await axios.post(
-        "http://localhost:4001/api/checkout",
+        "http://localhost:4001/payments/api/checkout",
         orderPayment
       );
       const { url, sessionId } = result.data;
