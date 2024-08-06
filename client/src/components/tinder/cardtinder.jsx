@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef,useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import TinderCard from "react-tinder-card";
 import DislikeButton from "../../assets/images/dislikebutton.png";
 import LikeButton from "../../assets/images/likebutton.png";
@@ -8,30 +8,29 @@ import location from "../../assets/images/location.png";
 import filter from "../../assets/images/filter.png";
 import SeeProfile from "./seeprofile";
 import RangeSlider from "./rangeslider";
-import axios from 'axios'
+import axios from "axios";
 import { useAuth } from "../../context/auth";
 
 function Cardtinder() {
   const [swipeCount, setSwipeCount] = useState(20);
   const [userData, setUserData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
-  const [currentUser,setCurrentUser] =  useState({name: '',user_id:''})
+  const [currentUser, setCurrentUser] = useState({ name: "", user_id: "" });
   const currentIndexRef = useRef(currentIndex);
-  const  { state } = useAuth()
-  const userId = state.user?.user_id
-  console.log(state)
-  console.log('cerrentIndexRef',currentIndexRef)
-
+  const { state } = useAuth();
+  const userId = state.user?.user_id;
+  console.log(state);
+  console.log("cerrentIndexRef", currentIndexRef);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await axios.get("http://localhost:4001/profiles");
-        console.log(result)
-        const users = result.data.data.map(user => ({
+        console.log(result);
+        const users = result.data.data.map((user) => ({
           user_id: user.user_id,
           name: user.name,
-          url: user.image_url 
+          url: user.image_url,
         }));
         setUserData(users);
         setCurrentIndex(users.length - 1);
@@ -42,25 +41,25 @@ function Cardtinder() {
     fetchData();
   }, []);
 
-//  ตอนที่ปัดไปปัดมา จะจำข้อมูลuserไว้ ทำให้ปัดปุ๊บมาปั๊บ
+  //  ตอนที่ปัดไปปัดมา จะจำข้อมูลuserไว้ ทำให้ปัดปุ๊บมาปั๊บ
   const childRefs = useMemo(
     () =>
       Array(userData.length)
         .fill(0)
         .map(() => React.createRef()),
-        // สร้างrefใหม่ในเเต่ละการ์ด ว่าข้อมูลการ์ดนี้ของคนนี้
+    // สร้างrefใหม่ในเเต่ละการ์ด ว่าข้อมูลการ์ดนี้ของคนนี้
     [userData.length]
   );
-// ตอนปัดการ์ด จะให้มีการอัพเดตindexก็คือค่าval
+  // ตอนปัดการ์ด จะให้มีการอัพเดตindexก็คือค่าval
   const updateCurrentIndex = (val) => {
     setCurrentIndex(val);
     currentIndexRef.current = val;
     // .cerrent เข้าถึงการ์ดที่อยู่ในตำแหน่ง currentIndex
   };
-// หลังจากปัดให้ลด CurrentIndex เพื่อไปการ์ดถัดไป
+  // หลังจากปัดให้ลด CurrentIndex เพื่อไปการ์ดถัดไป
   const swiped = (direction, nameToDelete, index) => {
     // ตรงนี้ปัดแล้ว merry ลด
-    setSwipeCount(prevCount => prevCount - 1)  
+    setSwipeCount((prevCount) => prevCount - 1);
     console.log(`You swiped: ${direction}`);
     if (index === 0) {
       updateCurrentIndex(userData.length - 1); // ตรงนี้ไปใบสุดท้าย
@@ -74,56 +73,56 @@ function Cardtinder() {
 
   const onCardLeftScreen = (myIdentifier) => {
     if (currentIndex >= 0 && currentIndex < userData.length) {
-      setCurrentUser(userData[currentIndex-1]) ;
+      setCurrentUser(userData[currentIndex - 1]);
       console.log(`${myIdentifier} left the screen.`);
     } else {
-      console.log(`${myIdentifier} left the screen. Current user: index out of bounds`);
+      console.log(
+        `${myIdentifier} left the screen. Current user: index out of bounds`
+      );
     }
   };
 
   const canSwipe = currentIndex >= 0 && currentIndex < userData.length;
-// ค่าdir คือทิศทางการปัด 
+  // ค่าdir คือทิศทางการปัด
   const swipe = async (dir) => {
     if (canSwipe) {
       await childRefs[currentIndex].current.swipe(dir);
     }
   };
-//ตรงลูกศร กลับไปการ์ดเเรก
+  //ตรงลูกศร กลับไปการ์ดเเรก
   const goBack = () => {
     if (currentIndex === userData.length - 1) {
-      updateCurrentIndex(0)
+      updateCurrentIndex(0);
     } else {
       const newIndex = currentIndex + 1;
       updateCurrentIndex(newIndex);
     }
   };
-//ตรงลูกศร ปัดไปการ์ดสุดท้าย
+  //ตรงลูกศร ปัดไปการ์ดสุดท้าย
   const goForward = () => {
     if (currentIndex === 0) {
-      updateCurrentIndex(userData.length-1);
-    }else{
+      updateCurrentIndex(userData.length - 1);
+    } else {
       const newIndex = currentIndex - 1;
       updateCurrentIndex(newIndex);
     }
   };
 
- const matchUser = async() =>{
-  if (currentIndex >= 0 && currentIndex < userData.length){
-    const userMatch ={
-    user_id: userId,
-    friend_id: currentUser.user_id
-  }
-  console.log(userMatch)
-  try{
-     await axios.post(
-      "http://localhost:4001/merry/match",userMatch
-    )
-  }catch(error){
-   alert("Error to match user", error);
-  }}
- } 
+  const matchUser = async () => {
+    if (currentIndex >= 0 && currentIndex < userData.length) {
+      const userMatch = {
+        user_id: userId,
+        friend_id: currentUser.user_id,
+      };
+      console.log(userMatch);
+      try {
+        await axios.post("http://localhost:4001/merry/match", userMatch);
+      } catch (error) {
+        alert("Error to match user", error);
+      }
+    }
+  };
 
- 
   return (
     <section>
       {/* Mobile and iPad view */}
@@ -137,10 +136,14 @@ function Cardtinder() {
               onSwipe={(dir) =>
                 swiped(dir, userData[currentIndex].name, currentIndex)
               }
-              onCardLeftScreen={() => onCardLeftScreen(userData[currentIndex].name)}
+              onCardLeftScreen={() =>
+                onCardLeftScreen(userData[currentIndex].name)
+              }
             >
               <div
-                style={{ backgroundImage: `url(${userData[currentIndex].url})` }}
+                style={{
+                  backgroundImage: `url(${userData[currentIndex].url})`,
+                }}
                 className="card bg-cover bg-center mt-[10%] w-screen h-screen rounded-3xl shadow-lg"
               >
                 <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-70 rounded-b-3xl z-2"></div>
@@ -170,48 +173,52 @@ function Cardtinder() {
         </div>
 
         {/* Desktop view */}
-        <div className="cardContainer flex justify-center max-lg:hidden z-[0]">
+        <div className="cardContainer flex justify-center max-lg:hidden z-10">
           {currentIndex >= 0 && (
-             <TinderCard
-             ref={childRefs[currentIndex]}
-             className="swipe"
-             key={userData[currentIndex].name}
-             onSwipe={(dir) =>
-               swiped(dir, userData[currentIndex].name, currentIndex)
-             }
-             onCardLeftScreen={() => onCardLeftScreen(userData[currentIndex].name)}
-           >
-             <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-80 rounded-b-3xl z-20"></div>
-             <div
-                style={{ backgroundImage: `url(${userData[currentIndex].url})` }}
-               className="bg-cover mt-[15%] w-[580px] h-[580px] rounded-3xl relative"
-             >
-               <div className="w-full h-full flex justify-center absolute p-4 pb-10 z-40">
-                 <div className="w-[90%] h-full flex flex-row items-end justify-between">
-                   <div className="text-white text-[25px] flex justify-center items-center">
-                     <div className="">{userData[currentIndex].name} 24</div>
-                     <SeeProfile />
-                   </div>
-                   <div className="mb-6">
-                     <button onClick={goBack}>
-                       <img
-                         src={arrowleft}
-                         className="mr-6 w-[16px] h-[16px]"
-                         alt="Previous"
-                       />
-                     </button>
-                     <button onClick={goForward}>
-                       <img
-                         src={arrowright}
-                         className="w-[16px] h-[16px]"
-                         alt="Next"
-                       />
-                     </button>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           </TinderCard>
+            <TinderCard
+              ref={childRefs[currentIndex]}
+              className="swipe"
+              key={userData[currentIndex].name}
+              onSwipe={(dir) =>
+                swiped(dir, userData[currentIndex].name, currentIndex)
+              }
+              onCardLeftScreen={() =>
+                onCardLeftScreen(userData[currentIndex].name)
+              }
+            >
+              <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-80 rounded-b-3xl z-20"></div>
+              <div
+                style={{
+                  backgroundImage: `url(${userData[currentIndex].url})`,
+                }}
+                className="bg-cover mt-[15%] w-[580px] h-[580px] rounded-3xl relative"
+              >
+                <div className="w-full h-full flex justify-center absolute p-4 pb-10 z-40">
+                  <div className="w-[90%] h-full flex flex-row items-end justify-between">
+                    <div className="text-white text-[25px] flex justify-center items-center">
+                      <div className="">{userData[currentIndex].name} 24</div>
+                      <SeeProfile />
+                    </div>
+                    <div className="mb-6">
+                      <button onClick={goBack}>
+                        <img
+                          src={arrowleft}
+                          className="mr-6 w-[16px] h-[16px]"
+                          alt="Previous"
+                        />
+                      </button>
+                      <button onClick={goForward}>
+                        <img
+                          src={arrowright}
+                          className="w-[16px] h-[16px]"
+                          alt="Next"
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TinderCard>
           )}
         </div>
 
@@ -232,7 +239,8 @@ function Cardtinder() {
 
         {/* Bottom desktop */}
         <p className="h-[100px] flex flex-row items-center justify-center max-lg:hidden">
-          Merry limit today <span className="text-[#FF1659] ml-4">{swipeCount}/20</span>
+          Merry limit today{" "}
+          <span className="text-[#FF1659] ml-4">{swipeCount}/20</span>
         </p>
 
         {/* Bottom mobile */}
@@ -251,7 +259,8 @@ function Cardtinder() {
             Filter
           </div>
           <p className="flex flex-row">
-            Merry limit today <span className="text-[#FF1659] ml-4">{swipeCount}/20</span>
+            Merry limit today{" "}
+            <span className="text-[#FF1659] ml-4">{swipeCount}/20</span>
           </p>
         </div>
 
