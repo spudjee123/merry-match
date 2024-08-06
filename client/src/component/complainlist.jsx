@@ -26,6 +26,10 @@ const ComplainList = () => {
     complaint.name.toLowerCase().includes(searchUser.toLowerCase())
   );
 
+  const handleEditClick = (id) => {
+    navigate(`/compalint/see/${id}`);
+  };
+
   return (
     <section className="px-4 py-4 bg-white border-b border-gray-300 flex">
       <div>
