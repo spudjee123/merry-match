@@ -8,6 +8,8 @@ import axios from "axios";
 
 const Payment2Page = () => {
   const navigate = useNavigate();
+  const [filteredPackages, setFilteredPackages] = useState([]);
+  const [selectedPackageName, setSelectedPackageName] = useState('');
 
   const handleBackToHome = () => {
     navigate("/");
@@ -30,11 +32,18 @@ const Payment2Page = () => {
 
   useEffect(() => {
     getData();
+    const packageName = localStorage.getItem('selectedPackageName');
+    if (packageName) {
+      setSelectedPackageName(packageName);
+    }
   }, []);
 
-  const filteredPackages = packages.filter((item) =>
-    item.packages_name.toLowerCase().includes("basic")
-  );
+  useEffect(() => {
+    if (selectedPackageName && packages.length > 0) {
+      const packageItem = packages.find(pkg => pkg.packages_name === selectedPackageName);
+      setFilteredPackages(packageItem ? [packageItem] : []);
+    }
+  }, [selectedPackageName, packages]);
 
   return (
     <section className="bg-white h-full w-full">
@@ -136,19 +145,18 @@ const Payment2Page = () => {
 
       {/* display lg up */}
       <div className="hidden lg:max-w-[800px] lg:flex lg:mx-auto lg:mt-[100px] lg:mb-[300px] 2xl:max-w-[1200px]">
-        {filteredPackages.map((item, index) => (
+        {filteredPackages.length > 0 ? (
+        filteredPackages.map((item, index) => (
           <div
             key={index}
             className="hidden lg:max-w-[800px] lg:flex lg:mx-auto lg:mt-[100px] lg:mb-[300px] 2xl:max-w-[1200px]"
           >
             <div className="lg:pt-[100px] lg:w-[70%] lg:mx-auto 2xl:w-[60%]">
               <div className="lg:h-[80px] lg:w-[80px]">
-                <img src={Success} alt="" />
+                <img src={Success} alt="Success" />
               </div>
               <div>
-                <p className="text-[#7B4429] text-[14px] my-[10px]">
-                  PAYMENT SUCCESS
-                </p>
+                <p className="text-[#7B4429] text-[14px] my-[10px]">PAYMENT SUCCESS</p>
               </div>
               <div>
                 <h2 className="text-[#A62D82] text-[32px] font-bold">
@@ -177,33 +185,28 @@ const Payment2Page = () => {
             <div>
               <div className="bg-gradient-to-r from-[#742138] to-[#A878BF] px-[20px] py-[25px] rounded-3xl mt-[50px]">
                 <div>
-                  <img src={item.icons} alt="" />
+                  <img src={item.icons} alt={item.packages_name} />
                 </div>
                 <div className="mt-[10px]">
                   <h2 className="text-white text-[32px] font-bold">
                     {item.packages_name}
                   </h2>
                   <p className="text-white text-[26px]">
-                    THB {item.price}.00{" "}
-                    <span className="text-[16px]">/Mouth</span>
+                    THB {item.price}.00 <span className="text-[16px]">/Month</span>
                   </p>
                 </div>
                 <div className="mt-[15px]">
                   <div className="flex gap-5">
                     <span className="h-[20px] w-[20px]">
-                      <img src={Success} alt="" />
+                      <img src={Success} alt="Success" />
                     </span>
-                    <p className="text-white">
-                      Merry more than a daily limited
-                    </p>
+                    <p className="text-white">Merry more than a daily limited</p>
                   </div>
                   <div className="flex gap-5 mt-[15px] mb-[40px]">
                     <span className="h-[20px] w-[20px]">
-                      <img src={Success} alt="" />
+                      <img src={Success} alt="Success" />
                     </span>
-                    <p className="text-white">
-                      Up to {item.merry_limit} Merry per day
-                    </p>
+                    <p className="text-white">Up to {item.merry_limit} Merry per day</p>
                   </div>
                 </div>
                 <div className="w-[95%] mx-auto mb-[40px]">
@@ -230,7 +233,10 @@ const Payment2Page = () => {
               </div>
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <p>Loading package details...</p>
+      )}
       </div>
       <div>
         <Footer />

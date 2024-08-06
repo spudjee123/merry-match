@@ -12,6 +12,7 @@ import axios from 'axios'
 import { useAuth } from "../../context/auth";
 
 function Cardtinder() {
+  const [swipeCount, setSwipeCount] = useState(20);
   const [userData, setUserData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [currentUser,setCurrentUser] =  useState({name: '',user_id:''})
@@ -58,6 +59,8 @@ function Cardtinder() {
   };
 // หลังจากปัดให้ลด CurrentIndex เพื่อไปการ์ดถัดไป
   const swiped = (direction, nameToDelete, index) => {
+    // ตรงนี้ปัดแล้ว merry ลด
+    setSwipeCount(prevCount => prevCount - 1)  
     console.log(`You swiped: ${direction}`);
     if (index === 0) {
       updateCurrentIndex(userData.length - 1); // ตรงนี้ไปใบสุดท้าย
@@ -65,6 +68,9 @@ function Cardtinder() {
       updateCurrentIndex(index - 1);
     }
   };
+  useEffect(() => {
+    console.log(`Total swipes: ${swipeCount}`);
+  }, [swipeCount]);
 
   const onCardLeftScreen = (myIdentifier) => {
     if (currentIndex >= 0 && currentIndex < userData.length) {
@@ -226,7 +232,7 @@ function Cardtinder() {
 
         {/* Bottom desktop */}
         <p className="h-[100px] flex flex-row items-center justify-center max-lg:hidden">
-          Merry limit today <span className="text-[#FF1659] ml-4">2/20</span>
+          Merry limit today <span className="text-[#FF1659] ml-4">{swipeCount}/20</span>
         </p>
 
         {/* Bottom mobile */}
@@ -245,7 +251,7 @@ function Cardtinder() {
             Filter
           </div>
           <p className="flex flex-row">
-            Merry limit today <span className="text-[#FF1659] ml-4">2/20</span>
+            Merry limit today <span className="text-[#FF1659] ml-4">{swipeCount}/20</span>
           </p>
         </div>
 
