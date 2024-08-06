@@ -14,13 +14,20 @@ import { Server } from "socket.io";
 import upload from "./src/middlewares/Multer.js";
 import cloudinary from "./src/utils/cloudinary.js";
 import merryRouter from "./src/routes/merry.mjs";
+import Connection from "./src/utils/db2.mjs";
+import mongoose from "mongoose";
+import Chat from "./models/chat.mjs";
 import matchViewRouter from "./src/routes/match-view.mjs";
 
 dotenv.config();
 
 import { validate as isUuid } from "uuid";
 
+import { timeStamp } from "console";
 const app = express();
+
+// เชื่อม mongodb for chat database
+Connection();
 
 app.use(cors());
 // chat
@@ -38,23 +45,33 @@ const io = new Server(server, {
 //   })
 // );
 
+// socket.io
 io.on("connection", (socket) => {
-  console.log(`User Connected: ${socket.id}`);
+  console.log("connected");
 
-  socket.on("Join_room", (data) => {
-    socket.join(data);
-    // Check id to join room
-    console.log(`User with ID: ${socket.id} joined room: ${data}`);
-  });
+  // chat to database
+  const loadMessages = async () => {
+    try {
+      const message = await Chat.find().sort({ timeStamp: 1 }).exec();
+      socket.emit("chat", message);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  loadMessages();
 
-  socket.on("send_message", (data) => {
-    // check detail chat room, id, author,message,time
-    // console.log("Message sent from server:", data);
-    socket.to(data.room).emit("receive_message", data);
+  socket.io("newMessage", async (msg) => {
+    try {
+      const newMessage = new Chat(msg);
+      await newMessage.save();
+      io.emit("message", msg);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected", socket.id);
+    console.log("disconnect");
   });
 });
 
@@ -347,7 +364,7 @@ app.post("/user/complaint", async (req, res) => {
 
   const newComplaint = {
     ...req.body,
-    status: status || null,
+    status: status || "New",
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -439,6 +456,44 @@ app.get("/complaint/list", async (req, res) => {
   } catch (err) {
     console.error("Unexpected error:", err);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// create message
+app.post("/msg", async (req, res) => {
+  try {
+    const { from, to, message } = req.body;
+    const newmessage = await MessageChannel.create({
+      message: message,
+      Chatusers: [from, to],
+      Sender: from,
+    });
+    return res.status(200).json(newmessage);
+  } catch (err) {
+    return res.status(500).json("Internal server error");
+  }
+});
+
+// create message
+app.get("/get/chat/msg/:user1Id/:user2Id", async (req, res) => {
+  try {
+    const from = req.params.user1Id;
+    const to = req.params.user2Id;
+
+    const newmessage = await Message.find({
+      Chatusers: {
+        $all: [from, to],
+      },
+    }).sort({ updateAt: -1 });
+    const allmessage = newmessage.map((msg) => {
+      return {
+        myself: msg.Sender.toString() == from,
+        message: msg.message,
+      };
+    });
+    return res.status(200).json(allmessage);
+  } catch (error) {
+    return res.status(500).json("Internal server error");
   }
 });
 

@@ -41,7 +41,7 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
-      onNewMessage(data); // Notify parent component about new message
+      onNewMessage(data);
     });
 
     return () => {

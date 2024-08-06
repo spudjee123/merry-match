@@ -98,7 +98,7 @@ const MatchingChat = () => {
         {/* left container */}
         <div className="lg:w-[20%]">
           <div className="lg:w-full">
-            <div className="lg:h-[30%] lg:w-full flex justify-center items-center lg:py-[30px]">
+            <div className="lg:h-[30%] lg:w-full flex justify-center items-center lg:py-[30px] lg:pt-[100px]">
               <div className="lg:h-[80%] lg:w-[95%] lg:rounded-xl lg:border lg:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
                 <div>
                   <img src={Heart} alt="" />
