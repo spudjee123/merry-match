@@ -5,11 +5,24 @@ import axios from "axios";
 
 const Chat = ({ socket, username, room, onNewMessage }) => {
   const [currentMessage, setCurrentMessage] = useState("");
-  // state for upload img
+  const [chats, setChats] = useState([]);
   const [img, setImg] = useState({
     file: null,
     url: "",
   });
+
+  useEffect(() => {
+    // Join the specified room
+    socket.emit("join_room", room);
+
+    socket.on("message", (msg) => {
+      setChats((prevChats) => [...prevChats, msg]);
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, [socket, room]);
 
   const sendMessage = async () => {
     let imgUrl = null;
@@ -17,37 +30,29 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
     if (currentMessage !== "" || img.file) {
       try {
         if (img.file) {
-          // ส่งไฟล์และรับ URL ของภาพ
           const uploadResponse = await upload(img.file);
-          imgUrl = uploadResponse.data.img;        }
+          imgUrl = uploadResponse.img;
+        }
 
         const messageData = {
           room: room,
           author: username,
           message: currentMessage,
           time: new Date().toLocaleTimeString(),
-          img: imgUrl,        
+          img: imgUrl,
         };
 
         await socket.emit("send_message", messageData);
-        onNewMessage(messageData); // เพิ่มข้อความที่ส่งเข้าไปในสถานะ messages
-        setCurrentMessage(""); // Clear message input after sending
-        setImg({ file: null, url: "" }); // Clear image input after sending
+        onNewMessage(messageData);
+        // Clear message input after sending
+        setCurrentMessage("");
+        // Clear image input after sending
+        setImg({ file: null, url: "" });
       } catch (error) {
         console.error("Error sending message:", error);
       }
     }
   };
-
-  useEffect(() => {
-    socket.on("receive_message", (data) => {
-      onNewMessage(data);
-    });
-
-    return () => {
-      socket.off("receive_message");
-    };
-  }, [socket, onNewMessage]);
 
   // function for uploading img
   const handleImg = (e) => {
@@ -74,7 +79,7 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
         }
       );
       console.log("Upload response:", response.data);
-      return response.data
+      return response.data;
     } catch (error) {
       console.error("Error uploading image:", error);
       throw error;
@@ -95,7 +100,10 @@ const Chat = ({ socket, username, room, onNewMessage }) => {
         <button className="" onClick={sendMessage}>
           <img src={SendChat} alt="" className="lg:h-[50px] lg:w-[50px]" />
         </button>
-        <label htmlFor="file" className="cursor-pointer lg:flex lg:justify-center lg:items-center">
+        <label
+          htmlFor="file"
+          className="cursor-pointer lg:flex lg:justify-center lg:items-center"
+        >
           <img src={ChatImg} alt="" className="lg:h-[35px] lg:w-[35px]" />
         </label>
         <input

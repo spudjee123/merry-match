@@ -49,6 +49,11 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("connected");
 
+  socket.on("join_room", (room) => {
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
+  });
+
   // chat to database
   const loadMessages = async () => {
     try {
@@ -60,7 +65,7 @@ io.on("connection", (socket) => {
   };
   loadMessages();
 
-  socket.io("newMessage", async (msg) => {
+  socket.on("newMessage", async (msg) => {
     try {
       const newMessage = new Chat(msg);
       await newMessage.save();
@@ -68,6 +73,11 @@ io.on("connection", (socket) => {
     } catch (err) {
       console.log(err);
     }
+  });
+
+  socket.on("send_message", (msg) => {
+    console.log(msg);
+    io.to(msg.room).emit("message", msg); // ส่งข้อความไปยังห้องที่กำหนด
   });
 
   socket.on("disconnect", () => {

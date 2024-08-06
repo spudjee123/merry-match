@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 function Connection() {
-  const mongoURI = "mongodb://127.0.0.1:27017";
+  const mongoURI = "mongodb://127.0.0.1:27017/chat";
   mongoose
     .connect(mongoURI)
     .then(() => console.log("connected"))
