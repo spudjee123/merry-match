@@ -3,10 +3,12 @@ import AdminPageSidebar from "./adminsidebar";
 import search from "../assets/icons/search.png";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Ensure you have this imported
 
 const ComplainList = () => {
   const [complaint, setComplaint] = useState([]);
   const [searchUser, setSearchUser] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const getComplaintList = async () => {
     try {
@@ -27,7 +29,7 @@ const ComplainList = () => {
   );
 
   const handleEditClick = (id) => {
-    navigate(`/compalint/see/${id}`);
+    navigate(`/complaint/see/${id}`);
   };
 
   return (
@@ -88,7 +90,14 @@ const ComplainList = () => {
                   <td className="px-4 text-left">{complaint.issue}</td>
                   <td className="px-4 text-left">{complaint.description}</td>
                   <td className="px-4 text-left">{complaint.created_at}</td>
-                  <td className="px-4 text-left">{complaint.status}</td>
+                  <td className="px-4 text-left">
+                    <button
+                      className="bg-[#fff5d4] text-[#393735] text-sm font-medium"
+                      onClick={() => handleEditClick(complaint.complaint_id)}
+                    >
+                      {complaint.status}
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

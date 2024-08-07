@@ -478,3 +478,40 @@ app.get("/complaint/list", async (req, res) => {
 server.listen(port, () => {
   console.log(`Server is running at ${port}`);
 });
+
+// admin can get by id from supabase
+app.get("/complaint/see/:complaint_id", async (req, res) => {
+  const complaintId = req.params.complaint_id;
+
+  if (!complaintId) {
+    return res.status(400).json({
+      message: "Compalint ID is required",
+    });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("complaint")
+      .select("*")
+      .eq("complaint_id", complaintId)
+      .single();
+
+    if (error) {
+      return res.status(404).json({
+        message: `Server could not find a complaint with id: ${complaintId}`,
+        error: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Complaint retrieved successfully",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message:
+        "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});

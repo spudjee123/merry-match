@@ -15,7 +15,7 @@ function AdminRoutes() {
       <Route path="/package/view" element={<PackageListPage />} />
       <Route path="/package/edit/:package_id" element={<EditPackage />} />
       <Route path="/complaint/list" element={<ComplainList />} />
-      <Route path="/complaint/see" element={<SeeComplaintDetail />} />
+      <Route path="/complaint/see/:complaint_id" element={<SeeComplaintDetail />} />
       <Route path="/complaint/resolved" element={<ComplaintResolved />} />
       <Route path="/complaint/cancel" element={<ComplaintCancel />} />
       <Route path="*" element={<NotFoundPage />} />
