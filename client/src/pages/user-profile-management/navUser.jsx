@@ -11,12 +11,25 @@ import Vector from "../user-profile-management/images/Vector.png";
 import Profile from "../user-profile-management/images/Profile.png";
 import exit from "../user-profile-management/images/exit.png";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "../../context/auth";
+import useUsers from "../../hooks/use-users";
 
 function NavUser() {
-  const { logout } = useAuth();
+  const { logout, state } = useAuth();
   const navigate = useNavigate();
+  const { userInfo, getUser } = useUsers();
+  const [imgProfile, setImgProfile] = useState("");
+
+  useEffect(() => {
+    getUser(state.user.user_id);
+  }, []);
+
+  useEffect(() => {
+    setImgProfile(userInfo.images[0]?.url);
+  }, [userInfo]);
+
   return (
     <div className="navbar h-[70px] bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
@@ -170,10 +183,7 @@ function NavUser() {
             className="btn btn-ghost btn-circle avatar "
           >
             <div className="w-10 rounded-full ">
-              <img
-                alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-              />
+              <img alt="Tailwind CSS Navbar component" src={imgProfile} />
             </div>
           </div>
           <ul
