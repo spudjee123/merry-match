@@ -5,11 +5,11 @@ import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import hookPayment from './hooks/hookpayment'
 
 const Payment2Page = () => {
+  const {filteredPackages} = hookPayment()
   const navigate = useNavigate();
-  const [filteredPackages, setFilteredPackages] = useState([]);
-  const [selectedPackageName, setSelectedPackageName] = useState('');
 
   const handleBackToHome = () => {
     navigate("/");
@@ -18,32 +18,6 @@ const Payment2Page = () => {
   const handleCheckPackage = () => {
     navigate("/check/membership");
   };
-
-  const [packages, setPackages] = useState([]);
-
-  const getData = async () => {
-    try {
-      const result = await axios.get("http://localhost:4001/admin/get");
-      setPackages(result.data.packages);
-    } catch (error) {
-      console.error("Error fetching packages:", error);
-    }
-  };
-
-  useEffect(() => {
-    getData();
-    const packageName = localStorage.getItem('selectedPackageName');
-    if (packageName) {
-      setSelectedPackageName(packageName);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selectedPackageName && packages.length > 0) {
-      const packageItem = packages.find(pkg => pkg.packages_name === selectedPackageName);
-      setFilteredPackages(packageItem ? [packageItem] : []);
-    }
-  }, [selectedPackageName, packages]);
 
   return (
     <section className="bg-white h-full w-full">

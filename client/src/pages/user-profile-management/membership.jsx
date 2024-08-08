@@ -7,13 +7,6 @@ import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../../context/auth";
 
-// const priceId =
-//   packageName.name === "Basic"
-//     ? process.env.STRIPE_PRICE_ID_BASIC
-//     : packageName.name === "Platinum"
-//     ? process.env.STRIPE_PRICE_ID_PLATINUM
-//     : process.env.STRIPE_PRICE_ID_PREMIUM;
-
 function Membership() {
   const [packages, setPackages] = useState([]);
   const  { state } = useAuth() 
@@ -53,7 +46,6 @@ function Membership() {
       );
       const { url, sessionId } = result.data;
       window.location.href = url
-
       // const sessionId = result.data.sessionId;
       stripe.redirectToCheckout({sessionId:sessionId});
       
