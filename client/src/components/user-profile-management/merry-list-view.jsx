@@ -17,30 +17,75 @@ import exitIcon from "../../assets/icons/cancel-icon.png";
 import exitPreviewIcon from "../../assets/icons/preview-exit-icon.png";
 
 import useProfiles from "../../hooks/use-profiles";
+import { useAuth } from "../../context/auth.jsx";
+import useMerryList from "../../hooks/use-merry-list.jsx";
 
 import getAge from "../../utils/get-age.jsx";
 
+import { useNavigate } from "react-router-dom";
+
 function MerryListView() {
   console.log(userProfilesTest.data);
-  const [isSecondImage, setIsSecondImage] = useState(false);
   const [currentView, setCurrentView] = useState({});
   const [isMobilePreview, setIsMobilePreview] = useState(false);
+  const [imageOrder, setImageOrder] = useState(0);
+  const [maxImage, setMaxImage] = useState(4);
+
+  const { state } = useAuth();
+
+  const navigate = useNavigate();
+
+  const user_id = state.user.user_id;
+  console.log("user_id", user_id);
+
   const date = new Date();
 
   const { profile, profilesList, getProfileById, getProfiles } = useProfiles();
+  const { merryList, otherCount, getMerryList } = useMerryList();
+  console.log("merryList", merryList);
 
   useEffect(() => {
+    const user_id = state.user.user_id;
+    console.log(user_id);
     getProfiles();
+    getMerryList(user_id);
   }, []);
 
-  console.log(profilesList);
+  // console.log(profilesList);
   console.log(profile);
 
   console.log("profile", profile);
   console.log("currrent", currentView);
 
+  const handleClickView = (item) => {
+    setImageOrder(0);
+    getProfileById(item.user_id === user_id ? item.friend_id : item.user_id);
+  };
+
+  const handleBackImage = (event) => {
+    event.preventDefault();
+    if (imageOrder > 0) {
+      setImageOrder(imageOrder - 1);
+    }
+  };
+
+  const handleNextImage = (event) => {
+    event.preventDefault();
+    if (imageOrder < maxImage - 1) {
+      setImageOrder(imageOrder + 1);
+    }
+  };
+
+  const handleClickUnmarry = (event) => {
+    location.reload();
+  };
+
+  console.log("max", maxImage);
   useEffect(() => {
     setCurrentView(profile);
+    if (profile.images) {
+      setMaxImage(profile.images.length);
+    }
   }, [profile]);
 
   return (
@@ -62,18 +107,18 @@ function MerryListView() {
                 with Merry!
               </p>
             </article>
-            <div className=" flex flex-col gap-4 md:flex-row md:justify-between md:items-center 2xl:justify-around">
+            <div className=" flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
               <div className=" flex gap-4 max-md:justify-center">
                 <div className="  px-6 py-5 bg-white rounded-2xl flex flex-col gap-1 border border-gray-200">
                   <div className=" text-red-500 text-2xl leading-[30px] flex gap-1 items-center ">
-                    <p>{16}</p>
+                    <p>{otherCount.followerCount}</p>
                     <img src={merryRedIcon} className=" h-6 " />
                   </div>
                   <p>Merry to you</p>
                 </div>
                 <div className="  px-6 py-5 bg-white rounded-2xl flex flex-col gap-1 border border-gray-200">
                   <div className=" text-red-500 text-2xl leading-[30px] flex gap-1 items-center">
-                    <p>{3}</p>
+                    <p>{otherCount.matchCount}</p>
                     <img src={merryMatchIcon} className=" h-6" />
                   </div>
 
@@ -92,16 +137,19 @@ function MerryListView() {
             </div>
           </header>
           <section className=" flex flex-col gap-x-3 gap-y-6">
-            {profilesList.map((item, index) => (
-              <article className=" border-b border-b-gray px-4 pt-4 pb-6 flex-1 flex flex-col lg:flex-row lg:justify-between">
+            {merryList.map((item, index) => (
+              <article
+                key={index}
+                className=" border-b border-b-gray px-4 pt-4 pb-6 flex-1 flex flex-col lg:flex-row lg:justify-between"
+              >
                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 ">
                   <header className=" flex justify-between gap-2">
                     <div className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] flex justify-center items-center rounded-3xl overflow-hidden relative">
                       <img
                         className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] object-cover"
-                        src={item.image_url}
+                        src={item.image}
                       />
-                      {item.user_id === "match" ? (
+                      {item.status === "match" ? (
                         <p className=" text-purple-600 bg-purple-100 pl-[10px] px-[1px] pr-[6px] rounded-tr-lg absolute left-0 bottom-0 text-xs font-medium max-lg:hidden">
                           Merry today
                         </p>
@@ -109,13 +157,11 @@ function MerryListView() {
                     </div>
                     <div className=" lg:hidden flex flex-col items-end gap-6">
                       <img
-                        src={
-                          item.user_id === "match" ? matchIcon : notMatchIcon
-                        }
+                        src={item.status === "match" ? matchIcon : notMatchIcon}
                         className=" h-8"
                       />
                       <div className=" flex gap-3">
-                        {item.user_id === "match" ? (
+                        {item.status === "match" ? (
                           <button
                             className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                             id="chat-btn"
@@ -127,8 +173,7 @@ function MerryListView() {
                           className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                           id="view-btn"
                           onClick={() => {
-                            getProfileById(item.user_id);
-                            setCurrentView(profile);
+                            handleClickView(item);
                             setIsMobilePreview(true);
                           }}
                         >
@@ -137,6 +182,7 @@ function MerryListView() {
                         <button
                           className=" bg-red-500 shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                           id="un-marry-btn"
+                          onClick={handleClickUnmarry}
                         >
                           <img src={merryWhiteIcon} className=" w-6 h-6" />
                         </button>
@@ -179,11 +225,11 @@ function MerryListView() {
 
                 <aside className=" max-lg:hidden flex flex-col items-end gap-6">
                   <img
-                    src={item.user_id === "match" ? matchIcon : notMatchIcon}
+                    src={item.status === "match" ? matchIcon : notMatchIcon}
                     className=" h-8"
                   />
                   <div className=" flex gap-3">
-                    {item.user_id === "match" ? (
+                    {item.status === "match" ? (
                       <button
                         className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                         id="chat-btn"
@@ -195,8 +241,7 @@ function MerryListView() {
                       className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                       id="view-btn"
                       onClick={() => {
-                        getProfileById(item.user_id);
-                        setCurrentView(profile);
+                        handleClickView(item);
                         document.getElementById("preview").showModal();
                       }}
                     >
@@ -205,6 +250,7 @@ function MerryListView() {
                     <button
                       className=" bg-red-500 shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                       id="un-marry-btn"
+                      onClick={handleClickUnmarry}
                     >
                       <img src={merryWhiteIcon} className=" w-6 h-6" />
                     </button>
@@ -229,14 +275,10 @@ function MerryListView() {
                   <div className=" h-[478px] relative">
                     <img
                       src={
-                        !currentView.images
-                          ? ""
-                          : currentView.images[0] && currentView.images[1]
-                          ? currentView.images[isSecondImage ? 1 : 0]
-                          : ""
+                        currentView.images ? currentView.images[imageOrder] : ""
                       }
                       className=" w-[478px] h-[478px] object-cover rounded-[32px]"
-                      alt={"preview photo " + isSecondImage ? "2" : "1"}
+                      alt={"preview photo " + { imageOrder }}
                     />
                   </div>
                   <div className=" h-12 flex justify-between items-center text-gray-700 relative ">
@@ -259,17 +301,14 @@ function MerryListView() {
                       </button>
                     </div>
                     <p className=" w-[72px] flex justify-center items-center">
-                      {isSecondImage ? "2" : "1"}
-                      <span className=" text-gray-600">/2</span>
+                      {imageOrder + 1}
+                      <span className=" text-gray-600">/ {maxImage}</span>
                     </p>
                     <div className=" flex">
                       <button
                         type="button"
                         id="back-preview-image-btn"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setIsSecondImage(false);
-                        }}
+                        onClick={handleBackImage}
                         className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
@@ -282,10 +321,7 @@ function MerryListView() {
                       <button
                         type="button"
                         id="next-preview-image-btn"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setIsSecondImage(true);
-                        }}
+                        onClick={handleNextImage}
                         className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                       >
                         <img
@@ -370,15 +406,9 @@ function MerryListView() {
           <div className="  ">
             <div className="relative">
               <img
-                src={
-                  !currentView.images
-                    ? ""
-                    : currentView.images[1] && currentView.images[2]
-                    ? currentView.images[isSecondImage ? 2 : 1]
-                    : ""
-                }
+                src={currentView.images ? currentView.images[imageOrder] : ""}
                 className=" w-full aspect-[26/21] object-cover rounded-b-[32px]"
-                alt={"preview photo " + isSecondImage ? "1" : "0"}
+                alt={"preview photo " + imageOrder}
               />
               <button className=" bg-dark absolute w-12 h-12 flex justify-center items-center rounded-full top-2 left-2 shadow-primary">
                 <img
@@ -394,8 +424,12 @@ function MerryListView() {
                 />
               </button>
             </div>
-            <div className=" h-12 hidden justify-between items-center relative text-gray-700 ">
-              <div className=" flex justify-center absolute top-[-30px] w-full gap-6 z-10">
+            <div className=" h-12 flex justify-between items-center relative text-gray-700 w-screen ">
+              <p className=" w-[72px] flex justify-center items-center z-20">
+                {imageOrder + 1}
+                <span className=" text-gray-600">/ {maxImage}</span>
+              </p>
+              <div className=" hidden justify-center relative top-[-30px] gap-6 z-10">
                 <button className=" w-[60px] h-[60px] bg-white shadow-primary rounded-2xl">
                   <img
                     src={rejectIcon}
@@ -413,19 +447,13 @@ function MerryListView() {
                   />
                 </button>
               </div>
-              <p className=" w-[72px] flex justify-center items-center z-20">
-                {isSecondImage ? "2" : "1"}
-                <span className=" text-gray-600">/2</span>
-              </p>
+
               <div className=" flex z-20">
                 <button
                   type="button"
                   id="back-preview-image-btn"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setIsSecondImage(false);
-                  }}
-                  className=" w-12 h-12 rounded-xl flex justify-center items-center"
+                  onClick={handleBackImage}
+                  className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                 >
                   <img
                     src={backIcon}
@@ -437,11 +465,8 @@ function MerryListView() {
                 <button
                   type="button"
                   id="next-preview-image-btn"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setIsSecondImage(true);
-                  }}
-                  className=" w-12 h-12 rounded-xl flex justify-center items-center"
+                  onClick={handleNextImage}
+                  className=" w-12 h-12 rounded-xl flex justify-center items-center z-20"
                 >
                   <img
                     src={nextIcon}
@@ -496,7 +521,7 @@ function MerryListView() {
                 <h2 className=" mb-4 text-2xl font-bold lead-[30px]">
                   About me
                 </h2>
-                <p>{"I know nothing...but you"}</p>
+                <p>{currentView.aboutMe}</p>
               </article>
 
               <article className=" w-full">
@@ -504,7 +529,7 @@ function MerryListView() {
                   Hobbies and Interests
                 </h2>
                 <div className=" flex flex-wrap gap-3">
-                  {currentView.hobbiesList.map((item, index) => (
+                  {(currentView.hobbiesList ?? []).map((item, index) => (
                     <div
                       key={index}
                       className=" px-4 py-2 rounded-xl border border-purple-300 text-purple-600"

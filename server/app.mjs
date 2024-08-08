@@ -14,6 +14,7 @@ import { Server } from "socket.io";
 import upload from "./src/middlewares/Multer.js";
 import cloudinary from "./src/utils/cloudinary.js";
 import merryRouter from "./src/routes/merry.mjs";
+import matchViewRouter from "./src/routes/match-view.mjs";
 
 dotenv.config();
 
@@ -66,7 +67,8 @@ app.use("/auth", authRouter);
 app.use("/payments", stripeRouter);
 app.use("/users", usersRouter);
 app.use("/profiles", profilesRouter);
-app.use("/merry", merryRouter)
+app.use("/merry", merryRouter);
+app.use("/merry-list", matchViewRouter);
 
 // app.use(protect);
 
@@ -83,7 +85,9 @@ app.get("/users", async (req, res) => {
   try {
     const auth = req.headers["authorization"];
 
-    result = await connectionPool.query(`select profile_id,name,image_url from user_profiles`);
+    result = await connectionPool.query(
+      `select profile_id,name,image_url from user_profiles`
+    );
   } catch (error) {
     return res.status(500).json({
       message: "Server could not read assignment because database connection",
@@ -331,7 +335,6 @@ app.delete("/admin/delete/:package_id", async (req, res) => {
 //   }
 // });
 
-
 //user create complaint
 app.post("/user/complaint", async (req, res) => {
   const { user_id, name, issue, description, status } = req.body;
@@ -425,7 +428,9 @@ stripeRouter.get("/api/order/:order_id", async (req, res) => {
 // admin can get complaint from supabase
 app.get("/complaint/list", async (req, res) => {
   try {
-    let { data: userComplaint, error } = await supabase.from("user_complaint").select("*");
+    let { data: userComplaint, error } = await supabase
+      .from("user_complaint")
+      .select("*");
     if (error) {
       console.error("Error fetching complaint list:", error);
       return res.status(500).json({ error: error.message });
