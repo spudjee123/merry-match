@@ -115,7 +115,7 @@ function Cardtinder() {
     <section>
       {/* Mobile and iPad view */}
       <div className="flex flex-col items-center">
-        <div className="lg:hidden">
+        <div className="lg:hidden ">
           {currentIndex >= 0 && (
             <TinderCard
               ref={childRefs[currentIndex]}
@@ -256,7 +256,7 @@ function Cardtinder() {
         <section className="">
           <dialog
             id="Filter"
-            className="modal bg-white w-screen h-[80%] flex flex-col mt-[180px] rounded-t-3xl"
+            className="modal bg-white w-screen h-[80%] flex flex-col mt-[180px] rounded-t-3xl "
           >
             <form method="dialog">
               <button className="text-[18px] text-black btn btn-sm btn-circle btn-ghost absolute left-3 top-4">

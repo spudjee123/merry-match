@@ -64,7 +64,7 @@ function SeeProfile({ user_id }) {
   return (
     <section>
       {/* Mobile and iPad view */}
-      <div className="lg:hidden">
+      <div className="lg:hidden overflow-x-hidden">
         <button
           onClick={() =>
             document.getElementById("SeeProfileMobile").showModal()
@@ -78,7 +78,7 @@ function SeeProfile({ user_id }) {
         </button>
         <dialog
           id="SeeProfileMobile"
-          className="modal bg-white w-screen h-screen mt-[0px]"
+          className="modal bg-white w-screen h-screen mt-[0px] "
         >
           <div className="w-full h-full">
             <form method="dialog">
@@ -90,7 +90,7 @@ function SeeProfile({ user_id }) {
                 />
               </button>
             </form>
-            <section className="w-screen h-screen">
+            <section className="w-screen h-screen ">
               <div
                 style={{
                   backgroundImage: `url(${imgProfile})`,
@@ -209,7 +209,7 @@ function SeeProfile({ user_id }) {
       </div>
 
       {/* Desktop view */}
-      <div className="max-lg:hidden">
+      <div className="max-lg:hidden overflow-x-hidden">
         <button
           onClick={() =>
             document.getElementById("SeeProfileDesktop").showModal()
