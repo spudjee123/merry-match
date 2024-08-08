@@ -116,7 +116,7 @@ const MerryMembership = () => {
                       </div>
                       <div className="flex-col justify-start items-start gap-2 inline-flex">
                         <p className="text-fuchsia-900 text-lg md:text-2xl font-bold ">
-                          Visa ending *9899
+                          Visa ending *42424
                         </p>
                         <div className="justify-start items-center gap-1.5 inline-flex">
                           <p className="text-slate-500 text-base font-normal ">

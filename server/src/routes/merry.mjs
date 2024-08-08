@@ -72,21 +72,34 @@ merryRouter.post("/unmatch", async (req, res) => {
   }
 });
 
-merryRouter.get("/status", async (req, res) => {
-  try {
-    let result = await connectionPool.query(`
- select u.user_id,u.friend_id,u.status, i.image_url
- from match_friend u 
- inner join user_profiles p on u.user_id = p.user_id 
- inner join user_images i on p.profile_id = i.profile_id
-  where status = 'match'
-     `);
+merryRouter.get("/status/:userId", async (req, res) => {
+  const { userId } = req.params;
 
-    const img = result.rows;
+  try {
+    let result = await connectionPool.query(
+      `
+      SELECT m.id, m.user_id, m.friend_id, m.status, p.name, m.user_id, i.image_url as image
+FROM match_friend m 
+INNER JOIN users u 
+  ON (u.user_id = m.friend_id or u.user_id = m.user_id)
+INNER JOIN user_profiles p
+  ON (p.user_id = m.friend_id or p.user_id = m.user_id)
+INNER JOIN user_images i
+  ON (p.profile_id = i.profile_id)
+WHERE (m.user_id = $1 or m.friend_id = $1) and (p.user_id !=$1) and (i.image_order = 1) and (status = 'match')
+GROUP BY m.id, p.profile_id, i.image_id
+ORDER BY m.id desc;
+    `,
+      [userId]
+    );
+
+    const userData = result.rows;
     return res.status(200).json({
       code: "U000",
       message: "Get profiles successfully",
-      data: img,
+      data: userData,
+      image: userData.map((item)=> item.image),
+      name: userData.map((item)=> item.name)
     });
   } catch (error) {
     console.error(error);

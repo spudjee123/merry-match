@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Heart from "../assets/images/heartmatchingpage.png";
 import ImgUser2 from "../assets/images/mockupimguser2.png";
 import ImgUser3 from "../assets/images/mockupimguser3.png";
@@ -6,8 +6,33 @@ import Avatar from "../assets/images/avatarmatchingpage.png";
 import NavUser from "../pages/user-profile-management/navUser";
 import Cardtinder from "./tinder/cardtinder";
 import RangeSlider from "./tinder/rangeslider";
+import { useEffect } from "react";
+import axios from "axios";
+import { useAuth } from "../context/auth";
 
 const MatchingPage = () => {
+  const [matchImages, setMatchImages] = useState([]);
+  const [matchName,setMatchName] = useState([])
+  const { state } = useAuth();
+  const userId = state.user?.user_id;
+
+  useEffect(() => {
+    const fetchMatchImages = async () => {
+      try {
+        const result = await axios.get(
+          `http://localhost:4001/merry/status/${userId}`
+        );
+        const image = result.data.image;
+        const name = result.data.name
+        console.log("abc", result);
+        setMatchImages(image);
+        setMatchName(name)
+      } catch (error) {
+        console.error("Error fetching match images:", error);
+      }
+    };
+    fetchMatchImages();
+  }, [userId]);
   return (
     <section>
       <NavUser />
@@ -32,14 +57,18 @@ const MatchingPage = () => {
               </p>
             </div>
           </div>
-          <div className="lg:h-[25%] lg:w-full border-2 lg:flex lg:justify-center lg:items-center">
+          <div
+            id="match-container"
+            className="lg:h-[25%] lg:w-full border-2 lg:flex lg:justify-center lg:items-center"
+          >
             <div className="lg:w-[95%]">
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
                 Merry Match!
               </h2>
-              <div className="lg:flex lg:gap-5 lg:mt-[10px]">
-                <img src={ImgUser2} alt="User 2" />
-                <img src={ImgUser3} alt="User 3" />
+              <div className="lg:flex lg:gap-5 lg:mt-[10px] overflow-x-auto overflow-y-auto max-h-[400px] max-w-[800px]">
+                {matchImages.map((item,index)=>{
+                  return(<img key={index} className="h-[100px] w-[100px] rounded-[24px]" src={item} alt="img_user" />)  
+                })}  
               </div>
             </div>
           </div>
@@ -48,15 +77,18 @@ const MatchingPage = () => {
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
                 Chat with Merry Match
               </h2>
-              <div className="lg:flex lg:mt-[15px] lg:gap-5">
-                <img src={Avatar} alt="Avatar" />
-                <div>
-                  <h1 className="lg:text-[16px] lg:text-[#2A2E3F]">Ygritte</h1>
-                  <p className="lg:text-[12px] lg:text-[#646D89]">
-                    You know nothing Jon Snow
-                  </p>
-                </div>
-              </div>
+              {matchImages.map((item,index)=>{
+                return(   
+                  <div className="lg:flex lg:mt-[15px] lg:gap-5">
+                  <img key={index} className="h-[60px] w-[60px] rounded-[40px]" src={item} alt="user_chat" />
+                  <div>
+                    <h1 className="lg:text-[16px] lg:text-[#2A2E3F]">{matchName[index]}</h1>
+                    <p className="lg:text-[12px] lg:text-[#646D89]">
+                      You know nothing {matchName[index]}
+                    </p>
+                  </div>
+                </div>)
+              })}
             </div>
           </div>
         </div>
