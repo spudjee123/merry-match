@@ -44,7 +44,7 @@ merryRouter.post("/match", async (req, res) => {
 });
 
 // จบทุกสิ่งทุกอย่าง เหมือนไม่มีอะไรเกิดขึ้น
-merryRouter.post("/unmatch", async (req, res) => {
+merryRouter.delete("/unmatch", async (req, res) => {
   const { user_id, friend_id } = req.body;
 
   if (!user_id || !friend_id) {
