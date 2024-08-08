@@ -89,7 +89,6 @@ io.on("connection", (socket) => {
       console.log("Error saving message:", err);
     }
   });
-  
 
   socket.on("send_message", (msg) => {
     // console.log(msg);
