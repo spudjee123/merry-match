@@ -28,9 +28,20 @@ const ComplainList = () => {
     complaint.name.toLowerCase().includes(searchUser.toLowerCase())
   );
 
-  const handleEditClick = (id) => {
+  const handleEditClick = async (id, status) => {
+
+    if(status === "New") {
+    await axios.put(`http://localhost:4001/admin/edit/complaint/${id}`, {status: "Pending"})
+    }
     navigate(`/complaint/see/${id}`);
+
+    
   };
+
+  // const handleClickToPending = async () => {
+  //   await axios.put(`http://localhost:4001/admin/edit/complaint/${complaint_id}`, {status: "Pending"})
+  //   navigate("/complaint/list")
+  // }
 
   return (
     <section className="px-4 py-4 bg-white border-b border-gray-300 flex">
@@ -92,8 +103,8 @@ const ComplainList = () => {
                   <td className="px-4 text-left">{complaint.created_at}</td>
                   <td className="px-4 text-left">
                     <button
-                      className="bg-[#fff5d4] text-[#393735] text-sm font-medium"
-                      onClick={() => handleEditClick(complaint.complaint_id)}
+                      className={`px-1 py-1 bg-[#fff5d4] rounded-lg flex items-center ${complaint.status === "New" ? "bg-beige-100 text-beige-700" : complaint.status === "Resolved" ? "bg-green-100 text-green-500" : complaint.status === "Cancel" ? "bg-gray-200 text-gray-700" : "" }`}
+                      onClick={() => handleEditClick(complaint.complaint_id,complaint.status)}
                     >
                       {complaint.status}
                     </button>
