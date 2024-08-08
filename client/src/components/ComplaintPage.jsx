@@ -6,64 +6,62 @@ import { useAuth } from "../context/auth";
 import axios from "axios";
 
 const ComplaintPage = () => {
+  const { state } = useAuth();
 
-  const {state} = useAuth()
+  const [textInput, setTextInput] = useState({
+    issue: "",
+    description: "",
+  });
 
-  
-    const [textInput,setTextInput] = useState({
-        issue:"",
-        description:"",
-        
-    })
+  const handleChange = (e) => {
+    setTextInput((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+  // console.log(textInput);
 
-    const handleChange = (e) => {
-        setTextInput((prev) => ({
-          ...prev,
-          [e.target.name]: e.target.value,
-        }));  
-      };
-// console.log(textInput);
+  // กดsubmitเพื่อส่งข้อมูล Complaint ไป supabase
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-// กดsubmitเพื่อส่งข้อมูล Complaint ไป supabase
-const handleSubmit = async (e) => {
-  e.preventDefault();
+    // check user_id
+    const userId = state.user?.user_id;
 
-  // check user_id
-  const userId = state.user?.user_id;
+    // check name
+    const nameUser = state.user?.name;
 
-  // check name
-  const nameUser = state.user?.name;
+    // ตรวจสอบว่าข้อมูล textInput มีค่าหรือไม่
+    const { issue, description } = textInput;
 
-  // ตรวจสอบว่าข้อมูล textInput มีค่าหรือไม่
-  const { issue, description } = textInput;
+    if (!userId || !issue || !description) {
+      alert("Please fill in all the required fields.");
+      return;
+    }
 
-  if (!userId || !issue || !description) {
-    alert("Please fill in all the required fields.");
-    return;
-  }
-
-  try {
-    const res = await axios.post(
-      "http://localhost:4001/user/complaint",
-      {
+    try {
+      const res = await axios.post("http://localhost:4001/user/complaint", {
         user_id: userId,
-        name: nameUser, 
+        name: nameUser,
         issue: issue,
         description: description,
-        status: "", 
+        status: "",
+      });
+      console.log("Response:", res);
+      alert("Send Complaint message successfully");
+      // ตั้งค่า textInput ให้เป็นค่าว่างหลังจากส่งข้อมูลเสร็จ
+      setTextInput({
+        issue: "",
+        description: "",
+      });
+    } catch (error) {
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+      } else {
+        console.error("An error occurred:", error);
       }
-    );
-    console.log("Response:", res);
-    alert("Send Complaint message successfully");
-  } catch (error) {
-    if (error.response) {
-      console.error("Error response data:", error.response.data);
-    } else {
-      console.error("An error occurred:", error);
     }
-  }
-};
-
+  };
 
   return (
     <section className="bg-white h-full w-screen pt-[120px] lg:pt-[150px]">
@@ -72,7 +70,11 @@ const handleSubmit = async (e) => {
       </div>
       <div className="lg:flex lg:flex-row-reverse lg:max-w-[70%] lg:mb-[250px] lg:mx-auto">
         <div className="lg:w-[40%]">
-          <img src={Img} alt="" className="h-[280px] w-[180px] mx-auto lg:w-[450px] lg:h-[675px]" />
+          <img
+            src={Img}
+            alt=""
+            className="h-[280px] w-[180px] mx-auto lg:w-[450px] lg:h-[675px]"
+          />
         </div>
         <div className="w-[90%] mx-auto mt-[60px] lg:w-[45%] lg:ml-0">
           <div className="mb-[40px] lg:w-full">
@@ -94,7 +96,7 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div className="mb-[40px]">
-            <p className="text-black text-body2">descriptionription</p>
+            <p className="text-black text-body2">description</p>
             <textarea
               placeholder="description..."
               name="description"
@@ -104,7 +106,10 @@ const handleSubmit = async (e) => {
               className="w-full rounded-lg h-[140px] bg-white border border-[#D6D9E4] px-[10px] pt-[10px] text-left align-text-top"
             />
           </div>
-          <button className="bg-[#C70039] rounded-full w-full text-white h-[50px] mb-[40px] lg:w-[200px]" onClick={handleSubmit}>
+          <button
+            className="bg-[#C70039] rounded-full w-full text-white h-[50px] mb-[40px] lg:w-[200px]"
+            onClick={handleSubmit}
+          >
             Submit
           </button>
         </div>

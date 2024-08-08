@@ -14,13 +14,16 @@ import { Server } from "socket.io";
 import upload from "./src/middlewares/Multer.js";
 import cloudinary from "./src/utils/cloudinary.js";
 import merryRouter from "./src/routes/merry.mjs";
+import Connection from "./src/utils/db2.mjs";
+import Chat from "./models/chat.mjs";
 import matchViewRouter from "./src/routes/match-view.mjs";
 
 dotenv.config();
 
-import { validate as isUuid } from "uuid";
-
 const app = express();
+
+// เชื่อม mongodb for chat database
+Connection();
 
 app.use(cors());
 // chat
@@ -32,29 +35,68 @@ const io = new Server(server, {
   },
 });
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//   })
-// );
-
+// socket.io
 io.on("connection", (socket) => {
-  console.log(`User Connected: ${socket.id}`);
+  console.log("Connected to Socket.io server");
 
-  socket.on("Join_room", (data) => {
-    socket.join(data);
-    // Check id to join room
-    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  socket.on("join_room", (room) => {
+    socket.join(room);
+    // console.log(`User joined room: ${room}`);
+
+    // Load previous messages for the room
+    const loadMessages = async () => {
+      try {
+        const messages = await Chat.find({ room })
+          .sort({ timestamp: 1 })
+          .exec();
+        // console.log("Loaded messages:", messages);
+        // ส่งข้อความทั้งหมดกลับไปยัง client
+        socket.emit("chat", messages);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    loadMessages();
   });
 
-  socket.on("send_message", (data) => {
-    // check detail chat room, id, author,message,time
-    // console.log("Message sent from server:", data);
-    socket.to(data.room).emit("receive_message", data);
+  // เก็บข้อมูลใน database
+  // socket.on("newMessage", async (msg) => {
+  //   console.log("New message to save:", msg);
+  //   try {
+  //     const newMessage = new Chat(msg);
+  //     await newMessage.save();
+  //     console.log("Message saved to MongoDB:", newMessage);
+  //     io.to(msg.room).emit("message", msg);
+  //   } catch (err) {
+  //     console.log("Error saving message:", err);
+  //   }
+  // });
+  socket.on("newMessage", async (msg) => {
+    console.log("New message to save:", msg);
+    try {
+      const newMessage = new Chat({
+        room: msg.room,
+        username: msg.username,
+        message: msg.message,
+        avatar: msg.avatar,
+        img: msg.img.flat() || [], // ใช้ .flat() เพื่อทำให้เป็น array ของ strings
+        timestamp: new Date(),
+      });
+      await newMessage.save();
+      console.log("Message saved to MongoDB:", newMessage);
+      io.to(msg.room).emit("message", msg);
+    } catch (err) {
+      console.log("Error saving message:", err);
+    }
+  });
+
+  socket.on("send_message", (msg) => {
+    // console.log(msg);
+    io.to(msg.room).emit("message", msg);
   });
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected", socket.id);
+    console.log("User disconnected");
   });
 });
 
@@ -145,38 +187,29 @@ app.post("/user/uploadimgfromchat", upload.single("file"), async (req, res) => {
   }
 
   try {
-    // ส่งไฟล์ไปยัง Cloudinary
+    // อัปโหลดไฟล์ไปยัง Cloudinary
     const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      upload_preset: "ml_default", // เปลี่ยนเป็น upload preset ที่คุณต้องการ
+      upload_preset: "ml_default", // ตรวจสอบให้แน่ใจว่าใช้ preset ที่ถูกต้อง
     });
 
-    // รับ URL ของภาพจาก Cloudinary
-    const imgUrl = uploadResult.secure_url;
+    // บันทึกข้อมูลภาพลงใน MongoDB
+    const newChat = new Chat({
+      room: req.body.room || "", // ถ้าไม่มี room ให้ใช้เป็น string ว่าง
+      username: req.body.username || "", // ถ้าไม่มี username ให้ใช้เป็น string ว่าง
+      img: [uploadResult.secure_url], // บันทึก URL ของภาพที่ได้จาก Cloudinary
+      timestamp: new Date(),
+    });
 
-    const newPackages = {
-      img: imgUrl,
-      created_at: new Date(),
-      updated_at: new Date(),
-    };
-
-    // บันทึกข้อมูล URL ของภาพในฐานข้อมูล
-    await connectionPool.query(
-      `INSERT INTO user_img_chat (img, created_at, updated_at) VALUES ($1, $2, $3)`,
-      [newPackages.img, newPackages.created_at, newPackages.updated_at]
-    );
-
+    // บันทึกข้อความใหม่ใน MongoDB
+    await newChat.save();
     return res.status(201).json({
-      message: "Create data successfully.",
-      data: {
-        img: imgUrl,
-        created_at: newPackages.created_at,
-        updated_at: newPackages.updated_at,
-      }, // ส่งกลับข้อมูลที่สร้างใหม่
+      message: "Image uploaded successfully.",
+      data: newChat,
     });
   } catch (error) {
-    console.error("Error uploading image to Cloudinary:", error);
+    console.error("Error saving image to MongoDB:", error);
     return res.status(500).json({
-      message: "Error uploading image to Cloudinary: " + error.message,
+      message: "Error saving image to MongoDB: " + error.message,
     });
   }
 });
@@ -347,7 +380,7 @@ app.post("/user/complaint", async (req, res) => {
 
   const newComplaint = {
     ...req.body,
-    status: status || null,
+    status: status || "New",
     created_at: new Date(),
     updated_at: new Date(),
   };

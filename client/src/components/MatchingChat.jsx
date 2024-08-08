@@ -16,16 +16,18 @@ const socket = io.connect("http://localhost:4001");
 const MatchingChat = () => {
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
-  const [messages, setMessages] = useState([]); // New state for storing messages
+  const [messages, setMessages] = useState([]); // State for storing messages
 
   const joinRoom = () => {
     if (username !== "" && room !== "") {
-      socket.emit("Join_room", room);
+      socket.emit("join_room", room);
+      // Load previous messages for the room
+      socket.emit("loadMessages", room);
     }
   };
 
   const handleNewMessage = (message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
+    setMessages((prevMessages) => [...prevMessages, message]); // Update messages with new message
   };
 
   useEffect(() => {
@@ -33,8 +35,13 @@ const MatchingChat = () => {
       console.log("Connected to server");
     });
 
-    socket.on("receive_message", (data) => {
+    socket.on("message", (data) => {
       handleNewMessage(data);
+    });
+
+    // Receive previous messages
+    socket.on("chat", (previousMessages) => {
+      setMessages(previousMessages); // Set the previous messages in state
     });
 
     socket.on("disconnect", () => {
@@ -44,7 +51,8 @@ const MatchingChat = () => {
     return () => {
       socket.off("connect");
       socket.off("disconnect");
-      socket.off("receive_message");
+      socket.off("message");
+      socket.off("chat"); // Clean up chat listener
     };
   }, []);
 
@@ -98,7 +106,7 @@ const MatchingChat = () => {
         {/* left container */}
         <div className="lg:w-[20%]">
           <div className="lg:w-full">
-            <div className="lg:h-[30%] lg:w-full flex justify-center items-center lg:py-[30px]">
+            <div className="lg:h-[30%] lg:w-full flex justify-center items-center lg:py-[30px] lg:pt-[100px]">
               <div className="lg:h-[80%] lg:w-[95%] lg:rounded-xl lg:border lg:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
                 <div>
                   <img src={Heart} alt="" />
@@ -166,30 +174,33 @@ const MatchingChat = () => {
           {/* chat box */}
           <div className="lg:w-full lg:mx-auto lg:overflow-hidden">
             <div className="lg:w-[90%] mx-auto flex flex-col lg:h-[670px] lg:overflow-y-auto">
-              {messages.map((message, index) => {
-                console.log(message); // ตรวจสอบค่าของ message
-                return (
-                  <div
-                    key={index}
-                    className={`mb-2 py-[10px] px-[25px] rounded-xl lg:w-[500px] ${
-                      message.author === username
-                        ? "bg-[#7D2262] text-white self-end"
-                        : "bg-[#EFC4E2] text-black self-start"
-                    }`}
-                  >
-                    <div className="font-bold">{message.author}</div>
-                    <div>{message.message}</div>
-                    <div className="text-xs text-black">{message.time}</div>
-                    {message.img && (
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`mb-2 py-[10px] px-[25px] rounded-xl lg:w-[500px] ${
+                    message.username === username
+                      ? "bg-[#7D2262] text-white self-end"
+                      : "bg-[#EFC4E2] text-black self-start"
+                  }`}
+                >
+                  <div className="font-bold">{message.username}</div>
+                  <div>{message.message}</div>
+                  {/* แปลงเวลาให้อ่านง่าย */}
+                  <div className="text-xs text-black">
+                    {new Date(message.timestamp).toLocaleTimeString()}
+                  </div>
+                  {/* เรียกรูปมาเเสดงถ้ามีไฟล์รูป */}
+                  {message.img &&
+                    message.img.map((url, i) => (
                       <img
-                        src={message.img}
+                        key={i}
+                        src={url}
                         alt="Uploaded"
                         className="mt-2 rounded-lg"
                       />
-                    )}
-                  </div>
-                );
-              })}
+                    ))}
+                </div>
+              ))}
             </div>
           </div>
           {/* input */}
@@ -222,6 +233,7 @@ const MatchingChat = () => {
                 username={username}
                 room={room}
                 onNewMessage={handleNewMessage}
+                messages={messages} // ส่ง messages ไปยัง Chat component
               />
             </div>
           </div>

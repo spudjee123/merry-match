@@ -2,7 +2,7 @@ import React from "react";
 import logo from "../assets/images/logo.png";
 import Box from "../assets/icons/Box.png";
 import Vector from "../assets/icons/Vector.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth";
 
 const AdminPageSidebar = () => {
@@ -40,7 +40,11 @@ const AdminPageSidebar = () => {
             <div className="h-6 w-6 md:h-8 md:w-8 flex justify-center items-center">
               <img src={Vector} alt="Vector Icon" className="w-full h-full" />
             </div>
-            <div className="text-slate-600 text-sm md:text-base">Complaint</div>
+            <Link to="/complaint/list">
+              <div className="text-slate-600 text-sm md:text-base cursor-pointer">
+                Complaint
+              </div>
+            </Link>
           </div>
         </a>
       </div>
