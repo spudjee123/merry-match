@@ -23,11 +23,33 @@ matchViewRouter.get("/:user_id", async (req, res) => {
       [user_id]
     );
     const merryList = merryListData.rows;
-    console.log(merryListData);
+
+    const followerCountData = await connectionPool.query(
+      `SELECT COUNT(*) as "followerCount"
+        FROM match_friend
+        WHERE  (user_id = $1 and status = 'match') or friend_id = $1`,
+      [user_id]
+    );
+
+    const followerCount = followerCountData.rows[0];
+
+    const matchCountData = await connectionPool.query(
+      `SELECT COUNT(*) as "matchCount"
+        FROM match_friend
+        WHERE  (user_id = $1 or friend_id = $1) and status = 'match'`,
+      [user_id]
+    );
+
+    const matchCount = matchCountData.rows[0];
+
     return res.json({
       code: "U000",
       message: "Get merry list successfully",
       data: merryList,
+      count: {
+        ...followerCount,
+        ...matchCount,
+      },
     });
   } catch (error) {
     console.log(error);

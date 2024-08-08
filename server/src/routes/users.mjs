@@ -28,7 +28,7 @@ usersRouter.get("/:user_id", async (req, res) => {
     const hobbiesList = hobbiesListData.rows.map((item) => item.hobby_name);
 
     const imagesData = await connectionPool.query(
-      `select image_url, public_id from user_images where profile_id = $1`,
+      `select image_url, public_id from user_images where profile_id = $1 order by image_order asc`,
       [userInfo.profile_id]
     );
 
