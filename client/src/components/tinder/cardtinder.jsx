@@ -25,7 +25,6 @@ function Cardtinder() {
     const fetchData = async () => {
       try {
         const result = await axios.get("http://localhost:4001/profiles");
-        console.log(result);
         const users = result.data.data.map((user) => ({
           user_id: user.user_id,
           name: user.name,
@@ -59,25 +58,16 @@ function Cardtinder() {
   const swiped = (direction, nameToDelete, index) => {
     // ตรงนี้ปัดแล้ว merry ลด
     setSwipeCount((prevCount) => prevCount - 1);
-    console.log(`You swiped: ${direction}`);
     if (index === 0) {
       updateCurrentIndex(userData.length - 1); // ตรงนี้ไปใบสุดท้าย
     } else {
       updateCurrentIndex(index - 1);
     }
   };
-  useEffect(() => {
-    console.log(`Total swipes: ${swipeCount}`);
-  }, [swipeCount]);
 
   const onCardLeftScreen = (myIdentifier) => {
     if (currentIndex >= 0 && currentIndex < userData.length) {
       setCurrentUser(userData[currentIndex - 1]);
-      console.log(`${myIdentifier} left the screen.`);
-    } else {
-      console.log(
-        `${myIdentifier} left the screen. Current user: index out of bounds`
-      );
     }
   };
 
@@ -112,9 +102,7 @@ function Cardtinder() {
       const userMatch = {
         user_id: userId,
         friend_id: currentUser.user_id,
-        
       };
-      console.log(userMatch);
       try {
         await axios.post("http://localhost:4001/merry/match", userMatch);
       } catch (error) {
@@ -163,7 +151,7 @@ function Cardtinder() {
                           Bangkok, Thailand
                         </p>
                       </div>
-                      <SeeProfile profile={userData[currentIndex]} />
+                      <SeeProfile user_id={userData[currentIndex].user_id} />
                     </div>
                   </div>
                 </div>
@@ -197,7 +185,7 @@ function Cardtinder() {
                   <div className="w-[90%] h-full flex flex-row items-end justify-between">
                     <div className="text-white text-[25px] flex justify-center items-center">
                       <div className="">{userData[currentIndex].name} 24</div>
-                      <SeeProfile />
+                      <SeeProfile user_id={userData[currentIndex].user_id} />
                     </div>
                     <div className="mb-6">
                       <button onClick={goBack}>
@@ -350,4 +338,3 @@ function Cardtinder() {
 }
 
 export default Cardtinder;
-
