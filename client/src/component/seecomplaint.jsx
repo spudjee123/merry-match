@@ -135,6 +135,47 @@ const SeeComplaintDetail = () => {
           </div>
         </div>
       </div>
+
+      {isDeleteDialogOpen && (
+        <dialog
+          id="delete"
+          className="modal rounded-2xl lg:rounded-3xl p-0"
+          open
+        >
+          <div className="modal-box p-0 shadow-primary">
+            <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
+              <h3 className=" text-xl leading-6 font-semibold">
+                Delete Confirmation
+              </h3>
+              <button
+                className="btn btn-sm btn-square btn-ghost"
+                onClick={() => setIsDeleteDialogOpen(false)}
+              >
+                X
+              </button>
+            </div>
+            <div className="p-4 lg:p-6 flex flex-col gap-6">
+              <p className="text-color-gray-700 leading-6">
+                Are you sure you want to delete this package?
+              </p>
+              <div className="flex flex-col lg:flex-row gap-4">
+                <button
+                  onClick={handleConfirmDelete}
+                  className="bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary"
+                >
+                  Yes, I want to delete
+                </button>
+                <button
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                  className="bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
+                >
+                  No, I don’t want
+                </button>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      )}
     </section>
   );
 };
