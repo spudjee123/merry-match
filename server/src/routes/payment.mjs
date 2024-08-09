@@ -190,7 +190,13 @@ stripeRouter.post("/api/payment-intent", express.json(), async (req, res) => {
   }
 });
 
-stripeRouter.put("/update/payment", express.json(), async (req, res) => {
+stripeRouter.put("/update", express.json(), async (req, res) => {
+  const { user, priceAmount, orderId, packageName } = req.body;
+
+  if (!user || !priceAmount || !orderId || !packageName) {
+    return res.status(400).json({ error: "Missing required fields." });
+  }
+
   try {
     // Create a new customer in Stripe if not already created
     const customer = await stripe.customers.create({
@@ -211,33 +217,30 @@ stripeRouter.put("/update/payment", express.json(), async (req, res) => {
       },
       metadata: {
         order_id: orderId,
-        package_name: packageName.name,
+        package_name: packageName,
       },
     });
 
-    // Insert the order data into the payment_test table
-    const orderData = {
-      order_id: orderId,
-      created_date: new Date(),
-    };
-    console.log(paymentIntent)
+    // Insert or update the order data into the payment_test table
     await connectionPool.query(
-      `Upadte payment_test set inten_id = $1 where order_id = $2`,
+      `UPDATE payment_test 
+       SET intent_id = $1, created_date = $2 
+       WHERE order_id = $3`,
       [
-        orderData.order_id,
-        orderData.created_date,
+        paymentIntent.id,  
+        new Date(),         
+        orderId,             
       ]
     );
 
     // Respond with the client secret for the PaymentIntent
     res.status(200).json({
-      message: 'update payment intent สำเร็จ',
-      // ส่งไปหน้าบ้าน
+      message: 'Payment Intent updated successfully',
       clientSecret: paymentIntent.client_secret,
     });
 
   } catch (error) {
-    console.error("Error creating Payment Intent:", error);
+    console.error("Error updating Payment Intent:", error);
     res.status(500).json({ error: error.message });
   }
 });
