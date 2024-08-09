@@ -64,13 +64,11 @@ function Cardtinder() {
 
   useEffect(() => {
     getAvailableProfiles(userId);
+    setCurrentIndex(0);
   }, []);
 
   useEffect(() => {
-    setCurrentIndex(userData.length - 1);
-  }, [userData]);
-
-  useEffect(() => {
+    setCurrentIndex(0);
     getAvailableProfiles(userId, filterParams);
   }, [filterParams]);
 
@@ -155,6 +153,7 @@ function Cardtinder() {
   };
 
   console.log("currentIndex", currentIndex);
+  console.log("User", userData);
   console.log("currentUser", userData[currentIndex]);
 
   return (
@@ -166,17 +165,17 @@ function Cardtinder() {
             <TinderCard
               ref={childRefs[currentIndex]}
               className="swipe"
-              key={userData[currentIndex].name}
+              key={userData[currentIndex]?.name}
               onSwipe={(dir) =>
-                swiped(dir, userData[currentIndex].name, currentIndex)
+                swiped(dir, userData[currentIndex]?.name, currentIndex)
               }
               onCardLeftScreen={() =>
-                onCardLeftScreen(userData[currentIndex].name)
+                onCardLeftScreen(userData[currentIndex]?.name)
               }
             >
               <div
                 style={{
-                  backgroundImage: `url(${userData[currentIndex].image})`,
+                  backgroundImage: `url(${userData[currentIndex]?.image})`,
                 }}
                 className="card bg-cover bg-center mt-[10%] w-screen h-screen rounded-3xl shadow-lg"
               >
@@ -186,8 +185,8 @@ function Cardtinder() {
                     <div className="text-white w-full flex items-center justify-between">
                       <div className="">
                         <h1 className="text-[25px]">
-                          {userData[currentIndex].name}{" "}
-                          {userData[currentIndex].age}
+                          {userData[currentIndex]?.name}{" "}
+                          {userData[currentIndex]?.age}
                         </h1>
                         <p className="flex flex-row text-[20px]">
                           <img
@@ -198,7 +197,7 @@ function Cardtinder() {
                           Bangkok, Thailand
                         </p>
                       </div>
-                      <SeeProfile user_id={userData[currentIndex].user_id} />
+                      <SeeProfile user_id={userData[currentIndex]?.user_id} />
                     </div>
                   </div>
                 </div>
@@ -213,18 +212,18 @@ function Cardtinder() {
             <TinderCard
               ref={childRefs[currentIndex]}
               className="swipe"
-              key={userData[currentIndex].name}
+              key={userData[currentIndex]?.name}
               onSwipe={(dir) =>
-                swiped(dir, userData[currentIndex].name, currentIndex)
+                swiped(dir, userData[currentIndex]?.name, currentIndex)
               }
               onCardLeftScreen={() =>
-                onCardLeftScreen(userData[currentIndex].name)
+                onCardLeftScreen(userData[currentIndex]?.name)
               }
             >
               <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-80 rounded-b-3xl z-20"></div>
               <div
                 style={{
-                  backgroundImage: `url(${userData[currentIndex].image})`,
+                  backgroundImage: `url(${userData[currentIndex]?.image})`,
                 }}
                 className="bg-cover mt-[15%] w-[580px] h-[580px] rounded-3xl relative"
               >
@@ -232,10 +231,10 @@ function Cardtinder() {
                   <div className="w-[90%] h-full flex flex-row items-end justify-between">
                     <div className="text-white text-[25px] flex justify-center items-center">
                       <div className="">
-                        {userData[currentIndex].name}{" "}
-                        {userData[currentIndex].age}
+                        {userData[currentIndex]?.name ?? "No one like you!"}{" "}
+                        {userData[currentIndex]?.age}
                       </div>
-                      <SeeProfile user_id={userData[currentIndex].user_id} />
+                      <SeeProfile user_id={userData[currentIndex]?.user_id} />
                     </div>
                     <div className="mb-6">
                       <button onClick={goBack}>
