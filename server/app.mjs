@@ -40,6 +40,8 @@ io.on("connection", (socket) => {
   console.log("Connected to Socket.io server");
 
   socket.on("join_room", (room) => {
+    // console.log(room);
+    
     socket.join(room);
     // console.log(`User joined room: ${room}`);
 

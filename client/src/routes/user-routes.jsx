@@ -22,7 +22,7 @@ function UserRoutes() {
       <Route path="/check/membership" element={<MerryMembership />} />
       <Route path="/paymentone" element={<PayMentOne />} />
       <Route path="/success" element={<Payment2Page />} />
-      <Route path="/matchingchat" element={<MatchingChat />} />
+      <Route path="/matchingchat/:matchId" element={<MatchingChat />} />
       <Route path="/complaint" element={<ComplaintPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
