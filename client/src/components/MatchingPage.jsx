@@ -12,7 +12,7 @@ import { useAuth } from "../context/auth";
 
 const MatchingPage = () => {
   const [matchImages, setMatchImages] = useState([]);
-  const [matchName,setMatchName] = useState([])
+  const [matchName, setMatchName] = useState([]);
   const { state } = useAuth();
   const userId = state.user?.user_id;
 
@@ -23,10 +23,10 @@ const MatchingPage = () => {
           `http://localhost:4001/merry/status/${userId}`
         );
         const image = result.data.image;
-        const name = result.data.name
+        const name = result.data.name;
         console.log("abc", result);
         setMatchImages(image);
-        setMatchName(name)
+        setMatchName(name);
       } catch (error) {
         console.error("Error fetching match images:", error);
       }
@@ -38,12 +38,12 @@ const MatchingPage = () => {
       <NavUser />
 
       {/* Mobile and iPad view */}
-      <div className="lg:hidden bg-[#160404] h-screen overflow-x-hidden">
+      <div className="lg:hidden bg-[#160404] h-screen w-screen overflow-x-hidden">
         <Cardtinder />
       </div>
 
       {/* Desktop view */}
-      <div className="bg-white mt-[70px] flex overflow-x-hidden max-lg:hidden">
+      <div className="bg-white w-screen h-screen mt-[70px] overflow-x-hidden flex max-lg:hidden">
         {/* Left View */}
         <div className="lg:w-[25%] border-2 flex flex-col items-center">
           <div className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center">
@@ -66,9 +66,16 @@ const MatchingPage = () => {
                 Merry Match!
               </h2>
               <div className="lg:flex lg:gap-5 lg:mt-[10px] overflow-x-auto overflow-y-auto max-h-[400px] max-w-[800px]">
-                {matchImages.map((item,index)=>{
-                  return(<img key={index} className="h-[100px] w-[100px] rounded-[24px]" src={item} alt="img_user" />)  
-                })}  
+                {matchImages.map((item, index) => {
+                  return (
+                    <img
+                      key={index}
+                      className="h-[100px] w-[100px] rounded-[24px]"
+                      src={item}
+                      alt="img_user"
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -77,17 +84,25 @@ const MatchingPage = () => {
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
                 Chat with Merry Match
               </h2>
-              {matchImages.map((item,index)=>{
-                return(   
+              {matchImages.map((item, index) => {
+                return (
                   <div className="lg:flex lg:mt-[15px] lg:gap-5">
-                  <img key={index} className="h-[60px] w-[60px] rounded-[40px]" src={item} alt="user_chat" />
-                  <div>
-                    <h1 className="lg:text-[16px] lg:text-[#2A2E3F]">{matchName[index]}</h1>
-                    <p className="lg:text-[12px] lg:text-[#646D89]">
-                      You know nothing {matchName[index]}
-                    </p>
+                    <img
+                      key={index}
+                      className="h-[60px] w-[60px] rounded-[40px]"
+                      src={item}
+                      alt="user_chat"
+                    />
+                    <div>
+                      <h1 className="lg:text-[16px] lg:text-[#2A2E3F]">
+                        {matchName[index]}
+                      </h1>
+                      <p className="lg:text-[12px] lg:text-[#646D89]">
+                        You know nothing {matchName[index]}
+                      </p>
+                    </div>
                   </div>
-                </div>)
+                );
               })}
             </div>
           </div>
