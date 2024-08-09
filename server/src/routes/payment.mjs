@@ -224,11 +224,10 @@ stripeRouter.put("/update", express.json(), async (req, res) => {
     // Insert or update the order data into the payment_test table
     await connectionPool.query(
       `UPDATE payment_test 
-       SET intent_id = $1, created_date = $2 
-       WHERE order_id = $3`,
+       SET intent_id = $1
+       WHERE order_id = $2`,
       [
-        paymentIntent.id,  
-        new Date(),         
+        paymentIntent.id,           
         orderId,             
       ]
     );
