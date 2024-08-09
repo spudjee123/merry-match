@@ -3,12 +3,13 @@ import AdminPageSidebar from "./adminsidebar";
 import search from "../assets/icons/search.png";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Ensure you have this imported
+import { useNavigate } from "react-router-dom";
 
 const ComplainList = () => {
   const [complaint, setComplaint] = useState([]);
   const [searchUser, setSearchUser] = useState("");
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [selectedStatus, setSelectedStatus] = useState("All status");
+  const navigate = useNavigate();
 
   const getComplaintList = async () => {
     try {
@@ -24,24 +25,22 @@ const ComplainList = () => {
     getComplaintList();
   }, []);
 
-  const filteredComplaints = complaint.filter((complaint) =>
-    complaint.name.toLowerCase().includes(searchUser.toLowerCase())
-  );
+  const filteredComplaints = complaint.filter((complaint) => {
+    const matchesName = complaint.name.toLowerCase().includes(searchUser.toLowerCase());
+    const matchDescription = complaint.description.toLowerCase().includes(searchUser.toLowerCase())
+    const matchIssue = complaint.issue.toLowerCase().includes(searchUser.toLowerCase())
+    const matchDateSubmit = complaint.created_at.toLowerCase().includes(searchUser.toLowerCase())
+    const matchesSearch = matchesName || matchDescription || matchIssue || matchDateSubmit
+    const matchesStatus = selectedStatus === "All status" || complaint.status === selectedStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   const handleEditClick = async (id, status) => {
-
-    if(status === "New") {
-    await axios.put(`http://localhost:4001/admin/edit/complaint/${id}`, {status: "Pending"})
+    if (status === "New") {
+      await axios.put(`http://localhost:4001/admin/edit/complaint/${id}`, { status: "Pending" });
     }
     navigate(`/complaint/see/${id}`);
-
-    
   };
-
-  // const handleClickToPending = async () => {
-  //   await axios.put(`http://localhost:4001/admin/edit/complaint/${complaint_id}`, {status: "Pending"})
-  //   navigate("/complaint/list")
-  // }
 
   return (
     <section className="px-4 py-4 bg-white border-b border-gray-300 flex">
@@ -65,17 +64,16 @@ const ComplainList = () => {
                 onChange={(e) => setSearchUser(e.target.value)}
               />
             </div>
-            <select className="select select-success w-full max-w-xs bg-white border-gray-300">
-              <option disabled selected>
-                All status
-              </option>
-              <option>One Piece</option>
-              <option>Naruto</option>
-              <option>Death Note</option>
-              <option>Attack on Titan</option>
-              <option>Bleach</option>
-              <option>Fullmetal Alchemist</option>
-              <option>Jojo's Bizarre Adventure</option>
+            <select
+              className="select select-success w-full max-w-xs bg-white border-gray-300"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              <option value="All status">All status</option>
+              <option value="New">New</option>
+              <option value="Pending">Pending</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Cancel">Cancel</option>
             </select>
           </div>
         </div>
@@ -103,8 +101,16 @@ const ComplainList = () => {
                   <td className="px-4 text-left">{complaint.created_at}</td>
                   <td className="px-4 text-left">
                     <button
-                      className={`px-1 py-1 bg-[#fff5d4] rounded-lg flex items-center ${complaint.status === "New" ? "bg-beige-100 text-beige-700" : complaint.status === "Resolved" ? "bg-green-100 text-green-500" : complaint.status === "Cancel" ? "bg-gray-200 text-gray-700" : "" }`}
-                      onClick={() => handleEditClick(complaint.complaint_id,complaint.status)}
+                      className={`px-1 py-1 bg-[#fff5d4] rounded-lg flex items-center ${
+                        complaint.status === "New"
+                          ? "bg-beige-100 text-beige-700"
+                          : complaint.status === "Resolved"
+                          ? "bg-green-100 text-green-500"
+                          : complaint.status === "Cancel"
+                          ? "bg-gray-200 text-gray-700"
+                          : ""
+                      }`}
+                      onClick={() => handleEditClick(complaint.complaint_id, complaint.status)}
                     >
                       {complaint.status}
                     </button>

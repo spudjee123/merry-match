@@ -8,7 +8,8 @@ const SeeComplaintDetail = () => {
   const navigate = useNavigate();
   const { complaint_id } = useParams();
   const [complaint, setComplaint] = useState(null);
-  // const [status, setStatus] = useState("")
+  const [isResolveDialogOpen, setIsResolveDialogOpen] = useState(false);
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
 
   const handleClickToComplaint = () => {
     navigate("/complaint/list");
@@ -31,30 +32,32 @@ const SeeComplaintDetail = () => {
     getComplaintDetail();
   }, [complaint_id]);
 
-  // const updateComplaint = async () => {
-  //   try {
-  //     const result = await axios.put(`http://localhost:4001/admin/edit/complaint/${complaint_id}`)
+  const handleClickToResolved = () => {
+    setIsResolveDialogOpen(true);
+  };
 
-  //   }
-  // }
-
-  const handleClickToResolved = async () => {
+  const handleConfirmResolved = async () => {
     await axios.put(
       `http://localhost:4001/admin/edit/complaint/${complaint_id}`,
       { status: "Resolved" }
     );
+    setIsResolveDialogOpen(false);
     navigate("/complaint/list");
   };
 
-  const handleClickToCancel = async () => {
+  const handleClickToCancel = () => {
+    setIsCancelDialogOpen(true);
+  };
+
+  const handleConfirmCancel = async () => {
     await axios.put(
       `http://localhost:4001/admin/edit/complaint/${complaint_id}`,
       { status: "Cancel" }
     );
+    setIsCancelDialogOpen(false);
     navigate("/complaint/list");
   };
 
-  console.log(complaint);
   if (!complaint) {
     return <div>Loading...</div>;
   }
@@ -73,8 +76,7 @@ const SeeComplaintDetail = () => {
             <div className="text-[#2a2e3f] text-xl lg:text-2xl font-bold">
               {complaint.issue}
             </div>
-            <div className={`px-2.5 py-1 bg-[#fff5d4] rounded-lg flex items-center ${complaint.status === "New" ? "bg-beige-100 text-beige-700" : complaint.status === "Resolved" ? "bg-green-100 text-green-500" : complaint.status === "Cancel" ? "bg-gray-200 text-gray-700" : "" }`}
-                      onClick={() => handleEditClick(complaint.complaint_id,complaint.status)}>
+            <div className={`px-2.5 py-1 bg-[#fff5d4] rounded-lg flex items-center ${complaint.status === "New" ? "bg-beige-100 text-beige-700" : complaint.status === "Resolved" ? "bg-green-100 text-green-500" : complaint.status === "Cancel" ? "bg-gray-200 text-gray-700" : ""}`}>
               <div className="text-[#393735] text-xs font-medium">
                 {complaint.status}
               </div>
@@ -136,40 +138,83 @@ const SeeComplaintDetail = () => {
         </div>
       </div>
 
-      {isDeleteDialogOpen && (
+      {/* Resolved pop up */}
+      {isResolveDialogOpen && (
         <dialog
-          id="delete"
+          id="resolve"
           className="modal rounded-2xl lg:rounded-3xl p-0"
           open
         >
           <div className="modal-box p-0 shadow-primary">
             <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
               <h3 className=" text-xl leading-6 font-semibold">
-                Delete Confirmation
+                Resolve Complaint
               </h3>
               <button
                 className="btn btn-sm btn-square btn-ghost"
-                onClick={() => setIsDeleteDialogOpen(false)}
+                onClick={() => setIsResolveDialogOpen(false)}
               >
                 X
               </button>
             </div>
             <div className="p-4 lg:p-6 flex flex-col gap-6">
-              <p className="text-color-gray-700 leading-6">
-                Are you sure you want to delete this package?
+              <p className="text-gray-700 leading-6">
+                This complaint is resolved?
               </p>
               <div className="flex flex-col lg:flex-row gap-4">
                 <button
-                  onClick={handleConfirmDelete}
-                  className="bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary"
+                  onClick={handleConfirmResolved}
+                  className="bg-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
                 >
-                  Yes, I want to delete
+                  Yes, it has been resolved
                 </button>
                 <button
-                  onClick={() => setIsDeleteDialogOpen(false)}
-                  className="bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
+                  onClick={() => setIsResolveDialogOpen(false)}
+                  className="bg-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
                 >
-                  No, I don’t want
+                  No, it’s not
+                </button>
+              </div>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {/* Cancel pop up */}
+      {isCancelDialogOpen && (
+        <dialog
+          id="cancel"
+          className="modal rounded-2xl lg:rounded-3xl p-0"
+          open
+        >
+          <div className="modal-box p-0 shadow-primary">
+            <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
+              <h3 className=" text-xl leading-6 font-semibold">
+                Cancel Complaint
+              </h3>
+              <button
+                className="btn btn-sm btn-square btn-ghost"
+                onClick={() => setIsCancelDialogOpen(false)}
+              >
+                X
+              </button>
+            </div>
+            <div className="p-4 lg:p-6 flex flex-col gap-6">
+              <p className="text-gray-700 leading-6">
+                Do you sure to cancel this complaint?
+              </p>
+              <div className="flex flex-col lg:flex-row gap-4">
+                <button
+                  onClick={handleConfirmCancel}
+                  className="bg-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
+                >
+                  Yes, cancel this complaint
+                </button>
+                <button
+                  onClick={() => setIsCancelDialogOpen(false)}
+                  className="bg-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
+                >
+                  No, give me more time
                 </button>
               </div>
             </div>
