@@ -475,6 +475,81 @@ app.get("/complaint/list", async (req, res) => {
   }
 });
 
+
+
+// admin can get by id from supabase
+app.get("/admin/get/complaint/:complaint_id", async (req, res) => {
+  const complaintId = req.params.complaint_id;
+
+  if (!complaintId) {
+    return res.status(400).json({
+      message: "Complaint ID is required",
+    });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("user_complaint")
+      .select("*")
+      .eq("complaint_id", complaintId)
+      .single();
+
+    if (error) {
+      return res.status(404).json({
+        message: `Server could not find a complaint with id: ${complaintId}`,
+        error: error.message,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Complaint retrieved successfully",
+      data: data,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message:
+        "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});
+
+
+// admin can update status complaint 
+app.put("/admin/edit/complaint/:complaint_id", async (req, res) => {
+  const complaintId = req.params.complaint_id;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({
+      message: "Invalid input.",
+    });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("user_complaint")
+      .update({ status })
+      .eq("complaint_id", complaintId)
+      .select();
+
+    if (error) {
+      throw error;
+    }
+
+    return res.status(200).json({
+      message: "Status updated successfully",
+      complaint: data[0],
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message:
+        "The server has encountered a situation it does not know how to handle.",
+      error: error.message,
+    });
+  }
+});
+
 server.listen(port, () => {
   console.log(`Server is running at ${port}`);
 });
