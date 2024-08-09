@@ -27,6 +27,66 @@ profilesRouter.get("/", async (req, res) => {
   }
 });
 
+profilesRouter.get("/available/:user_id", async (req, res) => {
+  const user_id = req.params.user_id;
+
+  const keyword = req.query.keyword;
+  const minAgeRaw = req.query.min_age;
+  const maxAgeRaw = req.query.max_age;
+  const sex = req.query.sex;
+
+  const minAge = minAgeRaw === "" ? null : Number(minAgeRaw) ? minAgeRaw : null;
+  const maxAge = maxAgeRaw === "" ? null : Number(maxAgeRaw) ? maxAgeRaw : null;
+
+  console.log("query", req.query);
+
+  console.log("keyword", keyword);
+  console.log("minAge", minAge);
+  console.log("maxAge", maxAge);
+  console.log("sex", sex);
+  try {
+    const profilesListData = await connectionPool.query(
+      `
+     SELECT p.*, i.image_url as "image", EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - EXTRACT(YEAR FROM p.birthdate)::INTEGER as age, count(*)
+    FROM user_profiles p
+      INNER JOIN user_images i
+        ON i.profile_id = p.profile_id
+      LEFT JOIN user_hobbies h
+        ON p.profile_id = h.profile_id
+    WHERE p.user_id NOT IN (
+        SELECT m1.friend_id
+          FROM match_friend m1
+          WHERE m1.user_id = $1
+        ) 
+      and p.user_id NOT IN (
+        SELECT m2.user_id
+          FROM match_friend m2
+          WHERE m2.friend_id = $1 and m2.status = 'match'
+        ) 
+      and p.user_id != $1 and i.image_order = 1 
+      and (sexident = $2 or $2 = '' or $2 isnull)
+      and (((EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - EXTRACT(YEAR FROM p.birthdate)::INTEGER) > $3) or $3 isnull )
+      and (((EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - EXTRACT(YEAR FROM p.birthdate)::INTEGER) > $4) or $4 isnull )
+      and (p.name ilike $5 or p.location ilike $5 or p.city ilike $5 or p.sexident ilike $5 or  p.sexprefer ilike $5 or p.racialprefer ilike $5 or p.meetprefer ilike $5 or p.about_me ilike $5 or h.hobby_name ilike $5 or $5 = '' or $5 isnull)
+    GROUP BY p.profile_id, i.image_id
+        `,
+      [user_id, sex, minAge, maxAge, keyword]
+    );
+    const profilesList = profilesListData.rows;
+
+    return res.status(200).json({
+      code: "U000",
+      message: "Get available profiles successfully",
+      data: profilesList,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Server could not register because database connection",
+    });
+  }
+});
+
 profilesRouter.get("/:user_id", async (req, res) => {
   const user_id = req.params.user_id;
   try {
