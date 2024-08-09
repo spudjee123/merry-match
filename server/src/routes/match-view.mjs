@@ -59,4 +59,17 @@ matchViewRouter.get("/:user_id", async (req, res) => {
   }
 });
 
+matchViewRouter.delete("/", async (req, res) => {
+  const user_id = req.body.user_id;
+  const friend_id = req.body.friend_id;
+  try {
+    await connectionPool(
+      `DELETE FROM match_friend WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1) `,
+      [user_id, friend_id]
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 export default matchViewRouter;
