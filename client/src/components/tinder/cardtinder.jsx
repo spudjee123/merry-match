@@ -10,38 +10,71 @@ import SeeProfile from "./seeprofile";
 import RangeSlider from "./rangeslider";
 import axios from "axios";
 import { useAuth } from "../../context/auth";
+import { useFilter } from "../../context/profile-filter-context";
+import useProfiles from "../../hooks/use-profiles";
 
 function Cardtinder() {
   const [swipeCount, setSwipeCount] = useState(20);
-  const [userData, setUserData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [currentUser, setCurrentUser] = useState({ name: "", user_id: "" });
   const currentIndexRef = useRef(currentIndex);
+  const { getAvailableProfiles, userData } = useProfiles();
+
   const { state } = useAuth();
   const userId = state.user?.user_id;
-  console.log(state);
+  // console.log(state);
+  const { filterParams, setFilterParams, ageRange, setAgeRange } = useFilter();
+  const [keyword, setKeyword] = useState("");
 
+  const handleSearchKeyword = (event) => {
+    event.preventDefault();
+    setFilterParams({ ...filterParams, keyword });
+  };
+  const handleTypeKeyword = (event) => {
+    setKeyword(event.target.value);
+  };
+
+  const handleResetSearch = () => {
+    setAgeRange([18, 80]);
+  };
+  console.log("filterParams", filterParams);
+  console.log("keyword", keyword);
+  // console.log("userData", userData);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const result = await axios.get(
+  //         `http://localhost:4001/profiles/available/${userId}`
+  //       );
+  //       const users = result.data.data.map((user) => ({
+  //         user_id: user.user_id,
+  //         name: user.name,
+  //         image: user.image,
+  //       }));
+  //       setUserData(users);
+  //       setCurrentIndex(users.length - 1);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
   console.log("userData", userData);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await axios.get(
-          `http://localhost:4001/profiles/available/${userId}`
-        );
-        const users = result.data.data.map((user) => ({
-          user_id: user.user_id,
-          name: user.name,
-          url: user.image,
-        }));
-        setUserData(users);
-        setCurrentIndex(users.length - 1);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
+    getAvailableProfiles(userId);
   }, []);
+
+  useEffect(() => {
+    setCurrentIndex(userData.length - 1);
+  }, [userData]);
+
+  useEffect(() => {
+    getAvailableProfiles(userId, filterParams);
+  }, [filterParams]);
+
+  console.log("User", userData);
 
   //  ตอนที่ปัดไปปัดมา จะจำข้อมูลuserไว้ ทำให้ปัดปุ๊บมาปั๊บ
   const childRefs = useMemo(
@@ -70,8 +103,8 @@ function Cardtinder() {
   };
 
   const onCardLeftScreen = (myIdentifier) => {
-    console.log("currentIndex", currentIndex);
-    console.log("currnetUser", userData[currentIndex - 1]);
+    // console.log("currentIndex", currentIndex);
+    // console.log("currnetUser", userData[currentIndex - 1]);
     if (currentIndex >= 0 && currentIndex < userData.length) {
       setCurrentUser(userData[currentIndex - 1]);
     }
@@ -105,14 +138,14 @@ function Cardtinder() {
 
   const matchUser = async () => {
     if (currentIndex >= 0 && currentIndex < userData.length) {
-      console.log("current profile", userData[currentIndex]);
+      // console.log("current profile", userData[currentIndex]);
       const userMatch = {
         user_id: userId,
         friend_id: userData[currentIndex].user_id,
       };
 
-      console.log(userMatch.user_id);
-      console.log(userMatch.friend_id);
+      // console.log(userMatch.user_id);
+      // console.log(userMatch.friend_id);
       try {
         await axios.post("http://localhost:4001/merry/match", userMatch);
       } catch (error) {
@@ -120,6 +153,9 @@ function Cardtinder() {
       }
     }
   };
+
+  console.log("currentIndex", currentIndex);
+  console.log("currentUser", userData[currentIndex]);
 
   return (
     <section>
@@ -140,7 +176,7 @@ function Cardtinder() {
             >
               <div
                 style={{
-                  backgroundImage: `url(${userData[currentIndex].url})`,
+                  backgroundImage: `url(${userData[currentIndex].image})`,
                 }}
                 className="card bg-cover bg-center mt-[10%] w-screen h-screen rounded-3xl shadow-lg"
               >
@@ -150,7 +186,8 @@ function Cardtinder() {
                     <div className="text-white w-full flex items-center justify-between">
                       <div className="">
                         <h1 className="text-[25px]">
-                          {userData[currentIndex].name} 24
+                          {userData[currentIndex].name}{" "}
+                          {userData[currentIndex].age}
                         </h1>
                         <p className="flex flex-row text-[20px]">
                           <img
@@ -187,14 +224,17 @@ function Cardtinder() {
               <div className="h-full w-full absolute bg-gradient-to-t from-purple-800 to-transparent opacity-80 rounded-b-3xl z-20"></div>
               <div
                 style={{
-                  backgroundImage: `url(${userData[currentIndex].url})`,
+                  backgroundImage: `url(${userData[currentIndex].image})`,
                 }}
                 className="bg-cover mt-[15%] w-[580px] h-[580px] rounded-3xl relative"
               >
                 <div className="w-full h-full flex justify-center absolute p-4 pb-10 z-40">
                   <div className="w-[90%] h-full flex flex-row items-end justify-between">
                     <div className="text-white text-[25px] flex justify-center items-center">
-                      <div className="">{userData[currentIndex].name} 24</div>
+                      <div className="">
+                        {userData[currentIndex].name}{" "}
+                        {userData[currentIndex].age}
+                      </div>
                       <SeeProfile user_id={userData[currentIndex].user_id} />
                     </div>
                     <div className="mb-6">
@@ -272,7 +312,10 @@ function Cardtinder() {
               <p className="text-[20px] text-[#191C77] absolute right-[45%] top-4">
                 Filter
               </p>
-              <button className="text-[16px] text-red-500 btn btn-sm btn-circle btn-ghost absolute right-6 top-4">
+              <button
+                onClick={handleResetSearch}
+                className="text-[16px] text-red-500 btn btn-sm btn-circle btn-ghost absolute right-6 top-4"
+              >
                 Clear
               </button>
             </form>
@@ -281,7 +324,7 @@ function Cardtinder() {
             <div className="w-full h-[20%] flex pt-24 items-start justify-center">
               <div className="w-[90%]">
                 <p className="text-black text-lg">Search by Keywords</p>
-                <form method="GET">
+                <form method="GET" onSubmit={handleSearchKeyword}>
                   <div className="relative pt-4">
                     <span className="absolute inset-y-0 left-0 flex pt-4 pl-2">
                       <button type="submit" className="p-1 border-gray-300">
@@ -299,11 +342,13 @@ function Cardtinder() {
                       </button>
                     </span>
                     <input
-                      type="search"
+                      type="text"
                       name="q"
                       className="py-2 w-full text-sm text-black rounded-md pl-10 bg-white border focus:border-gray-300 border-gray-300"
                       placeholder="Search..."
                       autoComplete="off"
+                      value={keyword}
+                      onChange={handleTypeKeyword}
                     />
                   </div>
                 </form>

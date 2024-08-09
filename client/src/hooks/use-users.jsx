@@ -27,17 +27,8 @@ const useUsers = () => {
     try {
       setIsError(false);
       setIsLoading(true);
-      console.log("hello");
       const result = await axios.get(`http://localhost:4001/users/${user_id}`);
-      console.log(result);
       setUserInfo({
-        ...result.data.data,
-        images: [
-          ...result.data.data.images,
-          ...restEmpty(result.data.data.images.length),
-        ],
-      });
-      console.log({
         ...result.data.data,
         images: [
           ...result.data.data.images,
