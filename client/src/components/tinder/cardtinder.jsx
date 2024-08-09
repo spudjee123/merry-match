@@ -21,14 +21,18 @@ function Cardtinder() {
   const userId = state.user?.user_id;
   console.log(state);
 
+  console.log("userData", userData);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get("http://localhost:4001/profiles");
+        const result = await axios.get(
+          `http://localhost:4001/profiles/available/${userId}`
+        );
         const users = result.data.data.map((user) => ({
           user_id: user.user_id,
           name: user.name,
-          url: user.image_url,
+          url: user.image,
         }));
         setUserData(users);
         setCurrentIndex(users.length - 1);
@@ -52,7 +56,7 @@ function Cardtinder() {
   const updateCurrentIndex = (val) => {
     setCurrentIndex(val);
     currentIndexRef.current = val;
-    // .cerrent เข้าถึงการ์ดที่อยู่ในตำแหน่ง currentIndex
+    // .current เข้าถึงการ์ดที่อยู่ในตำแหน่ง currentIndex
   };
   // หลังจากปัดให้ลด CurrentIndex เพื่อไปการ์ดถัดไป
   const swiped = (direction, nameToDelete, index) => {
@@ -66,6 +70,8 @@ function Cardtinder() {
   };
 
   const onCardLeftScreen = (myIdentifier) => {
+    console.log("currentIndex", currentIndex);
+    console.log("currnetUser", userData[currentIndex - 1]);
     if (currentIndex >= 0 && currentIndex < userData.length) {
       setCurrentUser(userData[currentIndex - 1]);
     }
@@ -99,10 +105,14 @@ function Cardtinder() {
 
   const matchUser = async () => {
     if (currentIndex >= 0 && currentIndex < userData.length) {
+      console.log("current profile", userData[currentIndex]);
       const userMatch = {
         user_id: userId,
-        friend_id: currentUser.user_id,
+        friend_id: userData[currentIndex].user_id,
       };
+
+      console.log(userMatch.user_id);
+      console.log(userMatch.friend_id);
       try {
         await axios.post("http://localhost:4001/merry/match", userMatch);
       } catch (error) {
