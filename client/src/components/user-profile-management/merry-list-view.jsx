@@ -88,6 +88,10 @@ function MerryListView() {
     }
   }, [profile]);
 
+  const handleClickChat = (id) => {
+    navigate (`/matchingchat/${id}`)
+  };
+
   return (
     <>
       {!isMobilePreview ? (
@@ -165,6 +169,7 @@ function MerryListView() {
                           <button
                             className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                             id="chat-btn"
+                            onClick={() => {handleClickChat (item.id)}}
                           >
                             <img src={chatIcon} className=" w-6 h-6" />
                           </button>
@@ -233,6 +238,7 @@ function MerryListView() {
                       <button
                         className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                         id="chat-btn"
+                        onClick={() => {handleClickChat (item.id)}}
                       >
                         <img src={chatIcon} className=" w-6 h-6" />
                       </button>

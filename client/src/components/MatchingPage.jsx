@@ -9,14 +9,18 @@ import RangeSlider from "./tinder/rangeslider";
 import { useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/auth";
+import { useNavigate } from "react-router-dom";
 
 const MatchingPage = () => {
   const [matchImages, setMatchImages] = useState([]);
   const [matchName, setMatchName] = useState([]);
+  const [matchInfo, setMatchInfo] = useState([]);
   const { state } = useAuth();
   const userId = state.user?.user_id;
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // เก็บข้อมูลทุกอย่าง
     const fetchMatchImages = async () => {
       try {
         const result = await axios.get(
@@ -24,15 +28,24 @@ const MatchingPage = () => {
         );
         const image = result.data.image;
         const name = result.data.name;
+        const info = result.data.data;
         console.log("abc", result);
         setMatchImages(image);
         setMatchName(name);
+        setMatchInfo(info);
       } catch (error) {
         console.error("Error fetching match images:", error);
       }
     };
     fetchMatchImages();
   }, [userId]);
+
+  // console.log(matchInfo);
+
+  const handleClickToChatRoom = (id) => {
+    navigate(`/matchingchat/${id}`);
+  };
+
   return (
     <section>
       <NavUser />
@@ -84,21 +97,26 @@ const MatchingPage = () => {
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
                 Chat with Merry Match
               </h2>
-              {matchImages.map((item, index) => {
+              {matchInfo.map((item, index) => {
                 return (
-                  <div className="lg:flex lg:mt-[15px] lg:gap-5">
+                  <div
+                    key={index}
+                    className="lg:flex lg:mt-[15px] lg:gap-5"
+                    onClick={() => {
+                      handleClickToChatRoom(item.id);
+                    }}
+                  >
                     <img
-                      key={index}
                       className="h-[60px] w-[60px] rounded-[40px]"
-                      src={item}
+                      src={item.image}
                       alt="user_chat"
                     />
                     <div>
                       <h1 className="lg:text-[16px] lg:text-[#2A2E3F]">
-                        {matchName[index]}
+                        {item.name}
                       </h1>
                       <p className="lg:text-[12px] lg:text-[#646D89]">
-                        You know nothing {matchName[index]}
+                        You know nothing {item.name}
                       </p>
                     </div>
                   </div>

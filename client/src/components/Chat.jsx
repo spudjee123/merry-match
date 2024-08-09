@@ -25,14 +25,14 @@ const Chat = ({ socket, username, room, onNewMessage, messages }) => {
 
   const sendMessage = async () => {
     let imgUrl = null;
-  
+
     if (currentMessage !== "" || img.file) {
       try {
         if (img.file) {
           const uploadResponse = await upload(img.file);
           imgUrl = uploadResponse.data.img; // ตรวจสอบว่าคุณได้ URL ของภาพ
         }
-  
+
         const messageData = {
           room: room,
           username: username,
@@ -40,7 +40,7 @@ const Chat = ({ socket, username, room, onNewMessage, messages }) => {
           timestamp: new Date().toISOString(),
           img: imgUrl ? [imgUrl] : [], // ส่ง img เป็น array ของ URL
         };
-  
+
         await socket.emit("newMessage", messageData);
         onNewMessage(messageData);
         setCurrentMessage("");
@@ -50,7 +50,6 @@ const Chat = ({ socket, username, room, onNewMessage, messages }) => {
       }
     }
   };
-  
 
   const handleImg = (e) => {
     if (e.target.files[0]) {
@@ -108,14 +107,26 @@ const Chat = ({ socket, username, room, onNewMessage, messages }) => {
         <button onClick={sendMessage}>
           <img src={SendChat} alt="" className="lg:h-[50px] lg:w-[50px]" />
         </button>
-        <label htmlFor="file" className="cursor-pointer lg:flex lg:justify-center lg:items-center">
+        <label
+          htmlFor="file"
+          className="cursor-pointer lg:flex lg:justify-center lg:items-center"
+        >
           <img src={ChatImg} alt="" className="lg:h-[35px] lg:w-[35px]" />
         </label>
-        <input type="file" id="file" style={{ display: "none" }} onChange={handleImg} />
+        <input
+          type="file"
+          id="file"
+          style={{ display: "none" }}
+          onChange={handleImg}
+        />
       </div>
       {img.url && (
         <div className="lg:mt-[10px]">
-          <img src={img.url} alt="Preview" className="lg:max-w-[200px] lg:max-h-[200px]" />
+          <img
+            src={img.url}
+            alt="Preview"
+            className="lg:max-w-[200px] lg:max-h-[200px]"
+          />
         </div>
       )}
     </div>
