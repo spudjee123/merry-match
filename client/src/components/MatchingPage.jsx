@@ -38,7 +38,7 @@ const MatchingPage = () => {
       <NavUser />
 
       {/* Mobile and iPad view */}
-      <div className="lg:hidden bg-[#160404] h-screen w-screen overflow-hidden">
+      <div className="lg:hidden bg-[#160404] h-screen w-screen overflow-x-hidden">
         <Cardtinder />
       </div>
 
