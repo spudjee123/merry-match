@@ -170,7 +170,7 @@ const AdminEditPackagePage = () => {
         <div className="text-xl font-bold text-gray-800">Edit Package</div>
         <div className="flex gap-4">
           <button
-            className="px-4 py-2 bg-rose-100 text-rose-800 rounded-full font-bold hover:bg-rose-200"
+            className="px-4 py-2 bg-red-100 hover:bg-red-200 active:bg-red-300 text-rose-800 rounded-full font-bold"
             onClick={handleClick}
           >
             Cancel
@@ -255,7 +255,7 @@ const AdminEditPackagePage = () => {
         <form onSubmit={handleUpload}>
           <button
             type="submit"
-            className="bg-rose-100 text-red-600 py-2 px-4 rounded-full mt-2 w-[120px] font-bold"
+            className="bg-red-100 hover:bg-red-200 active:bg-red-300 text-red-600 py-2 px-4 rounded-full mt-2 w-[120px] font-bold"
             disabled={loading}
           >
             {loading ? "Uploading..." : "Upload"}

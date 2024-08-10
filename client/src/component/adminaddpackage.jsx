@@ -129,7 +129,7 @@ const AdminAddPackagePage = () => {
         <div className="text-slate-800 text-2xl font-bold">Add Package</div>
         <div className="flex gap-4">
           <button
-            className="px-6 py-3 bg-rose-100 rounded-full shadow text-rose-800 font-bold"
+            className="px-6 py-3 bg-red-100 hover:bg-red-200 active:bg-red-300 rounded-full shadow text-rose-800 font-bold"
             onClick={handleClick}
           >
             Cancel
@@ -140,7 +140,7 @@ const AdminAddPackagePage = () => {
               id=""
               type="submit"
               onClick={handleSubmit}
-              className="px-6 py-3 bg-rose-700 rounded-full shadow text-white font-bold"
+              className="px-6 py-3 bg-red-500 hover:bg-red-400 active:bg-red-600 rounded-full shadow text-white font-bold"
             >
               Create
             </button>

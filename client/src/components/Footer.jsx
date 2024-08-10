@@ -27,9 +27,15 @@ const Footer = () => {
             </p>
           </div>
           <div className="flex justify-center mt-[25px] gap-5">
-            <img src={IconFacebook} alt="icon facebook" />
-            <img src={IconIg} alt="icon instagram" />
-            <img src={IconTwit} alt="icon twitter" />
+            <a href="https://www.facebook.com/" target="_blank">
+              <img src={IconFacebook} alt="icon facebook" />
+            </a>
+            <a href="https://www.instagram.com/" target="_blank">
+              <img src={IconIg} alt="icon instagram" />
+            </a>
+            <a href="https://x.com/i/flow/login" target="_blank">
+              <img src={IconTwit} alt="icon twitter" />
+            </a>
           </div>
         </div>
       </div>

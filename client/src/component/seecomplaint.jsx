@@ -92,7 +92,7 @@ const SeeComplaintDetail = () => {
               </div>
             </button>
             <button
-              className="px-6 py-3 bg-[#c70039] rounded-[99px] shadow flex items-center"
+              className="px-6 py-3 bg-red-500 hover:bg-red-400 active:bg-red-600 rounded-[99px] shadow flex items-center"
               onClick={handleClickToResolved}
             >
               <div className="text-center text-white text-base font-bold">
@@ -145,7 +145,7 @@ const SeeComplaintDetail = () => {
           className="modal rounded-2xl lg:rounded-3xl p-0"
           open
         >
-          <div className="modal-box p-0 shadow-primary">
+          <div className="modal-box p-0">
             <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
               <h3 className=" text-xl leading-6 font-semibold">
                 Resolve Complaint
@@ -164,13 +164,13 @@ const SeeComplaintDetail = () => {
               <div className="flex flex-col lg:flex-row gap-4">
                 <button
                   onClick={handleConfirmResolved}
-                  className="bg-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
+                  className="bg-red-100 hover:bg-red-200 active:bg-red-300 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
                 >
                   Yes, it has been resolved
                 </button>
                 <button
                   onClick={() => setIsResolveDialogOpen(false)}
-                  className="bg-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
+                  className="bg-red-500 hover:bg-red-400 active:bg-red-600 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
                 >
                   No, it’s not
                 </button>
@@ -187,7 +187,7 @@ const SeeComplaintDetail = () => {
           className="modal rounded-2xl lg:rounded-3xl p-0"
           open
         >
-          <div className="modal-box p-0 shadow-primary">
+          <div className="modal-box p-0">
             <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
               <h3 className=" text-xl leading-6 font-semibold">
                 Cancel Complaint
@@ -206,13 +206,13 @@ const SeeComplaintDetail = () => {
               <div className="flex flex-col lg:flex-row gap-4">
                 <button
                   onClick={handleConfirmCancel}
-                  className="bg-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
+                  className="bg-red-100 hover:bg-red-200 active:bg-red-300 px-6 py-3 max-lg:w-full rounded-[99px] text-red-600 leading-6 font-bold drop-shadow-secondary"
                 >
                   Yes, cancel this complaint
                 </button>
                 <button
                   onClick={() => setIsCancelDialogOpen(false)}
-                  className="bg-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
+                  className="bg-red-500 hover:bg-red-400 active:bg-red-600 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
                 >
                   No, give me more time
                 </button>

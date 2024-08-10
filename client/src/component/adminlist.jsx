@@ -95,7 +95,7 @@ const AdminPageList = () => {
             />
           </div>
           <button
-            className="px-6 py-3 bg-rose-700 rounded-full text-white font-bold"
+            className="px-6 py-3 bg-red-500 hover:bg-red-400 active:bg-red-600 rounded-full text-white font-bold"
             onClick={handleAddClick}
           >
             + Add Package
@@ -128,7 +128,7 @@ const AdminPageList = () => {
                 </td>
                 <td className="px-4 text-left">{pkg.package_id}</td>
                 <td className="px-4 text-left">
-                  <img src={pkg.icons} alt="package icon" />
+                  <img src={pkg.icons} alt="package icon" className="w-[35px] h-[35px]"/>
                 </td>
                 <td className="px-4 text-left">{pkg.packages_name}</td>
                 <td className="px-4 text-left">{pkg.merry_limit}</td>
@@ -154,7 +154,7 @@ const AdminPageList = () => {
           className="modal rounded-2xl lg:rounded-3xl p-0"
           open
         >
-          <div className="modal-box p-0 shadow-primary">
+          <div className="modal-box p-0">
             <div className="flex justify-between items-center h-14 px-6 py-2 border-b-2 m-0">
               <h3 className=" text-xl leading-6 font-semibold">
                 Delete Confirmation
@@ -173,13 +173,13 @@ const AdminPageList = () => {
               <div className="flex flex-col lg:flex-row gap-4">
                 <button
                   onClick={handleConfirmDelete}
-                  className="bg-color-red-100 px-6 py-3 max-lg:w-full rounded-[99px] text-color-red-600 leading-6 font-bold drop-shadow-secondary"
+                  className="bg-red-100 hover:bg-red-200 active:bg-red-300 px-6 py-3 max-lg:w-full rounded-[99px] text-[#95002B] leading-6 font-bold drop-shadow-secondary"
                 >
                   Yes, I want to delete
                 </button>
                 <button
                   onClick={() => setIsDeleteDialogOpen(false)}
-                  className="bg-color-red-500 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
+                  className="bg-red-500 hover:bg-red-400 active:bg-red-600 px-6 py-3 max-lg:w-full rounded-[99px] text-white leading-6 font-bold drop-shadow-primary"
                 >
                   No, I don’t want
                 </button>

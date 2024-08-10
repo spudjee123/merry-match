@@ -30,6 +30,10 @@ function NavUser() {
     setImgProfile(userInfo.images[0]?.url);
   }, [userInfo]);
 
+  const handleClickToMembership = () => {
+    navigate("/check/membership")
+  }
+
   return (
     <div className="navbar h-[70px] bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
@@ -152,11 +156,11 @@ function NavUser() {
           >
             Start Matching
           </button>
-          <button className="text-red-800 content-center md:text-[12px] lg:text-[18px]">
+          <button className="text-red-800 content-center md:text-[12px] lg:text-[18px]" onClick={handleClickToMembership}>
             Merry Member
           </button>
           <div className="dropdown dropdown-end">
-            <div
+            {/* <div
               tabIndex={0}
               role="button"
               className="btn m-1 bg-white hover:bg-white hover:border-white border-white rounded-[60px]"
@@ -166,18 +170,7 @@ function NavUser() {
                 alt="notification"
                 className="w-[18px] h-[18px] bg-white"
               />
-            </div>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu rounded-box z-[1] w-52 p-2 shadow bg-white"
-            >
-              <li>
-                <a>Item 1</a>
-              </li>
-              <li>
-                <a>Item 2</a>
-              </li>
-            </ul>
+            </div> */}
           </div>
         </div>
         <div className="dropdown dropdown-end ">
@@ -195,7 +188,7 @@ function NavUser() {
             className="menu menu-sm dropdown-content  rounded-box z-[1] mt-3 w-52 p-2 shadow bg-white"
           >
             <li>
-              <a className="justify-between">
+              <a className="justify-between" href="/membership">
                 <span className="badge bg-gradient-to-r from-[#742138] to-[#A87ABF] border-none text-white h-[41px] w-[179px]">
                   <img src={star} alt="star" />
                   More limit Merry!
@@ -219,7 +212,7 @@ function NavUser() {
               </button>
             </li>
             <li id="list-3">
-              <a href="/membership">
+              <a href="/check/membership">
                 <img src={Box} alt="box" className="w-[16px]" />
                 Merry Membership
               </a>
