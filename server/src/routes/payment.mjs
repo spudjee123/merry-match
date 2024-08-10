@@ -167,14 +167,14 @@ stripeRouter.post("/api/payment-intent", express.json(), async (req, res) => {
     };
     console.log(paymentIntent)
     await connectionPool.query(
-      `INSERT INTO payment_test (name,package_name, order_id, status, intent_id, created_date) 
-        VALUES ($1, $2, $3, $4, $5)`,
+      `INSERT INTO payment_test (name,package_name, order_id, status, payment_intent_id, created_date) 
+        VALUES ($1, $2, $3, $4, $5,$6)`,
       [
         orderData.name,
         orderData.package_name,
         orderData.order_id,
         orderData.status,
-        orderData.intent_id,
+        orderData.payment_intent_id,
         orderData.created_date,
       ]
     );
