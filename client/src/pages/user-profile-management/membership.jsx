@@ -12,13 +12,14 @@ function Membership() {
   const [packages, setPackages] = useState([]);
   const [price, setPrice] = useState();
   const { state } = useAuth();
-  const userName = state.user?.name;
+  const userName = state.user?.username
   const navigate = useNavigate();
   const [clientSecret, setClientSecret] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  
 
-  // console.log("ST", state);
+  console.log("ST", state);
 
   const getData = async () => {
     try {
@@ -45,10 +46,12 @@ console.log("abc",prices);
       const secret = await axios.post(
         "http://localhost:4001/payments/api/payment-intent",
         {
-          user: "Pee Nut",
+          user: userName,
           packageName: { name: "Basic", price: 59 },
         }
       );
+
+      console.log("55555",secret);
       setClientSecret(secret.data.clientSecret);
       setLoading(false);
     } catch (error) {

@@ -4,19 +4,45 @@ import { Elements, PaymentElement, useStripe, useElements, } from '@stripe/react
 import axios from 'axios';
 import Footer from "./Footer";
 import NavUser from "../pages/user-profile-management/navUser";
+import { useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 
 
 // Initialize Stripe with your public key
 
 
 const CheckoutForm = () => {
+  const { id } = useParams()
   const stripe = useStripe();
   const elements = useElements();
   const [clientSecret, setClientSecret] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
+  const [paymentIntent, setPaymentIntent] = useState("")
+  
+  useEffect(() => {
+     const getPaymentIntent = async() =>  {
+      try {
+        const result = await axios.get(
+          `http://localhost:4000/payment/update/payment/${id}`
+        );
+        const paymentIntent = result.data.clientSecret;
+        setPaymentIntent(paymentIntent);
+        toast.success(result.data.message);
 
+        console.log("id", paymentIntent);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.response.data.message);
+      }
+      
+    }
+  
+    getPaymentIntent()
+  }, [id])
+
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -41,6 +67,7 @@ const CheckoutForm = () => {
     } else {
       setError('Unexpected payment status.');
     }
+    navigate(`/success`);
     setIsLoading(false);
   };
 
