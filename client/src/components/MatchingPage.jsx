@@ -215,12 +215,6 @@ const MatchingPage = () => {
             </div>
           </div>
           <div className="flex m-6 justify-between">
-<<<<<<< HEAD
-            <button className="text-red-500 hover:bg-gray-300 active:bg-gray-600 rounded-full w-[130px] h-[60px] text-xl mr-4">
-              Clear
-            </button>
-            <button className="bg-red-500 hover:bg-red-400 active:bg-red-600 rounded-t-[30px] rounded-b-[30px] w-[130px] h-[60px] text-xl text-white">
-=======
             <button
               onClick={handleResetSearch}
               className="text-red-500 w-[130px] h-[60px] text-xl mr-4"
@@ -231,7 +225,6 @@ const MatchingPage = () => {
               onClick={handleClickSearch}
               className="bg-red-500 rounded-t-[30px] rounded-b-[30px] w-[130px] h-[60px] text-xl text-white"
             >
->>>>>>> 996ba1d (wip: fix tinder card)
               Search
             </button>
           </div>
