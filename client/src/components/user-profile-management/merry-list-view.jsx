@@ -89,7 +89,7 @@ function MerryListView() {
   }, [profile]);
 
   const handleClickChat = (id) => {
-    navigate (`/matchingchat/${id}`)
+    navigate(`/matchingchat/${id}`);
   };
 
   return (
@@ -169,7 +169,9 @@ function MerryListView() {
                           <button
                             className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                             id="chat-btn"
-                            onClick={() => {handleClickChat (item.id)}}
+                            onClick={() => {
+                              handleClickChat(item.id);
+                            }}
                           >
                             <img src={chatIcon} className=" w-6 h-6" />
                           </button>
@@ -236,15 +238,17 @@ function MerryListView() {
                   <div className=" flex gap-3">
                     {item.status === "match" ? (
                       <button
-                        className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
+                        className=" bg-white cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                         id="chat-btn"
-                        onClick={() => {handleClickChat (item.id)}}
+                        onClick={() => {
+                          handleClickChat(item.id);
+                        }}
                       >
                         <img src={chatIcon} className=" w-6 h-6" />
                       </button>
                     ) : null}
                     <button
-                      className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
+                      className=" bg-white cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                       id="view-btn"
                       onClick={() => {
                         handleClickView(item);
@@ -254,7 +258,7 @@ function MerryListView() {
                       <img src={viewIcon} className=" w-6 h-6" />
                     </button>
                     <button
-                      className=" bg-red-500 shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
+                      className=" bg-red-500 cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                       id="un-marry-btn"
                       onClick={handleClickUnmarry}
                     >

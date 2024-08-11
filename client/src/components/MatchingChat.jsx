@@ -155,10 +155,10 @@ const MatchingChat = () => {
         {/* left container */}
         <div className="lg:w-[25%] border-2 flex flex-col items-center">
           <div
-            className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center"
+            className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center cursor-pointer"
             onClick={handleClickToMatchingPage}
           >
-            <div className="lg:h-[80%] lg:w-[95%] lg:bg-[#F6F7FC] lg:rounded-xl lg:border lg:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
+            <div className="lg:h-[80%] lg:w-[95%] lg:bg-[#F6F7FC] lg:rounded-xl lg:border lg:hover:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
               <img src={Heart} alt="Heart Icon" />
               <h2 className="lg:text-[#95002B] lg:text-[20px] lg:font-bold">
                 Discover New Match
@@ -176,7 +176,7 @@ const MatchingChat = () => {
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
                 Merry Match!
               </h2>
-              <div className="lg:flex lg:gap-5 lg:mt-[10px] overflow-x-auto overflow-y-auto max-h-[400px] max-w-[800px]">
+              <div className="lg:flex lg:gap-5 lg:mt-[10px] overflow-x-auto overflow-y-auto max-h-[400px] max-w-[800px] cursor-pointer">
                 {matchImages.map((item, index) => {
                   return (
                     <img
@@ -201,8 +201,8 @@ const MatchingChat = () => {
                     key={index}
                     className={`lg:flex lg:mt-[15px] lg:gap-5 ${
                       item.id === clickId
-                        ? "border border-purple-500 bg-gray-100 p-2 rounded-xl"
-                        : ""
+                        ? "cursor-pointer active:border active:border-purple-500 hover:bg-gray-100 p-2 rounded-xl"
+                        : "cursor-pointer active:border active:border-purple-500 hover:bg-gray-100 p-2 rounded-xl"
                     }`}
                     onClick={() => {
                       handleClickToChat(item.id);
@@ -265,7 +265,7 @@ const MatchingChat = () => {
           {/* input */}
           <div className="lg:w-[90%] mx-auto">
             {/* ช่องพิมพ์ข้อความ */}
-            <div className="lg:w-full">
+            <div className="lg:w-full ">
               <Chat
                 socket={socket}
                 username={username}

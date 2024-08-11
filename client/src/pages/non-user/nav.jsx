@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import logo from "../non-user/logo.png";
 import bell from "../non-user/bell.png";
 import hamburger from "../non-user/hamburger.png";
+import { useNavigate } from "react-router-dom";
 
 function Nav() {
+  const navigate = useNavigate();
+
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -18,13 +21,17 @@ function Nav() {
   return (
     <div className="navbar bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 ">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
-        <Link to={"/"}>
+        <button
+          onClick={() => {
+            navigate("/merry-list");
+          }}
+        >
           <img
             src={logo}
             alt="logo"
             className="w-[132px]:h-[38px] md:w-[180px] md:h-[]"
           />
-        </Link>
+        </button>
       </div>
       <div className="flex flex-1 justify-end px-2">
         <div className="flex items-stretch">
@@ -88,7 +95,7 @@ function Nav() {
               How to Merry
             </button>
             <Link to="/login" className="content-center">
-              <button className="lg:w-[139px] lg:h-[52px] lg:text-[18px] rounded-[99px] bg-red-500 text-white content-center md:w-[112px] md:h-[48px]">
+              <button className="lg:w-[139px] lg:h-[52px] lg:text-[18px] rounded-[99px] bg-red-500 hover:bg-red-400 active:bg-red-600 text-white content-center md:w-[112px] md:h-[48px]">
                 Login
               </button>
             </Link>

@@ -56,7 +56,7 @@ export function LandingPage() {
             onClick={() => {
               navigate("/login");
             }}
-            className="px-6 py-3 bg-rose-700 rounded-full hover:bg-[#FFE1EA] hover:text-[#95002B] shadow text-base font-bold leading-normal font-['Nunito']"
+            className="px-6 py-3 rounded-full bg-red-500 hover:bg-red-400 active:bg-red-600 text-white shadow text-base font-bold leading-normal font-['Nunito']"
           >
             Start matching!
           </button>
@@ -154,7 +154,7 @@ export function LandingPage() {
               onClick={() => {
                 navigate("/login");
               }}
-              className="px-6 py-3 bg-rose-100 rounded-full hover:bg-[#E4E6ED] font-bold leading-normal font-['Nunito'] text-red-600"
+              className="px-6 py-3 bg-rose-100 rounded-full hover:bg-red-200 active:bg-red-300 font-bold leading-normal font-['Nunito'] text-red-600"
             >
               Start Matching!
             </button>

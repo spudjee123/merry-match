@@ -107,7 +107,7 @@ const ComplaintPage = () => {
             />
           </div>
           <button
-            className="bg-[#C70039] rounded-full w-full text-white h-[50px] mb-[40px] lg:w-[200px]"
+            className="bg-red-500 hover:bg-red-400 active:bg-red-600 rounded-full w-full text-white h-[50px] mb-[40px] lg:w-[200px]"
             onClick={handleSubmit}
           >
             Submit
