@@ -31,9 +31,16 @@ const MatchingPage = () => {
 
   const handleResetSearch = () => {
     setAgeRange([18, 80]);
+    setFilterParams({});
   };
 
-  console.log(ageRange);
+  const handleClickSearch = (event) => {
+    event.preventDefault();
+    setFilterParams({ minAge: ageRange[0], maxAge: ageRange[1] });
+  };
+
+  console.log("ageRange", ageRange);
+  console.log("FilterParams", filterParams);
 
   useEffect(() => {
     // เก็บข้อมูลทุกอย่าง
@@ -221,7 +228,7 @@ const MatchingPage = () => {
               Clear
             </button>
             <button
-              onClick={handleResetSearch}
+              onClick={handleClickSearch}
               className="bg-red-500 rounded-t-[30px] rounded-b-[30px] w-[130px] h-[60px] text-xl text-white"
             >
 >>>>>>> 996ba1d (wip: fix tinder card)

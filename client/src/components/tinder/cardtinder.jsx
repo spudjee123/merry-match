@@ -35,7 +35,14 @@ function Cardtinder() {
   };
 
   const handleResetSearch = () => {
+    setFilterParams({});
     setAgeRange([18, 80]);
+  };
+
+  // กด search อายุ กับ เพศ
+  const handleClickSearch = (event) => {
+    event.preventDefault();
+    setFilterParams({ minAge: ageRange[0], maxAge: ageRange[1] });
   };
   console.log("filterParams", filterParams);
   console.log("keyword", keyword);
@@ -231,7 +238,7 @@ function Cardtinder() {
                   <div className="w-[90%] h-full flex flex-row items-end justify-between">
                     <div className="text-white text-[25px] flex justify-center items-center">
                       <div className="">
-                        {userData[currentIndex]?.name ?? "No one like you!"}{" "}
+                        {userData[currentIndex]?.name ?? "Merry is out of card"}{" "}
                         {userData[currentIndex]?.age}
                       </div>
                       <SeeProfile user_id={userData[currentIndex]?.user_id} />
@@ -377,7 +384,10 @@ function Cardtinder() {
               </div>
             </div>
             <div className="w-[90%] m-6 flex items-center justify-center">
-              <button className="bg-red-500 rounded-[30px] w-full h-[60px] text-xl text-white">
+              <button
+                onClick={handleClickSearch}
+                className="bg-red-500 rounded-[30px] w-full h-[60px] text-xl text-white"
+              >
                 Search
               </button>
             </div>
