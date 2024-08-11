@@ -11,18 +11,23 @@ const Stripe = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const stripePromise = loadStripe('pk_test_51PfGepCsaxbmSm5Dug1DybzMHjBhWXevCXSlPcDrst0nGMSbNPb9lkUMFI2tgTqLpoXJwgHyqznryoN0xNpLkdt40000NTQoiw');
-  
+  const stripePromise = loadStripe(
+    "pk_test_51PfGepCsaxbmSm5Dug1DybzMHjBhWXevCXSlPcDrst0nGMSbNPb9lkUMFI2tgTqLpoXJwgHyqznryoN0xNpLkdt40000NTQoiw"
+  );
+
   useEffect(() => {
     const fetchClientSecret = async () => {
-      let result ;
+      let result;
+      
       try {
-         result = await axios.post('http://localhost:4001/payments/api/payment-intent', {
-          user: "John Doe",
-          packageName: { name: "Basic", price: 59 },
-        })
-          
-        
+        result = await axios.post(
+          "http://localhost:4001/payments/api/payment-intent",
+          {
+            user: "Ton Homland",
+            packageName: { name: "Basic", price: 59 },
+          }
+        );
+        console.log("result", result);
         setClientSecret(result.data.clientSecret);
         setLoading(false);
       } catch (error) {
@@ -30,9 +35,7 @@ const Stripe = () => {
         setError("Failed to initialize payment.");
         setLoading(false);
       }
-      
     };
-    
 
     fetchClientSecret();
   }, []);
@@ -47,17 +50,15 @@ const Stripe = () => {
 
   const appearance = {
     theme: "stripe",
-  }
+  };
 
   const options = {
     clientSecret,
     appearance,
-  }
+  };
 
-  console.log("1",clientSecret);
-  console.log("2",stripePromise);
-  
-  
+  console.log("1", clientSecret);
+  console.log("2", stripePromise);
 
   return (
     <Elements stripe={stripePromise} options={options}>
