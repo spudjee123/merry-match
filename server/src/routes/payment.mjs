@@ -15,7 +15,7 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
 dotenv.config();
 
 stripeRouter.post("/api/payment-intent", express.json(), async (req, res) => {
-  const { user, packageName, paymentIntentId, clientSecret } = req.body;
+  const { user, packageName, paymentIntentId, email } = req.body;
 
   // Generate a unique order ID if not provided
   const orderId = paymentIntentId ? undefined : uuidv4();
@@ -34,8 +34,8 @@ stripeRouter.post("/api/payment-intent", express.json(), async (req, res) => {
     try {
       // Create a new customer in Stripe
       const customer = await stripe.customers.create({
-        name: user.name, // Ensure user has a 'name' field
-        email: user.email,
+        name: user, // Ensure user has a 'name' field
+        email: email,
         metadata: {
           userId: user.id,
         },
@@ -50,13 +50,13 @@ const paymentIntent = await stripe.paymentIntents.create({
         metadata: {
           order_id: orderId,
           package_name: packageName.name,
-          user_name: user.name, // Added 'user_name' for clarity
+          user_name: user, // Added 'user_name' for clarity
         },
       });
 
       // Insert the order data into the payment_test table
       const orderData = {
-        name: user.name, // Ensure this matches your database schema
+        name: user, // Ensure this matches your database schema
         package_name: packageName.name,
         order_id: orderId,
         payment_intent_id: paymentIntent.id,
@@ -91,10 +91,11 @@ const paymentIntent = await stripe.paymentIntents.create({
       return res.status(400).json({ error: 'Missing clientSecret.' });
     }
 
+    const statusPayment = "complete"
     try {
       await connectionPool.query(
-        `UPDATE payment_test SET status = $1, client_secret = $2 WHERE payment_intent_id = $3`,
-        ['complete', clientSecret, paymentIntentId]
+        `UPDATE payment_test SET status = $1 WHERE payment_intent_id = $2`,
+        [statusPayment, paymentIntentId]
       );
       res.status(200).json({ message: 'Order status and clientSecret updated successfully.' });
     } catch (error) {
