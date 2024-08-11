@@ -65,8 +65,8 @@ profilesRouter.get("/available/:user_id", async (req, res) => {
         ) 
       and p.user_id != $1 and i.image_order = 1 
       and (sexident = $2 or $2 = '' or $2 isnull)
-      and (((EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - EXTRACT(YEAR FROM p.birthdate)::INTEGER) > $3) or $3 isnull )
-      and (((EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - EXTRACT(YEAR FROM p.birthdate)::INTEGER) > $4) or $4 isnull )
+      and (((EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - EXTRACT(YEAR FROM p.birthdate)::INTEGER) >= $3) or $3 isnull )
+      and (((EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER - EXTRACT(YEAR FROM p.birthdate)::INTEGER) <= $4) or $4 isnull )
       and (p.name ilike $5 or p.location ilike $5 or p.city ilike $5 or p.sexident ilike $5 or  p.sexprefer ilike $5 or p.racialprefer ilike $5 or p.meetprefer ilike $5 or p.about_me ilike $5 or h.hobby_name ilike $5 or $5 = '' or $5 isnull)
     GROUP BY p.profile_id, i.image_id
         `,

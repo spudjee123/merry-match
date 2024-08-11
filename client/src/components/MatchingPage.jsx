@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/auth";
 import { useNavigate } from "react-router-dom";
+import { useFilter } from "../context/profile-filter-context";
 
 const MatchingPage = () => {
   const [matchImages, setMatchImages] = useState([]);
@@ -18,6 +19,28 @@ const MatchingPage = () => {
   const { state } = useAuth();
   const userId = state.user?.user_id;
   const navigate = useNavigate();
+  const { filterParams, setFilterParams, ageRange, setAgeRange } = useFilter();
+  const [keyword, setKeyword] = useState("");
+  const handleSearchKeyword = (event) => {
+    event.preventDefault();
+    setFilterParams({ ...filterParams, keyword });
+  };
+  const handleTypeKeyword = (event) => {
+    setKeyword(event.target.value);
+  };
+
+  const handleResetSearch = () => {
+    setAgeRange([18, 80]);
+    setFilterParams({});
+  };
+
+  const handleClickSearch = (event) => {
+    event.preventDefault();
+    setFilterParams({ minAge: ageRange[0], maxAge: ageRange[1] });
+  };
+
+  console.log("ageRange", ageRange);
+  console.log("FilterParams", filterParams);
 
   useEffect(() => {
     // เก็บข้อมูลทุกอย่าง
@@ -29,7 +52,7 @@ const MatchingPage = () => {
         const image = result.data.image;
         const name = result.data.name;
         const info = result.data.data;
-        console.log("abc", result);
+        // console.log("abc", result);
         setMatchImages(image);
         setMatchName(name);
         setMatchInfo(info);
@@ -136,7 +159,7 @@ const MatchingPage = () => {
           {/* Search by Keywords */}
           <div className="flex flex-col p-4">
             <p className="text-black text-lg">Search by Keywords</p>
-            <form method="GET">
+            <form method="GET" onSubmit={handleSearchKeyword}>
               <div className="relative pt-4">
                 <span className="absolute inset-y-0 left-0 flex pt-4 pl-2">
                   <button type="submit" className="p-1 border-gray-300">
@@ -159,6 +182,8 @@ const MatchingPage = () => {
                   className="py-2 w-full text-sm text-black rounded-md pl-10 bg-white border focus:border-gray-300 border-gray-300"
                   placeholder="Search..."
                   autoComplete="off"
+                  value={keyword}
+                  onChange={handleTypeKeyword}
                 />
               </div>
             </form>
@@ -173,6 +198,9 @@ const MatchingPage = () => {
                   type="checkbox"
                   defaultChecked
                   className="checkbox ml-4 mt-4 border-gray-300 [--chkbg:purple] [--chkfg:white] checked:border-purple-300"
+                  onChange={(event) => {
+                    console.log("event", event.target.checked);
+                  }}
                 />
                 <p className="ml-4 mt-3 w-full text-lg">{label}</p>
               </div>
@@ -187,10 +215,16 @@ const MatchingPage = () => {
             </div>
           </div>
           <div className="flex m-6 justify-between">
-            <button className="text-red-500 hover:bg-gray-300 active:bg-gray-600 rounded-full w-[130px] h-[60px] text-xl mr-4">
+            <button
+              onClick={handleResetSearch}
+              className="text-red-500 w-[130px] h-[60px] text-xl mr-4"
+            >
               Clear
             </button>
-            <button className="bg-red-500 hover:bg-red-400 active:bg-red-600 rounded-t-[30px] rounded-b-[30px] w-[130px] h-[60px] text-xl text-white">
+            <button
+              onClick={handleClickSearch}
+              className="bg-red-500 rounded-t-[30px] rounded-b-[30px] w-[130px] h-[60px] text-xl text-white"
+            >
               Search
             </button>
           </div>

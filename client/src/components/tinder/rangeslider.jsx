@@ -1,57 +1,58 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
+import { useFilter } from "../../context/profile-filter-context";
 
 function valuetext(value) {
   return `${value}`;
 }
 
 export default function RangeSlider() {
-  const [value, setValue] = React.useState([18, 80]);
+  const { ageRange, setAgeRange } = useFilter();
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setAgeRange(newValue);
   };
 
   const handleMinAgeChange = (event) => {
     const newValue = Number(event.target.value);
-    setValue([newValue, value[1]]);
+    setAgeRange([newValue, ageRange[1]]);
   };
 
   const handleMaxAgeChange = (event) => {
     const newValue = Number(event.target.value);
-    setValue([value[0], newValue]);
+    setAgeRange([ageRange[0], newValue]);
   };
 
   const handleMinAgeBlur = () => {
-    let minAge = value[0];
-    let maxAge = value[1];
+    let minAge = ageRange[0];
+    let maxAge = ageRange[1];
     if (minAge < 18) {
       minAge = 18;
     }
     if (minAge > maxAge) {
       minAge = maxAge;
     }
-    setValue([minAge, maxAge]);
+    setAgeRange([minAge, maxAge]);
   };
 
   const handleMaxAgeBlur = () => {
-    let minAge = value[0];
-    let maxAge = value[1];
+    let minAge = ageRange[0];
+    let maxAge = ageRange[1];
     if (maxAge > 80) {
       maxAge = 80;
     }
     if (maxAge < minAge) {
       maxAge = minAge;
     }
-    setValue([minAge, maxAge]);
+    setAgeRange([minAge, maxAge]);
   };
 
   return (
     <Box sx={{ width: "90%" }}>
       <Slider
         getAriaLabel={() => "Age Range"}
-        value={value}
+        value={ageRange}
         onChange={handleChange}
         valueLabelDisplay="auto"
         getAriaValueText={valuetext}
@@ -62,7 +63,7 @@ export default function RangeSlider() {
       <div className="flex justify-between items-center py-5">
         <input
           type="text"
-          value={value[0]}
+          value={ageRange[0]}
           onChange={handleMinAgeChange}
           onBlur={handleMinAgeBlur}
           className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-28 h-15 text-start"
@@ -70,7 +71,7 @@ export default function RangeSlider() {
         <p className="text-black">-</p>
         <input
           type="text"
-          value={value[1]}
+          value={ageRange[1]}
           onChange={handleMaxAgeChange}
           onBlur={handleMaxAgeBlur}
           className="px-3 py-2 border bg-white border-gray-200 rounded-lg text-xl w-28 h-15 text-start"

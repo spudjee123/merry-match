@@ -10,24 +10,27 @@ import NotFoundPage from "../pages/NotFoundPage";
 import { Routes, Route } from "react-router-dom";
 import MatchingChat from "../components/MatchingChat";
 import ComplaintPage from "../components/ComplaintPage";
-import Stripe from "../components/elementStripe"
+import { FilterProvider } from "../context/profile-filter-context";
+import Stripe from "../components/elementStripe";
 
 function UserRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<HomeUserLogin />} />
-      <Route path="/profile" element={<EditProfilePage />} />
-      <Route path="/merry-list" element={<MerryListPage />} />
-      <Route path="/membership" element={<Membership />} />
-      <Route path="/matching" element={<MatchingPage />} />
-      <Route path="/check/membership" element={<MerryMembership />} />
-      <Route path="/paymentone" element={<PayMentOne />} />
-      <Route path="/success" element={<Payment2Page />} />
-      <Route path="/matchingchat/:matchId" element={<MatchingChat />} />
-      <Route path="/complaint" element={<ComplaintPage />} />
-       <Route path="/stripe" element={<Stripe />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <FilterProvider>
+      <Routes>
+        <Route path="/" element={<HomeUserLogin />} />
+        <Route path="/profile" element={<EditProfilePage />} />
+        <Route path="/merry-list" element={<MerryListPage />} />
+        <Route path="/membership" element={<Membership />} />
+        <Route path="/matching" element={<MatchingPage />} />
+        <Route path="/check/membership" element={<MerryMembership />} />
+        <Route path="/paymentone" element={<PayMentOne />} />
+        <Route path="/success" element={<Payment2Page />} />
+        <Route path="/matchingchat/:matchId" element={<MatchingChat />} />
+        <Route path="/complaint" element={<ComplaintPage />} />
+        <Route path="/stripe" element={<Stripe />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </FilterProvider>
   );
 }
 

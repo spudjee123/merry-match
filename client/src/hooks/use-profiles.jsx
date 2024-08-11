@@ -16,6 +16,8 @@ const useProfiles = () => {
   const [profilesList, setProfilesList] = useState([]);
   const [profile, setProfile] = useState({});
 
+  const [userData, setUserData] = useState([]);
+
   const getProfiles = async () => {
     try {
       setIsError(false);
@@ -58,7 +60,9 @@ const useProfiles = () => {
           "&"
         )}`
       );
+      console.log("RESULT", result);
       setProfilesList(result.data.data);
+      setUserData(result.data.data);
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -85,6 +89,7 @@ const useProfiles = () => {
     getProfileById,
     profilesList,
     profile,
+    userData,
   };
 };
 
