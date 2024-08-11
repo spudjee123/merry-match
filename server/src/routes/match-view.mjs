@@ -63,10 +63,19 @@ matchViewRouter.delete("/", async (req, res) => {
   const user_id = req.body.user_id;
   const friend_id = req.body.friend_id;
   try {
-    await connectionPool(
-      `DELETE FROM match_friend WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1) `,
+    const roomIdData = await connectionPool.query(
+      `DELETE FROM match_friend WHERE (user_id = $1 AND friend_id = $2) OR (user_id = $2 AND friend_id = $1) RETURNING id`,
       [user_id, friend_id]
     );
+
+    console.log(roomIdData.rows[0].id);
+
+    const roomId = roomIdData.rows[0].id;
+
+    return res.status(200).json({
+      message: "delete successfully",
+      room_id: roomId,
+    });
   } catch (error) {
     console.log(error);
   }

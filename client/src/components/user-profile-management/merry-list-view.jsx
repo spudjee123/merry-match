@@ -41,7 +41,8 @@ function MerryListView() {
   const date = new Date();
 
   const { profile, profilesList, getProfileById, getProfiles } = useProfiles();
-  const { merryList, otherCount, getMerryList } = useMerryList();
+  const { merryList, otherCount, getMerryList, deleteMerryList } =
+    useMerryList();
   console.log("merryList", merryList);
 
   useEffect(() => {
@@ -76,7 +77,8 @@ function MerryListView() {
     }
   };
 
-  const handleClickUnmarry = (event) => {
+  const handleClickUnmarry = (user_id, friend_id) => {
+    deleteMerryList(user_id, friend_id);
     location.reload();
   };
 
@@ -141,133 +143,144 @@ function MerryListView() {
             </div>
           </header>
           <section className=" flex flex-col gap-x-3 gap-y-6">
-            {merryList.map((item, index) => (
-              <article
-                key={index}
-                className=" border-b border-b-gray px-4 pt-4 pb-6 flex-1 flex flex-col lg:flex-row lg:justify-between"
-              >
-                <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 ">
-                  <header className=" flex justify-between gap-2">
-                    <div className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] flex justify-center items-center rounded-3xl overflow-hidden relative">
-                      <img
-                        className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] object-cover"
-                        src={item.image}
-                      />
-                      {item.status === "match" ? (
-                        <p className=" text-purple-600 bg-purple-100 pl-[10px] px-[1px] pr-[6px] rounded-tr-lg absolute left-0 bottom-0 text-xs font-medium max-lg:hidden">
-                          Merry today
-                        </p>
-                      ) : null}
-                    </div>
-                    <div className=" lg:hidden flex flex-col items-end gap-6">
-                      <img
-                        src={item.status === "match" ? matchIcon : notMatchIcon}
-                        className=" h-8"
-                      />
-                      <div className=" flex gap-3">
+            {merryList.map((item, index) => {
+              const friend_id =
+                item.user_id === user_id ? item.friend_id : item.user_id;
+
+              return (
+                <article
+                  key={index}
+                  className=" border-b border-b-gray px-4 pt-4 pb-6 flex-1 flex flex-col lg:flex-row lg:justify-between"
+                >
+                  <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 ">
+                    <header className=" flex justify-between gap-2">
+                      <div className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] flex justify-center items-center rounded-3xl overflow-hidden relative">
+                        <img
+                          className=" w-[104px] h-[104px] lg:w-[187px] lg:h-[187px] object-cover"
+                          src={item.image}
+                        />
                         {item.status === "match" ? (
+                          <p className=" text-purple-600 bg-purple-100 pl-[10px] px-[1px] pr-[6px] rounded-tr-lg absolute left-0 bottom-0 text-xs font-medium max-lg:hidden">
+                            Merry today
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className=" lg:hidden flex flex-col items-end gap-6">
+                        <img
+                          src={
+                            item.status === "match" ? matchIcon : notMatchIcon
+                          }
+                          className=" h-8"
+                        />
+                        <div className=" flex gap-3">
+                          {item.status === "match" ? (
+                            <button
+                              className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
+                              id="chat-btn"
+                              onClick={() => {
+                                handleClickChat(item.id);
+                              }}
+                            >
+                              <img src={chatIcon} className=" w-6 h-6" />
+                            </button>
+                          ) : null}
                           <button
                             className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
-                            id="chat-btn"
+                            id="view-btn"
                             onClick={() => {
-                              handleClickChat(item.id);
+                              handleClickView(item);
+                              setIsMobilePreview(true);
                             }}
                           >
-                            <img src={chatIcon} className=" w-6 h-6" />
+                            <img src={viewIcon} className=" w-6 h-6" />
                           </button>
-                        ) : null}
-                        <button
-                          className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
-                          id="view-btn"
-                          onClick={() => {
-                            handleClickView(item);
-                            setIsMobilePreview(true);
-                          }}
-                        >
-                          <img src={viewIcon} className=" w-6 h-6" />
-                        </button>
-                        <button
-                          className=" bg-red-500 shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
-                          id="un-marry-btn"
-                          onClick={handleClickUnmarry}
-                        >
-                          <img src={merryWhiteIcon} className=" w-6 h-6" />
-                        </button>
+                          <button
+                            className=" bg-red-500 shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
+                            id="un-marry-btn"
+                            onClick={() => {
+                              handleClickUnmarry(user_id, friend_id);
+                            }}
+                          >
+                            <img src={merryWhiteIcon} className=" w-6 h-6" />
+                          </button>
+                        </div>
+                      </div>
+                    </header>
+                    <div className=" text-gray-900 flex flex-col gap-2 lg:gap-6">
+                      <div className=" flex gap-4 items-center">
+                        <h2 className=" flex gap-2 text-2xl leading-[30px] font-bold ">
+                          {item.name.split(" ")[0]}
+                          <span className=" text-gray-700">
+                            {getAge(item.birthdate)}
+                          </span>
+                        </h2>
+                        <p className=" flex whitespace-nowrap gap-2 items-center text-gray-700">
+                          <img src={locationIcon} className=" w-4 h-4" />
+                          {`${item.city}, ${item.location}`}
+                        </p>
+                      </div>
+                      <div className=" grid grid-cols-2 gap-y-2 gap-x-4 py-1">
+                        <p className=" flex items-center">Sexual identities</p>
+                        <p className=" font-semibold text-gray-700">
+                          {item.sexident}
+                        </p>
+                        <p className=" flex items-center">Sexual preferences</p>
+                        <p className=" font-semibold text-gray-700">
+                          {item.sexprefer}
+                        </p>
+                        <p className=" flex items-center">Racial preferences</p>
+                        <p className=" font-semibold text-gray-700">
+                          {item.racialprefer}
+                        </p>
+                        <p className=" flex items-center">Meeting interests</p>
+                        <p className=" font-semibold text-gray-700">
+                          {item.meetprefer}
+                        </p>
                       </div>
                     </div>
-                  </header>
-                  <div className=" text-gray-900 flex flex-col gap-2 lg:gap-6">
-                    <div className=" flex gap-4 items-center">
-                      <h2 className=" flex gap-2 text-2xl leading-[30px] font-bold ">
-                        {item.name.split(" ")[0]}
-                        <span className=" text-gray-700">
-                          {getAge(item.birthdate)}
-                        </span>
-                      </h2>
-                      <p className=" flex whitespace-nowrap gap-2 items-center text-gray-700">
-                        <img src={locationIcon} className=" w-4 h-4" />
-                        {`${item.city}, ${item.location}`}
-                      </p>
-                    </div>
-                    <div className=" grid grid-cols-2 gap-y-2 gap-x-4 py-1">
-                      <p className=" flex items-center">Sexual identities</p>
-                      <p className=" font-semibold text-gray-700">
-                        {item.sexident}
-                      </p>
-                      <p className=" flex items-center">Sexual preferences</p>
-                      <p className=" font-semibold text-gray-700">
-                        {item.sexprefer}
-                      </p>
-                      <p className=" flex items-center">Racial preferences</p>
-                      <p className=" font-semibold text-gray-700">
-                        {item.racialprefer}
-                      </p>
-                      <p className=" flex items-center">Meeting interests</p>
-                      <p className=" font-semibold text-gray-700">
-                        {item.meetprefer}
-                      </p>
-                    </div>
                   </div>
-                </div>
 
-                <aside className=" max-lg:hidden flex flex-col items-end gap-6">
-                  <img
-                    src={item.status === "match" ? matchIcon : notMatchIcon}
-                    className=" h-8"
-                  />
-                  <div className=" flex gap-3">
-                    {item.status === "match" ? (
+                  <aside className=" max-lg:hidden flex flex-col items-end gap-6">
+                    <img
+                      src={item.status === "match" ? matchIcon : notMatchIcon}
+                      className=" h-8"
+                    />
+                    <div className=" flex gap-3">
+                      {item.status === "match" ? (
+                        <button
+                          className=" bg-white cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
+                          id="chat-btn"
+                          onClick={() => {
+                            handleClickChat(item.id);
+                          }}
+                        >
+                          <img src={chatIcon} className=" w-6 h-6" />
+                        </button>
+                      ) : null}
                       <button
                         className=" bg-white cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
-                        id="chat-btn"
+                        id="view-btn"
                         onClick={() => {
-                          handleClickChat(item.id);
+                          handleClickView(item);
+                          document.getElementById("preview").showModal();
                         }}
                       >
-                        <img src={chatIcon} className=" w-6 h-6" />
+                        <img src={viewIcon} className=" w-6 h-6" />
                       </button>
-                    ) : null}
-                    <button
-                      className=" bg-white cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
-                      id="view-btn"
-                      onClick={() => {
-                        handleClickView(item);
-                        document.getElementById("preview").showModal();
-                      }}
-                    >
-                      <img src={viewIcon} className=" w-6 h-6" />
-                    </button>
-                    <button
-                      className=" bg-red-500 cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
-                      id="un-marry-btn"
-                      onClick={handleClickUnmarry}
-                    >
-                      <img src={merryWhiteIcon} className=" w-6 h-6" />
-                    </button>
-                  </div>
-                </aside>
-              </article>
-            ))}
+                      <button
+                        className=" bg-red-500 cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
+                        id="un-marry-btn"
+                        onClick={() => {
+                          handleClickUnmarry(user_id, friend_id);
+                        }}
+                      >
+                        <img src={merryWhiteIcon} className=" w-6 h-6" />
+                      </button>
+                    </div>
+                  </aside>
+                </article>
+              );
+            })}
           </section>
 
           <dialog id="preview" className="modal">

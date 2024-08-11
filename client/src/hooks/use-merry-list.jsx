@@ -10,11 +10,9 @@ const useMerryList = () => {
 
   const getMerryList = async (user_id) => {
     try {
-      console.log("hello");
       const result = await axios.get(
         `http://localhost:4001/merry-list/${user_id}`
       );
-      console.log(result);
       setMerryList(result.data.data);
       setOtherCount(result.data.count);
     } catch (error) {
@@ -22,7 +20,21 @@ const useMerryList = () => {
     }
   };
 
-  return { getMerryList, merryList, otherCount };
+  const deleteMerryList = async (user_id, friend_id) => {
+    try {
+      const result = await axios.delete(`http://localhost:4001/merry-list/`, {
+        data: {
+          user_id: user_id,
+          friend_id: friend_id,
+        },
+      });
+      console.log("delete room", result.data.room_id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return { getMerryList, deleteMerryList, merryList, otherCount };
 };
 
 export default useMerryList;
