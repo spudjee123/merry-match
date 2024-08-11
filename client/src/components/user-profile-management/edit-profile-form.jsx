@@ -142,7 +142,7 @@ function EditProfileForm() {
               <button
                 type="button"
                 id="preview-btn"
-                className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary"
+                className=" px-6 py-3 bg-red-100 text-red-600 font-bold leading-6 text-center rounded-[99px] drop-shadow-secondary hover:bg-red-200 active:bg-red-300"
                 onClick={(event) => {
                   event.preventDefault();
                   const imageCount = userInfo.images.filter(
@@ -166,7 +166,7 @@ function EditProfileForm() {
               <button
                 type="submit"
                 id="update-btn"
-                className="  px-6 py-3 bg-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary"
+                className="  px-6 py-3 bg-red-500 text-white font-bold leading-6 text-center rounded-[99px] drop-shadow-primary hover:bg-red-400 active:bg-red-600"
                 onClick={handleUpdate}
               >
                 Update Profile

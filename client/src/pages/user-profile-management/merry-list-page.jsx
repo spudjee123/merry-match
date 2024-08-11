@@ -6,7 +6,7 @@ function MerryListPage() {
   return (
     <>
       <NavUser />
-      <section className=" mt-[88px] px-0 max-lg:pb-10 lg:px-[254px] lg:pt-20 lg:pb-[147px] min-h-[calc(100vh-397px)] lg:min-h-[calc(100vh-459px)] bg-main">
+      <section className=" mt-[70px] px-0 max-lg:pb-10 lg:px-[254px] lg:pt-20 lg:pb-[147px] min-h-[calc(100vh-397px)] lg:min-h-[calc(100vh-459px)] bg-main">
         <MerryListView />
       </section>
       <Footer />

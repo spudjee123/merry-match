@@ -59,8 +59,8 @@ const MatchingPage = () => {
       <div className="bg-white w-screen h-screen mt-[70px] overflow-x-hidden flex max-lg:hidden">
         {/* Left View */}
         <div className="lg:w-[25%] border-2 flex flex-col items-center">
-          <div className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center">
-            <div className="lg:h-[80%] lg:w-[95%] lg:bg-[#F6F7FC] lg:rounded-xl lg:border lg:border-[#A62D82] lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
+          <div className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center cursor-pointer">
+            <div className="lg:h-[80%] lg:w-[95%] lg:bg-[#F6F7FC] lg:rounded-xl lg:border lg:hover:border-purple-400 lg:flex lg:flex-col lg:justify-center lg:items-center lg:text-center">
               <img src={Heart} alt="Heart Icon" />
               <h2 className="lg:text-[#95002B] lg:text-[20px] lg:font-bold">
                 Discover New Match
@@ -78,7 +78,7 @@ const MatchingPage = () => {
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
                 Merry Match!
               </h2>
-              <div className="lg:flex lg:gap-5 lg:mt-[10px] overflow-x-auto overflow-y-auto max-h-[400px] max-w-[800px]">
+              <div className="lg:flex lg:gap-5 lg:mt-[10px] overflow-x-auto overflow-y-auto max-h-[400px] max-w-[800px] cursor-pointer">
                 {matchImages.map((item, index) => {
                   return (
                     <img
@@ -101,7 +101,7 @@ const MatchingPage = () => {
                 return (
                   <div
                     key={index}
-                    className="lg:flex lg:mt-[15px] lg:gap-5"
+                    className="lg:flex lg:mt-[15px] lg:gap-5 cursor-pointer active:border active:border-purple-500 hover:bg-gray-100 p-2 rounded-xl"
                     onClick={() => {
                       handleClickToChatRoom(item.id);
                     }}
@@ -187,10 +187,10 @@ const MatchingPage = () => {
             </div>
           </div>
           <div className="flex m-6 justify-between">
-            <button className="text-red-500 w-[130px] h-[60px] text-xl mr-4">
+            <button className="text-red-500 hover:bg-gray-300 active:bg-gray-600 rounded-full w-[130px] h-[60px] text-xl mr-4">
               Clear
             </button>
-            <button className="bg-red-500 rounded-t-[30px] rounded-b-[30px] w-[130px] h-[60px] text-xl text-white">
+            <button className="bg-red-500 hover:bg-red-400 active:bg-red-600 rounded-t-[30px] rounded-b-[30px] w-[130px] h-[60px] text-xl text-white">
               Search
             </button>
           </div>

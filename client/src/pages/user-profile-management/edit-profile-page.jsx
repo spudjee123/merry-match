@@ -6,7 +6,7 @@ function EditProfilePage() {
   return (
     <>
       <NavUser />
-      <section className="bg-main text-black mt-[88px]">
+      <section className="bg-main text-black mt-[70px]">
         <EditProfileForm />
       </section>
       <Footer />

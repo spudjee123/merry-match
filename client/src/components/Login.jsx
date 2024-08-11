@@ -115,7 +115,7 @@ const Login = () => {
             <div className="lg:flex lg:justify-center mt-[30px]">
               <button
                 id="login-btn"
-                className="text-white bg-[#C70039] h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto"
+                className="text-white bg-red-500 hover:bg-red-400 active:bg-red-600 h-[48px] w-[343px] text-[16px] rounded-full lg:mx-auto"
                 onClick={handleLogin}
               >
                 Log in

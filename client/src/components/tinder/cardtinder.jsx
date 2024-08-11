@@ -210,17 +210,14 @@ function Cardtinder() {
           )}
         </div>
 
-        <div className="buttons flex space-x-4 mt-[-55px] z-40">
+        <div className="space-x-4 mt-[-55px] z-40 ">
           <button
-            className={`p-2 rounded ${!canSwipe ? "" : ""}`}
+            className={`p-2 cursor-pointer  ${!canSwipe ? "" : ""}`}
             onClick={() => swipe("left")}
           >
             <img src={DislikeButton} alt="Dislike" />
           </button>
-          <button
-            className={`p-2 rounded ${!canSwipe ? "" : ""}`}
-            onClick={matchUser}
-          >
+          <button className={`p-2  ${!canSwipe ? "" : ""}`} onClick={matchUser}>
             <img src={LikeButton} alt="Like" />
           </button>
         </div>

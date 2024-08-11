@@ -33,13 +33,17 @@ function NavUser() {
   return (
     <div className="navbar h-[70px] bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
-        <a>
+        <button
+          onClick={() => {
+            navigate("/");
+          }}
+        >
           <img
             src={logo}
             alt="logo"
             className="w-[132px]:h-[38px] md:w-[180px] md:h-[]"
           />
-        </a>
+        </button>
       </div>
       <div className="flex flex-1 justify-end px-2">
         <div className="flex items-stretch">
