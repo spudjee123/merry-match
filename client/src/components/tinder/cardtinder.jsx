@@ -370,6 +370,7 @@ function Cardtinder() {
                     <input
                       type="checkbox"
                       defaultChecked
+                      value={label}
                       className="checkbox mt-4 border-gray-300 [--chkbg:purple] [--chkfg:white] checked:border-purple-300"
                     />
                     <p className="ml-4 mt-3 w-full text-lg">{label}</p>
