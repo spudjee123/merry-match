@@ -96,11 +96,11 @@ const Chat = ({ socket, username, room, onNewMessage, messages }) => {
       </div> */}
 
       {/* chat input */}
-      <div className="lg:flex lg:mt-[20px]">
+      <div className="lg:flex lg:mt-[20px] lg:justify-around">
         <input
           placeholder="Message here..."
           type="text"
-          className="lg:w-[85%] lg:h-[50px] lg:bg-[#200009] lg:border lg:rounded-xl"
+          className="lg:w-[85%] lg:h-[50px] lg:bg-[#200009] lg:border lg:rounded-xl lg:pl-[20px]"
           value={currentMessage}
           onChange={(e) => setCurrentMessage(e.target.value)}
         />

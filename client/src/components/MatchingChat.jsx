@@ -153,7 +153,7 @@ const MatchingChat = () => {
       {/* desktop view */}
       <div className="lg:bg-white lg:h-full lg:w-full lg:flex hidden">
         {/* left container */}
-        <div className="lg:w-[25%] border-2 flex flex-col items-center">
+        <div className="lg:w-[25%] border-b-2 flex flex-col items-center lg:mt-[70px]">
           <div
             className="lg:h-[30%] lg:w-full border-2 flex justify-center items-center cursor-pointer"
             onClick={handleClickToMatchingPage}
@@ -170,7 +170,7 @@ const MatchingChat = () => {
           </div>
           <div
             id="match-container"
-            className="lg:h-[25%] lg:w-full border-2 lg:flex lg:justify-center lg:items-center"
+            className="lg:h-[25%] lg:w-full lg:flex lg:justify-center lg:items-center"
           >
             <div className="lg:w-[95%]">
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
@@ -190,7 +190,7 @@ const MatchingChat = () => {
               </div>
             </div>
           </div>
-          <div className="lg:h-[45%] lg:w-full border-2 lg:flex lg:justify-center lg:items-start">
+          <div className="lg:h-[45%] lg:w-full lg:flex lg:justify-center lg:items-start">
             <div className="lg:w-[95%] lg:mt-[25px]">
               <h2 className="lg:text-[#2A2E3F] lg:font-semibold">
                 Chat with Merry Match
@@ -232,7 +232,7 @@ const MatchingChat = () => {
         <div className="bg-[#200009] lg:w-[80%] lg:flex lg:flex-col lg:justify-end lg:items-end">
           {/* chat box */}
           <div className="lg:w-full lg:mx-auto lg:overflow-hidden">
-            <div className="lg:w-[90%] mx-auto flex flex-col lg:h-[600px] lg:overflow-y-auto">
+            <div className="lg:w-[90%] mx-auto flex flex-col lg:h-[650px] lg:overflow-y-auto">
               {messages.map((message, index) => (
                 <div
                   key={index}
