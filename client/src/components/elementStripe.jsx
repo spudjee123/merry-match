@@ -2,29 +2,26 @@ import React, { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import axios from "axios";
-import CheckoutForm from "./CheckoutForm"; 
+import CheckoutForm from "./stripe.jsx"; // Assuming you have a CheckoutForm component
 
-const stripePromise = loadStripe(
-  "pk_test_51PfZ62RwhwPMa1TWPdOpfAzf1QLKPwWMYmcLUuQ6Q3zwvT3c1OuhV7G573684JGsZC9Mm1sApO8LtcgFsOWdGYOf00POWiZaJZ"
-);
+
 
 const Stripe = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const stripePromise = loadStripe('pk_test_51PfGepCsaxbmSm5Dug1DybzMHjBhWXevCXSlPcDrst0nGMSbNPb9lkUMFI2tgTqLpoXJwgHyqznryoN0xNpLkdt40000NTQoiw');
+  
   useEffect(() => {
     const fetchClientSecret = async () => {
+      let result ;
       try {
-        const result = await axios.post(
-          "http://localhost:4001/payments/api/payment-intent",
-          {
-            name: "ABC", 
-            user_id: 119 ,
-            packageName: { name: "Basic", price: 59 },
-          }
-        );
-        console.log("asd",result);
+         result = await axios.post('http://localhost:4001/payments/api/payment-intent', {
+          user: "John Doe",
+          packageName: { name: "Basic", price: 59 },
+        })
+          
         
         setClientSecret(result.data.clientSecret);
         setLoading(false);
@@ -33,7 +30,9 @@ const Stripe = () => {
         setError("Failed to initialize payment.");
         setLoading(false);
       }
+      
     };
+    
 
     fetchClientSecret();
   }, []);
@@ -46,8 +45,22 @@ const Stripe = () => {
     return <div>{error}</div>;
   }
 
+  const appearance = {
+    theme: "stripe",
+  }
+
+  const options = {
+    clientSecret,
+    appearance,
+  }
+
+  console.log("1",clientSecret);
+  console.log("2",stripePromise);
+  
+  
+
   return (
-    <Elements stripe={stripePromise} options={{ clientSecret }}>
+    <Elements stripe={stripePromise} options={options}>
       <CheckoutForm />
     </Elements>
   );

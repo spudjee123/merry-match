@@ -6,12 +6,19 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../../context/auth";
+import { useNavigate } from "react-router-dom";
 
 function Membership() {
   const [packages, setPackages] = useState([]);
-  const  { state } = useAuth() 
-  const userName = state.user?.name
-  console.log(state)
+  const [price, setPrice] = useState();
+  const { state } = useAuth();
+  const userName = state.user?.name;
+  const navigate = useNavigate();
+  const [clientSecret, setClientSecret] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // console.log("ST", state);
 
   const getData = async () => {
     try {
@@ -33,28 +40,24 @@ function Membership() {
 const prices = packages.map((item => item.price))
 console.log("abc",prices);
 
-  const paymentCheckout = async (packageName) => {
-    localStorage.setItem('selectedPackageName', packageName);
-    const orderPayment = {
-      user: { name: userName },
-      packageName: { name: packageName },
-    };
-    const stripe = await loadStripe(
-      import.meta.env.VITE_STRIPE_PUBLIC_KEY
-    );
+  const handleEditClick = async () => {
     try {
-      const result = await axios.post(
-        "http://localhost:4001/payments/api/checkout",
-        orderPayment
+      const secret = await axios.post(
+        "http://localhost:4001/payments/api/payment-intent",
+        {
+          user: "Pee Nut",
+          packageName: { name: "Basic", price: 59 },
+        }
       );
-      const { url, sessionId } = result.data;
-      window.location.href = url
-      // const sessionId = result.data.sessionId;
-      stripe.redirectToCheckout({sessionId:sessionId});
-      
+      setClientSecret(secret.data.clientSecret);
+      setLoading(false);
     } catch (error) {
-      console.error("Error to payment checkout package:", error);
+      console.error("Error fetching client secret:", error);
+      setError("Failed to initialize payment.");
+      setLoading(false);
     }
+
+    navigate(`/stripe`);
   };
 
   return (
@@ -113,9 +116,7 @@ console.log("abc",prices);
                     <button
                       id="choose-btn"
                       className="btn hover:bg-red-100 bg-red-100 border-red-100 text-red-600 rounded-[99px] w-[311px] h-[48px] leading-6 text-base mb-12"
-                      onClick={() => {
-                        paymentCheckout(item.packages_name);
-                      }}
+                      onClick={handleEditClick}
                     >
                       Choose package
                     </button>

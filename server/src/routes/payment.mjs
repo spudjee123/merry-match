@@ -29,7 +29,7 @@ stripeRouter.post("/api/payment-intent", express.json(), async (req, res) => {
   if (!priceAmount) {
     return res.status(400).json({ error: "Invalid package name." });
   }
-  
+
   try {
     // Create a new customer in Stripe if not already created
     const customer = await stripe.customers.create({
@@ -41,8 +41,21 @@ stripeRouter.post("/api/payment-intent", express.json(), async (req, res) => {
     });
 
     // Create a PaymentIntent with the order amount and currency
-
-    // Insert the order data into the payment_test table
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: priceAmount * 100, // Convert the price to the smallest unit
+      currency: 'thb',
+      // ชื่อ
+      customer: customer.id,
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      metadata: {
+        order_id: orderId,
+        package_name: packageName.name,
+        name:user
+      },
+    });
+// Insert the order data into the payment_test table
     const orderData = {
       name:user,
       package_name: packageName.name,
@@ -53,8 +66,7 @@ stripeRouter.post("/api/payment-intent", express.json(), async (req, res) => {
     };
     console.log(paymentIntent)
     await connectionPool.query(
-      `INSERT INTO payment_test (name,package_name, order_id, status, payment_intent_id, created_date) 
-        VALUES ($1, $2, $3, $4, $5,$6)`,
+      `INSERT INTO payment_test (name,package_name, order_id, status, payment_intent_id, created_date) VALUES ($1, $2, $3, $4, $5,$6)`,
       [
         orderData.name,
         orderData.package_name,

@@ -10,7 +10,7 @@ import NotFoundPage from "../pages/NotFoundPage";
 import { Routes, Route } from "react-router-dom";
 import MatchingChat from "../components/MatchingChat";
 import ComplaintPage from "../components/ComplaintPage";
-import Stripe from '../components/stripe'
+import Stripe from "../components/elementStripe"
 
 function UserRoutes() {
   return (

@@ -7,7 +7,7 @@ import NavUser from "../pages/user-profile-management/navUser";
 
 
 // Initialize Stripe with your public key
-const stripePromise = loadStripe('pk_test_51PfZ62RwhwPMa1TWPdOpfAzf1QLKPwWMYmcLUuQ6Q3zwvT3c1OuhV7G573684JGsZC9Mm1sApO8LtcgFsOWdGYOf00POWiZaJZ');
+
 
 const CheckoutForm = () => {
   const stripe = useStripe();
@@ -17,16 +17,6 @@ const CheckoutForm = () => {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    // Fetch client secret from the backend
-    axios.post('/create-payment-intent', { /* Your payment data */ })
-      .then(response => {
-        setClientSecret(response.data.clientSecret);
-      })
-      .catch(error => {
-        setError('Failed to initialize payment.');
-      });
-  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -54,9 +44,9 @@ const CheckoutForm = () => {
     setIsLoading(false);
   };
 
-  const paymentElementOptions = {
-    layout: "tabs"
-  };
+  // const paymentElementOptions = {
+  //   layout: "tabs"
+  // };
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
@@ -65,8 +55,8 @@ const CheckoutForm = () => {
           <NavUser />
         </nav>
 
-        <div className="w-full">
-          <div className="flex-grow flex justify-center items-center bg-white mt-28">
+        <div className="w-screen">
+          <div className="flex-grow flex justify-center items-center bg-white mt-[50px]">
             <div className="max-w-5xl w-full p-8 bg-white flex flex-col items-center">
               <div className="w-full flex gap-[22px]">
                 <div className="w-full max-w-md px-6 py-8 bg-slate-50 rounded-3xl border border-gray-300 flex flex-col gap-6">
@@ -111,7 +101,7 @@ const CheckoutForm = () => {
                     </div>
                   </div>
                   <div className="h-[372px] px-6 py-8 flex flex-col gap-10 items-end">
-                    <PaymentElement id="payment-element" options={paymentElementOptions} />
+                    <PaymentElement  />
                   </div>
                   <div className="w-full px-6 pt-6 pb-8 border-t border-gray-300 flex justify-between items-center">
                     <div className="px-2 py-1 rounded-2xl flex justify-center items-center gap-2">
@@ -119,7 +109,7 @@ const CheckoutForm = () => {
                         Cancel
                       </div>
                     </div>
-                    <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" disabled={!stripe || !clientSecret || isLoading}>
+                    <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" >
                       {isLoading ? 'Processing...' : 'Payment Confirm'}
                     </button>
                     {error && <div id="payment-message" className="text-red-500">{error}</div>}
@@ -131,18 +121,14 @@ const CheckoutForm = () => {
           </div>
         </div>
 
-        <footer className="w-full">
-          <Footer />
-        </footer>
+        
+        <Footer />
+        
       </section>
     </form>
   );
 };
 
-const App = () => (
-  <Elements stripe={stripePromise}>
-    <CheckoutForm />
-  </Elements>
-);
 
-export default App;
+
+export default CheckoutForm;
