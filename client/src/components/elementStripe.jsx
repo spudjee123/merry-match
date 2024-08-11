@@ -6,10 +6,14 @@ import CheckoutForm from "./stripe.jsx"; // Assuming you have a CheckoutForm com
 
 
 
+
 const Stripe = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+
+
 
   const stripePromise = loadStripe(
     "pk_test_51PfGepCsaxbmSm5Dug1DybzMHjBhWXevCXSlPcDrst0nGMSbNPb9lkUMFI2tgTqLpoXJwgHyqznryoN0xNpLkdt40000NTQoiw"

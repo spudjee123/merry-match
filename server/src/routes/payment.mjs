@@ -80,6 +80,7 @@ const paymentIntent = await stripe.paymentIntents.create({
       res.status(200).json({
         message: 'PaymentIntent created successfully',
         clientSecret: paymentIntent.client_secret,
+        order_id: orderId
       });
 } catch (error) {
       console.error("Error creating PaymentIntent:", error);
