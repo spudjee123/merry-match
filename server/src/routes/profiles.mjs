@@ -12,8 +12,6 @@ profilesRouter.get("/", async (req, res) => {
 
     const profilesList = profilesListData.rows;
 
-    console.log(profilesList);
-
     return res.status(200).json({
       code: "U000",
       message: "Get profiles successfully",
