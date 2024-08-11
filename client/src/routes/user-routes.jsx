@@ -10,6 +10,7 @@ import NotFoundPage from "../pages/NotFoundPage";
 import { Routes, Route } from "react-router-dom";
 import MatchingChat from "../components/MatchingChat";
 import ComplaintPage from "../components/ComplaintPage";
+import Stripe from "../components/elementStripe"
 
 function UserRoutes() {
   return (
@@ -24,6 +25,7 @@ function UserRoutes() {
       <Route path="/success" element={<Payment2Page />} />
       <Route path="/matchingchat/:matchId" element={<MatchingChat />} />
       <Route path="/complaint" element={<ComplaintPage />} />
+       <Route path="/stripe" element={<Stripe />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
