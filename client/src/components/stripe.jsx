@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import NavUser from "../pages/user-profile-management/navUser";
 import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 
 // Initialize Stripe with your public key
@@ -15,17 +16,21 @@ const CheckoutForm = () => {
   const { id } = useParams()
   const stripe = useStripe();
   const elements = useElements();
-  const [clientSecret, setClientSecret] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
   const [paymentIntent, setPaymentIntent] = useState("")
+  const location = useLocation()
   
+  const { packageName, price, merryLimit, clientSecret, orderId} = location.state
+console.log("location",location);
+console.log("1",clientSecret);
+
   useEffect(() => {
      const getPaymentIntent = async() =>  {
       try {
         const result = await axios.get(
-          `http://localhost:4000/payment/update/payment/${id}`
+          `http://localhost:4001/payment/update/payment/${orderId}`
         );
         const paymentIntent = result.data.clientSecret;
         setPaymentIntent(paymentIntent);
@@ -57,8 +62,11 @@ const CheckoutForm = () => {
       confirmParams: {
         return_url: `${window.location.origin}/success`,
       },
+      redirect: "if_required"
     });
 
+    console.log("payment",paymentIntent);
+    
     if (error) {
       setError(error.message);
     } else if (paymentIntent.status === 'succeeded') {
@@ -96,7 +104,7 @@ const CheckoutForm = () => {
                     <div className="flex justify-between items-baseline py-2">
                       <div className="text-slate-500 text-base">Package</div>
                       <div className="text-right text-slate-800 text-xl font-semibold">
-                        Premium
+                        {packageName}
                       </div>
                     </div>
                     <div className="flex flex-col gap-2 px-2 py-2.5 bg-white rounded-lg">
@@ -107,7 +115,7 @@ const CheckoutForm = () => {
                       </div>
                       <div className="flex items-center gap-2 pl-2">
                         <div className="text-slate-600 text-base">
-                          Up to 70 Merry per day
+                          Up to {merryLimit} Merry per day
                         </div>
                       </div>
                     </div>
@@ -116,7 +124,7 @@ const CheckoutForm = () => {
                         Price (Monthly)
                       </div>
                       <div className="text-right text-stone-950 text-xl font-semibold">
-                        THB 149.00
+                        {price}
                       </div>
                     </div>
                   </div>
