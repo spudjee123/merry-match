@@ -17,6 +17,7 @@ function Membership() {
     try {
       const result = await axios.get("http://localhost:4001/admin/get");
       setPackages(result.data.packages);
+      console.log("abc",result.data.packages)
     } catch (error) {
       console.error("Error fetching packages:", error);
     }
@@ -29,6 +30,8 @@ function Membership() {
   const filteredPackages = packages.filter((item) =>
     item.packages_name.toLowerCase()
   );
+const prices = packages.map((item => item.price))
+console.log("abc",prices);
 
   const paymentCheckout = async (packageName) => {
     localStorage.setItem('selectedPackageName', packageName);
