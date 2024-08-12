@@ -4,9 +4,9 @@ import { Elements, PaymentElement, useStripe, useElements, } from '@stripe/react
 import axios from 'axios';
 import Footer from "./Footer";
 import NavUser from "../pages/user-profile-management/navUser";
-import { useNavigate } from "react-router-dom";
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 // Initialize Stripe with your public key
@@ -20,34 +20,13 @@ const CheckoutForm = () => {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
   const [paymentIntent, setPaymentIntent] = useState("")
+  const navigate = useNavigate()
   const location = useLocation()
   
   const { packageName, price, merryLimit, clientSecret, orderId} = location.state
 console.log("location",location);
 console.log("1",clientSecret);
 
-  useEffect(() => {
-     const getPaymentIntent = async() =>  {
-      try {
-        const result = await axios.get(
-          `http://localhost:4001/payment/update/payment/${orderId}`
-        );
-        const paymentIntent = result.data.clientSecret;
-        setPaymentIntent(paymentIntent);
-        toast.success(result.data.message);
-
-        console.log("id", paymentIntent);
-      } catch (error) {
-        console.log(error);
-        toast.error(error.response.data.message);
-      }
-      
-    }
-  
-    getPaymentIntent()
-  }, [id])
-
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -65,13 +44,17 @@ console.log("1",clientSecret);
       redirect: "if_required"
     });
 
-    console.log("payment",paymentIntent);
-    
+    try {
+      await axios.post('http://localhost:4001/payments/status', {
+      "paymentIntentId": paymentIntent.id
+    });
+    } catch (error) {  
+    alert("update error") 
+    }
     if (error) {
       setError(error.message);
     } else if (paymentIntent.status === 'succeeded') {
       setMessage('Payment succeeded!');
-      // Do something after payment success (e.g., redirect to a success page)
     } else {
       setError('Unexpected payment status.');
     }
@@ -144,7 +127,7 @@ console.log("1",clientSecret);
                         Cancel
                       </div>
                     </div>
-                    <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" >
+                    <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" onClick={handleSubmit} >
                       {isLoading ? 'Processing...' : 'Payment Confirm'}
                     </button>
                     {error && <div id="payment-message" className="text-red-500">{error}</div>}

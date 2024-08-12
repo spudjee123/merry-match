@@ -4,38 +4,28 @@ import heart from "./images/heart.png";
 import check from "./images/check.png";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../../context/auth";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 function Membership() {
   const [packages, setPackages] = useState([]);
-  const [price, setPrice] = useState();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { state } = useAuth();
   const userName = state.user?.username;
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const location = useLocation();
 
-  console.log("ST", state);
-
-  // navigate('/stripe', {
-  //   payment: {
-  //     packageName,
-  //     packagePrice,
-  //     merryLimit,
-  //   }
-  // });
-
+  // ดึงข้อมูล package
   const getData = async () => {
     try {
       const result = await axios.get("http://localhost:4001/admin/get");
       setPackages(result.data.packages);
-      console.log("abc", result.data.packages);
+      console.log("Packages:", result.data.packages);
     } catch (error) {
       console.error("Error fetching packages:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,41 +33,25 @@ function Membership() {
     getData();
   }, []);
 
-  const filteredPackages = packages.filter((item) =>
-    item.packages_name.toLowerCase()
-  );
-  const prices = packages.map((item) => item.price ?? 0);
-  console.log("price", prices);
 
-  const handleEditClick = async (packages_name, price, merry_limit) => {
+  const handleEditClick = (packages_name, price, merry_limit) => {
     try {
-      const secret = await axios.post(
-        "http://localhost:4001/payments/api/payment-intent",
-        {
-          user: userName,
-          packageName: { name: packages_name, price: price },
-        }
-      );
-      const clientSecret = secret.data.clientSecret;
-
-      console.log("1",clientSecret);
-
-      setLoading(false);
       navigate(`/stripe`, {
         state: {
-          clientSecret,
           packageName: packages_name,
           price,
           merryLimit: merry_limit,
-          orderId: secret.data.order_id
         },
       });
     } catch (error) {
-      console.error("Error fetching client secret:", error);
-      setError("Failed to initialize payment.");
-      setLoading(false);
+      console.error("Error navigating to /stripe:", error);
+      setError("Failed to navigate to payment page.");
     }
   };
+
+  const filteredPackages = packages.filter((item) =>
+    item.packages_name.toLowerCase()
+  );
 
   return (
     <>
