@@ -618,10 +618,14 @@ function RegisterForm() {
             {step}
             <span className=" text-gray-600">/3</span>
           </p>
-          <div className=" w-[220px] lg:w-[207px] h-12 flex items-center gap-6   ">
+          <div className=" w-[300px] lg:w-[300px] h-12 flex items-center gap-6   ">
             <button
               type="button"
-              className={`${step === 1 ? "text-gray-500" : "text-red-500"}`}
+              className={`${
+                step === 1
+                  ? "text-gray-500"
+                  : "text-red-500 hover:bg-gray-300 active:bg-gray-600 rounded-[99px] h-12 w-28"
+              }`}
               disabled={step === 1}
               onClick={(event) => {
                 event.preventDefault();
@@ -632,7 +636,7 @@ function RegisterForm() {
             </button>
             <Link>
               <button
-                className=" h-12 px-6 py-3 bg-red-500 drop-shadow-primary text-white rounded-[99px]"
+                className=" h-12 px-6 py-3 bg-red-500 hover:bg-red-400 active:bg-red-600 drop-shadow-primary text-white rounded-[99px]"
                 type={step === 3 ? "submit" : "button"}
                 onClick={handleSubmit}
               >

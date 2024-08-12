@@ -23,7 +23,7 @@ function Nav() {
       <div className="flex-1 px--18 lg:flex-none lg:[calc(100%-320px)]">
         <button
           onClick={() => {
-            navigate("/merry-list");
+            navigate("/");
           }}
         >
           <img
@@ -47,13 +47,33 @@ function Nav() {
               tabIndex={0}
               className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-52 p-2 shadow "
             >
-              <li>
+              {/* <li>
                 <button onClick={() => scrollToSection("section-two")}>
                   Why Merry Match?
                 </button>
               </li>
               <li>
                 <button onClick={() => scrollToSection("section-three")}>
+                  How to Merry
+                </button>
+              </li> */}
+              <li>
+                <button
+                  onClick={() => {
+                    navigate("/");
+                    // setTimeout(() => scrollToSection("section-two"), 100);
+                  }}
+                >
+                  Why Merry Match?
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    navigate("/");
+                    // setTimeout(() => scrollToSection("section-three"), 100);
+                  }}
+                >
                   How to Merry
                 </button>
               </li>
