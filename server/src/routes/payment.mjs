@@ -10,7 +10,6 @@ const app = express();
 const stripeRouter = Router();
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
-
 // แบบ intent
 dotenv.config();
 
@@ -134,32 +133,32 @@ stripeRouter.post('/status', express.json(), async (req, res) => {
 
 });
 
-
-stripeRouter.post("/update/payment/:id", express.json(), async (req, res) => {
-  const { id } = req.params; // รับค่า id จาก params
+stripeRouter.get("/", express.json(), async (req, res) => {
+  const { userName } = req.body; // รับค่า id จาก params
 
   try {
     // ดึง payment_intent_id จากฐานข้อมูล
-    const order = await pool.query(
-      'UPDATE payment_test SET status = $1 WHERE payment_intent_id = $2',
-      ['complete', id]
+    const order = await connectionPool.query(
+      'select package_name from payment_test  WHERE name = $1',
+      [userName]
     );
 
-
     if (!order.rows.length) {
-      return res.status(404).json({ message: 'ไม่พบคำสั่งซ่อมในคำขอ' });
+      return res.status(404).json({ message: 'not found' });
     }
     
     return res.status(200).json({
-      message: 'ดึงข้อมูล payment intent สำเร็จ',
-      clientSecret: paymentIntent.client_secret
+      message: 'get data successfully',
+      data: order.rows[0]
     });
 
   } catch (error) {
     console.error('Error retrieving PaymentIntent:', error);
-    return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการชำระเงิน' });
+    return res.status(500).json({ message: 'server error' });
   }
 });
+
+
 
 export default stripeRouter;
 
