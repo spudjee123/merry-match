@@ -1,12 +1,34 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import NavUser from "../pages/user-profile-management/navUser.jsx";
 import Footer from "./Footer.jsx";
 import premium from "../assets/icons/premium.png";
 import Frame from "../assets/icons/Frame.png";
+import { useAuth } from "../context/auth.jsx";
 
 const MerryMembership = () => {
+  const {state} = useAuth()
+  const userName = state.user?.username;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [hasPackage, setHasPackage] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await axios.get('http://localhost:4001/payments', {
+          userName : userName
+        });
+        console.log("abc", result.data.package_name);
+        setData(result.data.package_name);
+      } catch (error) {
+        setError(error.response ? error.response.data.message : 'Server error');
+      }
+    };
+
+    if (userName) {
+      fetchData();
+    }
+  }, [userName]);
 
   const handleCancelPackage = () => {
     setIsDeleteDialogOpen(true);

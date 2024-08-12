@@ -8,9 +8,7 @@ import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-
 // Initialize Stripe with your public key
-
 
 const CheckoutForm = () => {
   const { id } = useParams()
@@ -26,7 +24,6 @@ const CheckoutForm = () => {
   const { packageName, price, merryLimit, clientSecret, orderId} = location.state
 console.log("location",location);
 console.log("1",clientSecret);
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -58,7 +55,13 @@ console.log("1",clientSecret);
     } else {
       setError('Unexpected payment status.');
     }
-    navigate(`/success`);
+    navigate(`/success`, {
+      state: {
+        packageName: packageName,
+        price: price,
+        merryLimit: merryLimit,
+      },
+    });
     setIsLoading(false);
   };
 

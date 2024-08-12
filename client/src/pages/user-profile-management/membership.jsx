@@ -15,8 +15,7 @@ function Membership() {
   const { state } = useAuth();
   const userName = state.user?.username;
   const navigate = useNavigate();
-
-  // ดึงข้อมูล package
+  
   const getData = async () => {
     try {
       const result = await axios.get("http://localhost:4001/admin/get");
@@ -32,7 +31,6 @@ function Membership() {
   useEffect(() => {
     getData();
   }, []);
-
 
   const handleEditClick = (packages_name, price, merry_limit) => {
     try {
