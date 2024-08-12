@@ -31,8 +31,8 @@ function NavUser() {
   }, [userInfo]);
 
   const handleClickToMembership = () => {
-    navigate("/check/membership")
-  }
+    navigate("/check/membership");
+  };
 
   return (
     <div className="navbar h-[70px] bg-white md:pl-[100px] md:pr-[100px] fixed w-full top-0 z-20 shadow-md">
@@ -156,7 +156,10 @@ function NavUser() {
           >
             Start Matching
           </button>
-          <button className="text-red-800 content-center md:text-[12px] lg:text-[18px]" onClick={handleClickToMembership}>
+          <button
+            className="text-red-800 content-center md:text-[12px] lg:text-[18px]"
+            onClick={handleClickToMembership}
+          >
             Merry Member
           </button>
           <div className="dropdown dropdown-end">
