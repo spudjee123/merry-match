@@ -59,18 +59,20 @@ const paymentIntent = await stripe.paymentIntents.create({
         name: user, // Ensure this matches your database schema
         package_name: packageName.name,
         order_id: orderId,
+        status: "pending",
         payment_intent_id: paymentIntent.id,
         created_date: new Date(),
       };
       console.log(paymentIntent);
 
       await connectionPool.query(
-        `INSERT INTO payment_test (name, package_name, order_id, payment_intent_id, created_date) 
-          VALUES ($1, $2, $3, $4, $5)`,
+        `INSERT INTO payment_test (name, package_name, order_id,status, payment_intent_id, created_date) 
+          VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           orderData.name,
           orderData.package_name,
           orderData.order_id,
+          orderData.status,
           orderData.payment_intent_id,
           orderData.created_date,
         ]
@@ -105,25 +107,49 @@ const paymentIntent = await stripe.paymentIntents.create({
   }
 });
 
-stripeRouter.get("/update/payment/:id", express.json(), async (req, res) => {
+// //////////////////////////////////////////////////////////////////////
+stripeRouter.post('/status', express.json(), async (req, res) => {
+  let { paymentIntentId } = req.body;
+
+  if (!paymentIntentId) {
+    return res.status(400).json({ error: 'Payment intent ID is required' });
+  }
+  let result
+  try {
+   
+    result = await connectionPool.query(
+      'UPDATE payment_test SET status = $1 WHERE payment_intent_id = $2',
+      ['success', paymentIntentId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Payment intent not found' });
+    }
+
+    res.status(200).json({ message: 'Payment status updated to complete successfully' });
+  } catch (error) {
+    console.error('Error updating payment status:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+});
+
+
+stripeRouter.post("/update/payment/:id", express.json(), async (req, res) => {
   const { id } = req.params; // รับค่า id จาก params
 
   try {
     // ดึง payment_intent_id จากฐานข้อมูล
-    const order = await connectionPool.query(
-      'SELECT payment_intent_id FROM payment_test WHERE order_id = $1',
-      [id]
+    const order = await pool.query(
+      'UPDATE payment_test SET status = $1 WHERE payment_intent_id = $2',
+      ['complete', id]
     );
+
 
     if (!order.rows.length) {
       return res.status(404).json({ message: 'ไม่พบคำสั่งซ่อมในคำขอ' });
     }
-
-    const { payment_intent_id } = order.rows[0]; // รับ payment_intent_id จากผลลัพธ์
-
-    // ดึงข้อมูล PaymentIntent จาก Stripe
-    const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent_id);
-
+    
     return res.status(200).json({
       message: 'ดึงข้อมูล payment intent สำเร็จ',
       clientSecret: paymentIntent.client_secret
@@ -134,6 +160,7 @@ stripeRouter.get("/update/payment/:id", express.json(), async (req, res) => {
     return res.status(500).json({ message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการชำระเงิน' });
   }
 });
+
 export default stripeRouter;
 
 
