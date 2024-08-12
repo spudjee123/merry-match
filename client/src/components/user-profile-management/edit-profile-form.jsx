@@ -12,6 +12,8 @@ import preview_exit_icon from "../../assets/icons/preview-exit-icon.png";
 import getAge from "../../utils/get-age";
 import useUsers from "../../hooks/use-users.jsx";
 
+import Title from "../common/page-title.jsx";
+
 function EditProfileForm() {
   const { state } = useAuth();
   const { getUser, putUser, deleteUser, userInfo, setUserInfo } = useUsers();
@@ -127,17 +129,11 @@ function EditProfileForm() {
       {!isMobilePreview ? (
         <form className="gap-10 lg:gap-20 flex flex-col px-4 py-10 lg:px-60 lg:pt-20 lg:pb-14 ">
           <section className=" flex justify-between">
-            <article>
-              <h1 className=" text-sm font-semibold leading-[21px] text-beige-700 mb-2">
-                PROFILE
-              </h1>
-              <p className=" text-purple-500 text-[32px] leading-10 font-bold lg:text-[46px] lg:font-extrabold lg:leading-[57.5px]">
-                Let’s make profile
-              </p>
-              <p className=" text-purple-500 text-[32px] leading-10 font-bold lg:text-[46px] lg:font-extrabold lg:leading-[57.5px]">
-                to let others know you
-              </p>
-            </article>
+            <Title
+              title="PROFILE"
+              upperDetail="Let’s make profile"
+              lowerDetail="to let others know you"
+            />
             <div className=" hidden lg:flex justify-end items-end gap-4">
               <button
                 type="button"

@@ -43,15 +43,11 @@ function AuthProvider(props) {
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
       setState({
         ...state,
         error: error,
         loading: false,
       });
-      if (error.response.status === 404) {
-        alert("Username or password is invalid");
-      }
     }
   };
 
@@ -86,7 +82,7 @@ function AuthProvider(props) {
 
   return (
     <AuthContext.Provider
-      value={{ state, register, login, logout, isAuthenticated }}
+      value={{ state, setState, register, login, logout, isAuthenticated }}
     >
       {props.children}
     </AuthContext.Provider>
