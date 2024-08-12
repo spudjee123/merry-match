@@ -7,6 +7,7 @@ import NavUser from "../pages/user-profile-management/navUser";
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/auth';
 
 // Initialize Stripe with your public key
 
@@ -18,6 +19,8 @@ const CheckoutForm = () => {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
   const [paymentIntent, setPaymentIntent] = useState("")
+  const { state } = useAuth();
+  const userName = state.user?.username;
   const navigate = useNavigate()
   const location = useLocation()
   
@@ -68,6 +71,15 @@ console.log("1",clientSecret);
   // const paymentElementOptions = {
   //   layout: "tabs"
   // };
+  const handleCancel = async (event) =>{
+    event.preventDefault();
+    try {
+      await axios.delete('http://localhost:4001/payments/cancel',{userName: userName})
+    } catch (error) {
+      alert("cancel error")
+    }
+    navigate(`/membership`)
+  }
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
@@ -125,11 +137,9 @@ console.log("1",clientSecret);
                     <PaymentElement  />
                   </div>
                   <div className="w-full px-6 pt-6 pb-8 border-t border-gray-300 flex justify-between items-center">
-                    <div className="px-2 py-1 rounded-2xl flex justify-center items-center gap-2">
-                      <div className="text-rose-700 text-base font-bold">
+                    <button onClick={handleCancel} className="px-2 py-1 rounded-2xl flex justify-center items-center gap-2 text-rose-700 text-base font-bold">
                         Cancel
-                      </div>
-                    </div>
+                    </button>
                     <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" onClick={handleSubmit} >
                       {isLoading ? 'Processing...' : 'Payment Confirm'}
                     </button>
