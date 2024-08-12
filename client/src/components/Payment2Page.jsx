@@ -5,10 +5,13 @@ import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import hookPayment from './hooks/hookpayment'
+import { useLocation } from "react-router-dom";
+
 
 const Payment2Page = () => {
-  const {filteredPackages} = hookPayment()
+  const location = useLocation()
+  
+  const { packageName, price, merryLimit} = location.state
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
@@ -16,7 +19,13 @@ const Payment2Page = () => {
   };
 
   const handleCheckPackage = () => {
-    navigate("/check/membership");
+    navigate("/check/membership", {
+      state: {
+        packageName: packageName,
+        price: price,
+        merryLimit: merryLimit,
+      },
+    });
   };
 
   return (
@@ -42,17 +51,16 @@ const Payment2Page = () => {
         </div>
         {/* success card */}
         <div className="bg-gradient-to-r from-[#742138] to-[#A878BF] px-[20px] py-[25px] rounded-3xl mt-[50px]">
-          {filteredPackages.map((item, index) => (
-            <div key={index}>
+            <div>
               <div>
-                <img src={item.icons} alt="" />
+                <img src={IconPremium} alt="" />
               </div>
               <div className="mt-[10px]">
                 <h2 className="text-white text-[32px] font-bold">
-                  {item.packages_name}
+                  {packageName}
                 </h2>
                 <p className="text-white text-[26px]">
-                  THB {item.price}.00{" "}
+                  THB {price}.00{" "}
                   <span className="text-[16px]">/Mouth</span>
                 </p>
               </div>
@@ -68,7 +76,7 @@ const Payment2Page = () => {
                     <img src={Success} alt="" />
                   </span>
                   <p className="text-white">
-                    Up to {item.merry_limit} Merry per day
+                    Up to {merryLimit} Merry per day
                   </p>
                 </div>
               </div>
@@ -81,7 +89,7 @@ const Payment2Page = () => {
                     <p className="text-white">Start Membership</p>
                   </div>
                   <div>
-                    <p className="text-white">01/04/2022</p>
+                    <p className="text-white">15/08/2024</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
@@ -89,12 +97,12 @@ const Payment2Page = () => {
                     <p className="text-white">Next billing</p>
                   </div>
                   <div>
-                    <p className="text-white">01/05/2022</p>
+                    <p className="text-white">15/09/2024</p>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
+          
         </div>
         {/* button */}
         <div className="mt-[50px] flex justify-between mb-[120px] gap-5">
@@ -119,10 +127,9 @@ const Payment2Page = () => {
 
       {/* display lg up */}
       <div className="hidden lg:max-w-[800px] lg:flex lg:mx-auto lg:mt-[100px] lg:mb-[300px] 2xl:max-w-[1200px]">
-        {filteredPackages.length > 0 ? (
-        filteredPackages.map((item, index) => (
+       
           <div
-            key={index}
+           
             className="hidden lg:max-w-[800px] lg:flex lg:mx-auto lg:mt-[100px] lg:mb-[300px] 2xl:max-w-[1200px]"
           >
             <div className="lg:pt-[100px] lg:w-[70%] lg:mx-auto 2xl:w-[60%]">
@@ -159,14 +166,14 @@ const Payment2Page = () => {
             <div>
               <div className="bg-gradient-to-r from-[#742138] to-[#A878BF] px-[20px] py-[25px] rounded-3xl mt-[50px]">
                 <div>
-                  <img src={item.icons} alt={item.packages_name} />
+                  <img src={IconPremium} alt="" />
                 </div>
                 <div className="mt-[10px]">
                   <h2 className="text-white text-[32px] font-bold">
-                    {item.packages_name}
+                    {packageName}
                   </h2>
                   <p className="text-white text-[26px]">
-                    THB {item.price}.00 <span className="text-[16px]">/Month</span>
+                    THB {price}.00 <span className="text-[16px]">/Month</span>
                   </p>
                 </div>
                 <div className="mt-[15px]">
@@ -180,7 +187,7 @@ const Payment2Page = () => {
                     <span className="h-[20px] w-[20px]">
                       <img src={Success} alt="Success" />
                     </span>
-                    <p className="text-white">Up to {item.merry_limit} Merry per day</p>
+                    <p className="text-white">Up to {merryLimit} Merry per day</p>
                   </div>
                 </div>
                 <div className="w-[95%] mx-auto mb-[40px]">
@@ -192,7 +199,7 @@ const Payment2Page = () => {
                       <p className="text-white">Start Membership</p>
                     </div>
                     <div>
-                      <p className="text-white">01/04/2022</p>
+                      <p className="text-white">15/08/2024</p>
                     </div>
                   </div>
                   <div className="flex justify-between">
@@ -200,17 +207,15 @@ const Payment2Page = () => {
                       <p className="text-white">Next billing</p>
                     </div>
                     <div>
-                      <p className="text-white">01/05/2022</p>
+                      <p className="text-white">15/09/2024</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        ))
-      ) : (
-        <p>Loading package details...</p>
-      )}
+
+      
       </div>
       <div>
         <Footer />

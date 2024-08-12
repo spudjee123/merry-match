@@ -4,19 +4,28 @@ import { Elements, PaymentElement, useStripe, useElements, } from '@stripe/react
 import axios from 'axios';
 import Footer from "./Footer";
 import NavUser from "../pages/user-profile-management/navUser";
-
+import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/auth';
 
 // Initialize Stripe with your public key
-
 
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const [clientSecret, setClientSecret] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
-
+  const [paymentIntent, setPaymentIntent] = useState("")
+  const { state } = useAuth();
+  const userName = state.user?.username;
+  const navigate = useNavigate()
+  const location = useLocation()
+  
+  const { packageName, price, merryLimit, clientSecret, orderId} = location.state
+console.log("location",location);
+console.log("1",clientSecret);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,22 +40,45 @@ const CheckoutForm = () => {
       confirmParams: {
         return_url: `${window.location.origin}/success`,
       },
+      redirect: "if_required"
     });
 
+    try {
+      await axios.post('http://localhost:4001/payments/status', {
+      "paymentIntentId": paymentIntent.id
+    });
+    } catch (error) {  
+    alert("update error") 
+    }
     if (error) {
       setError(error.message);
     } else if (paymentIntent.status === 'succeeded') {
       setMessage('Payment succeeded!');
-      // Do something after payment success (e.g., redirect to a success page)
     } else {
       setError('Unexpected payment status.');
     }
+    navigate(`/success`, {
+      state: {
+        packageName: packageName,
+        price: price,
+        merryLimit: merryLimit,
+      },
+    });
     setIsLoading(false);
   };
 
   // const paymentElementOptions = {
   //   layout: "tabs"
   // };
+  const handleCancel = async (event) =>{
+    event.preventDefault();
+    try {
+      await axios.delete('http://localhost:4001/payments/cancel',{userName: userName})
+    } catch (error) {
+      alert("cancel error")
+    }
+    navigate(`/membership`)
+  }
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
@@ -54,7 +86,6 @@ const CheckoutForm = () => {
         <nav className="w-full">
           <NavUser />
         </nav>
-
         <div className="w-screen">
           <div className="flex-grow flex justify-center items-center bg-white mt-[50px]">
             <div className="max-w-5xl w-full p-8 bg-white flex flex-col items-center">
@@ -69,7 +100,7 @@ const CheckoutForm = () => {
                     <div className="flex justify-between items-baseline py-2">
                       <div className="text-slate-500 text-base">Package</div>
                       <div className="text-right text-slate-800 text-xl font-semibold">
-                        Premium
+                        {packageName}
                       </div>
                     </div>
                     <div className="flex flex-col gap-2 px-2 py-2.5 bg-white rounded-lg">
@@ -80,7 +111,7 @@ const CheckoutForm = () => {
                       </div>
                       <div className="flex items-center gap-2 pl-2">
                         <div className="text-slate-600 text-base">
-                          Up to 70 Merry per day
+                          Up to {merryLimit} Merry per day
                         </div>
                       </div>
                     </div>
@@ -89,7 +120,7 @@ const CheckoutForm = () => {
                         Price (Monthly)
                       </div>
                       <div className="text-right text-stone-950 text-xl font-semibold">
-                        THB 149.00
+                        {price}
                       </div>
                     </div>
                   </div>
@@ -104,10 +135,9 @@ const CheckoutForm = () => {
                     <PaymentElement  />
                   </div>
                   <div className="w-full px-6 pt-6 pb-8 border-t border-gray-300 flex justify-between items-center">
-                    <div className="px-2 py-1 rounded-2xl flex justify-center items-center gap-2">
-                      <div className="text-rose-700 text-base font-bold">
+                    <button onClick={handleCancel} className="px-2 py-1 rounded-2xl flex justify-center items-center gap-2 text-rose-700 text-base font-bold">
                         Cancel
-                      </div>
+                      </button>
                     </div>
                     <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" >
                       {isLoading ? 'Processing...' : 'Payment Confirm'}
@@ -118,13 +148,9 @@ const CheckoutForm = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        
+          </div>   
         <Footer />
-        
-      </section>
+        </section>
     </form>
   );
 };

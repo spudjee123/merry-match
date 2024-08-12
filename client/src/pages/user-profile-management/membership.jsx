@@ -4,29 +4,27 @@ import heart from "./images/heart.png";
 import check from "./images/check.png";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "../../context/auth";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function Membership() {
   const [packages, setPackages] = useState([]);
-  const [price, setPrice] = useState();
-  const { state } = useAuth();
-  const userName = state.user?.name;
-  const navigate = useNavigate();
-  const [clientSecret, setClientSecret] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // console.log("ST", state);
-
+  const { state } = useAuth();
+  const userName = state.user?.username;
+  const navigate = useNavigate();
+  
   const getData = async () => {
     try {
       const result = await axios.get("http://localhost:4001/admin/get");
       setPackages(result.data.packages);
-      console.log("abc",result.data.packages)
+      console.log("Packages:", result.data.packages);
     } catch (error) {
       console.error("Error fetching packages:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,31 +32,24 @@ function Membership() {
     getData();
   }, []);
 
+  const handleEditClick = (packages_name, price, merry_limit) => {
+    try {
+      navigate(`/stripe`, {
+        state: {
+          packageName: packages_name,
+          price,
+          merryLimit: merry_limit,
+        },
+      });
+    } catch (error) {
+      console.error("Error navigating to /stripe:", error);
+      setError("Failed to navigate to payment page.");
+    }
+  };
+
   const filteredPackages = packages.filter((item) =>
     item.packages_name.toLowerCase()
   );
-const prices = packages.map((item => item.price))
-console.log("abc",prices);
-
-  const handleEditClick = async () => {
-    try {
-      const secret = await axios.post(
-        "http://localhost:4001/payments/api/payment-intent",
-        {
-          user: "Pee Nut",
-          packageName: { name: "Basic", price: 59 },
-        }
-      );
-      setClientSecret(secret.data.clientSecret);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching client secret:", error);
-      setError("Failed to initialize payment.");
-      setLoading(false);
-    }
-
-    navigate(`/stripe`);
-  };
 
   return (
     <>
@@ -116,7 +107,13 @@ console.log("abc",prices);
                     <button
                       id="choose-btn"
                       className="btn hover:bg-red-100 bg-red-100 border-red-100 text-red-600 rounded-[99px] w-[311px] h-[48px] leading-6 text-base mb-12"
-                      onClick={handleEditClick}
+                      onClick={() => {
+                        handleEditClick(
+                          item.packages_name,
+                          item.price,
+                          item.merry_limit
+                        );
+                      }}
                     >
                       Choose package
                     </button>

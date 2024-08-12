@@ -11,7 +11,7 @@ jwtInterceptor();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
  
-  <React.StrictMode>
+  // <React.StrictMode>
      <ErrorBoundary fallback={<div>Something went wrong</div>}>
     <BrowserRouter>
       <AuthProvider>
@@ -21,6 +21,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       </AuthProvider>
     </BrowserRouter>
     </ErrorBoundary>
-  </React.StrictMode>
+  // </React.StrictMode>
 
 );

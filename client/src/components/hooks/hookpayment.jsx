@@ -17,18 +17,9 @@ function hookPayment() {
 
   useEffect(() => {
     getData();
-    const packageName = localStorage.getItem('selectedPackageName');
-    if (packageName) {
-      setSelectedPackageName(packageName);
-    }
+   
   }, []);
 
-  useEffect(() => {
-    if (selectedPackageName && packages.length > 0) {
-      const packageItem = packages.find(pkg => pkg.packages_name === selectedPackageName);
-      setFilteredPackages(packageItem ? [packageItem] : []);
-    }
-  }, [selectedPackageName, packages]);
   return {filteredPackages,setFilteredPackages,selectedPackageName,setSelectedPackageName,packages, setPackages}
 }
 
