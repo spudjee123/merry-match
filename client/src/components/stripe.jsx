@@ -12,7 +12,6 @@ import { useAuth } from '../context/auth';
 // Initialize Stripe with your public key
 
 const CheckoutForm = () => {
-  const { id } = useParams()
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
@@ -87,7 +86,6 @@ console.log("1",clientSecret);
         <nav className="w-full">
           <NavUser />
         </nav>
-
         <div className="w-screen">
           <div className="flex-grow flex justify-center items-center bg-white mt-[50px]">
             <div className="max-w-5xl w-full p-8 bg-white flex flex-col items-center">
@@ -139,8 +137,9 @@ console.log("1",clientSecret);
                   <div className="w-full px-6 pt-6 pb-8 border-t border-gray-300 flex justify-between items-center">
                     <button onClick={handleCancel} className="px-2 py-1 rounded-2xl flex justify-center items-center gap-2 text-rose-700 text-base font-bold">
                         Cancel
-                    </button>
-                    <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" onClick={handleSubmit} >
+                      </button>
+                    </div>
+                    <button className="px-6 py-3 bg-rose-700 rounded-[99px] shadow flex justify-center items-center gap-2 text-center text-white text-base font-bold" type="submit" >
                       {isLoading ? 'Processing...' : 'Payment Confirm'}
                     </button>
                     {error && <div id="payment-message" className="text-red-500">{error}</div>}
@@ -149,13 +148,9 @@ console.log("1",clientSecret);
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        
+          </div>   
         <Footer />
-        
-      </section>
+        </section>
     </form>
   );
 };

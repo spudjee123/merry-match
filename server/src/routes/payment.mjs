@@ -106,7 +106,7 @@ const paymentIntent = await stripe.paymentIntents.create({
   }
 });
 
-// //////////////////////////////////////////////////////////////////////update status
+// //////////////////////////////////////////////////////////////////////
 stripeRouter.post('/status', express.json(), async (req, res) => {
   let { paymentIntentId } = req.body;
 
@@ -158,30 +158,7 @@ stripeRouter.get("/", express.json(), async (req, res) => {
   }
 });
 
-stripeRouter.delete("/cancel", express.json(), async (req, res) => {
-  const { userName } = req.body; // รับค่า id จาก params
 
-  try {
-    // ดึง payment_intent_id จากฐานข้อมูล
-    const order = await connectionPool.query(
-      `DELETE * FROM payment_test WHERE name = $1  AND status = $2 ORDER BY created_date DESC LIMIT 1`,
-      [userName,'pending']
-    );
-
-    if (!order.rows.length) {
-      return res.status(404).json({ message: 'not found' });
-    }
-    
-    return res.status(200).json({
-      message: 'delete data successfully',
-      data: order.rows[0]
-    });
-
-  } catch (error) {
-    console.error('Error retrieving PaymentIntent:', error);
-    return res.status(500).json({ message: 'server error' });
-  }
-});
 
 export default stripeRouter;
 

@@ -60,7 +60,7 @@ const Payment2Page = () => {
                   {packageName}
                 </h2>
                 <p className="text-white text-[26px]">
-                  THB {packageName}.00{" "}
+                  THB {price}.00{" "}
                   <span className="text-[16px]">/Mouth</span>
                 </p>
               </div>
