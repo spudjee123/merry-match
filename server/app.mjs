@@ -17,6 +17,7 @@ import merryRouter from "./src/routes/merry.mjs";
 import Connection from "./src/utils/db2.mjs";
 import Chat from "./models/chat.mjs";
 import matchViewRouter from "./src/routes/match-view.mjs";
+import db from "./src/utils/dbMongo.mjs";
 
 dotenv.config();
 
@@ -41,7 +42,7 @@ io.on("connection", (socket) => {
 
   socket.on("join_room", (room) => {
     // console.log(room);
-    
+
     socket.join(room);
     // console.log(`User joined room: ${room}`);
 
@@ -477,8 +478,6 @@ app.get("/complaint/list", async (req, res) => {
   }
 });
 
-
-
 // admin can get by id from supabase
 app.get("/admin/get/complaint/:complaint_id", async (req, res) => {
   const complaintId = req.params.complaint_id;
@@ -516,8 +515,7 @@ app.get("/admin/get/complaint/:complaint_id", async (req, res) => {
   }
 });
 
-
-// admin can update status complaint 
+// admin can update status complaint
 app.put("/admin/edit/complaint/:complaint_id", async (req, res) => {
   const complaintId = req.params.complaint_id;
   const { status } = req.body;
@@ -551,6 +549,26 @@ app.put("/admin/edit/complaint/:complaint_id", async (req, res) => {
     });
   }
 });
+
+// user can delete chat room when unmatch friend
+app.delete("/chatroom/:roomChatId", async (req, res) => {
+  // เลือก Collection
+  console.log(req.params.roomChatId);
+  
+  const collection = db.collection("messages");
+
+  // นำ roomChatId จาก Endpoint parameter มา Assign ลงใน Variable roomChatId
+  const roomChatId = req.params.roomChatId;
+
+  // Delete ข้อมูลออกจากใน Database
+  await collection.deleteMany({ room: roomChatId });
+
+  return res.json({
+    message: `Chat Room ID record (${req.params.roomChatId}) has been deleted successfully`,
+  });
+});
+// query
+// db.messages.deleteMany({"room":""})
 
 server.listen(port, () => {
   console.log(`Server is running at ${port}`);
