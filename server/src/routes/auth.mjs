@@ -159,8 +159,8 @@ authRouter.post("/login", async (req, res) => {
     );
 
     if (packageData.rowCount) {
-      const [{ package_name, merry_limit }] = packageData.rows;
-      user.packageName = package_name;
+      const [{ packages_name, merry_limit }] = packageData.rows;
+      user.packageName = packages_name;
       user.merryLimit = merry_limit;
     } else {
       user.merryLimit = 50;

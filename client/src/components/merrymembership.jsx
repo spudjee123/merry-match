@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import NavUser from "../pages/user-profile-management/navUser.jsx";
 import Footer from "./Footer.jsx";
 import premium from "../assets/icons/premium.png";
@@ -6,8 +6,9 @@ import Frame from "../assets/icons/Frame.png";
 import { useAuth } from "../context/auth.jsx";
 import axios from "axios";
 
+
 const MerryMembership = () => {
-  const {state} = useAuth()
+  const { state } = useAuth();
   const userName = state.user?.username;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [hasPackage, setHasPackage] = useState(true);
@@ -15,12 +16,17 @@ const MerryMembership = () => {
   const [getPrice,setGetPrice] = useState("")
   const [getMerry,setGetMerry] = useState("")
   const [getIcon,setGetIcon] = useState("")
+  const [packages, setPackages] = useState("")
+  const [packageHistory, setPackageHistory] = useState([])
+
+console.log("P",packages);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         let result = await axios.post("http://localhost:4001/payments/", { userName: userName });
-        console.log("abc", result); 
+        console.log("1", result); 
         setGetPackageName(result.data.data.packages_name)
         setGetPrice(result.data.data.price)
         setGetMerry(result.data.data.merry_limit)
@@ -33,6 +39,22 @@ const MerryMembership = () => {
   
     fetchData();
   }, [userName]);
+
+  const getData = async () => {
+    try {
+      console.log("name",userName);
+      
+      const result = await axios.get(`http://localhost:4001/membership/${userName}`);
+      setPackages(result.data.data);
+      console.log("2", result);
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleCancelPackage = () => {
     setIsDeleteDialogOpen(true);
@@ -48,6 +70,33 @@ const MerryMembership = () => {
       alert('Error cancelling package');
     }
   };
+
+  useEffect(() => {
+    if (packages.packages_name) {
+      setHasPackage(true)
+    } else {
+      setHasPackage(false)
+    }
+  },[packages])
+
+  const getHistoryData = async () => {
+    try {
+      console.log("name",userName);
+      
+      const result = await axios.get(`http://localhost:4001/membership/history/${userName}`);
+      setPackageHistory(result.data.data);
+      console.log("2", result);
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    }
+  };
+  
+  console.log("his",packageHistory);
+  
+  useEffect(() => {
+    getHistoryData();
+  }, []);
+
 
   return (
     <section className="w-full">
@@ -82,8 +131,8 @@ const MerryMembership = () => {
                     <div className="self-stretch pb-10 border-b border-pink-400 justify-between items-start inline-flex flex-wrap">
                       <div className="justify-start items-center gap-6 flex flex-wrap">
                         <div className="w-full md:w-[319px] justify-start items-start gap-4 flex">
-                          <div className="w-[78px] h-[78px] p-[21px] bg-slate-50 rounded-2xl justify-center items-center flex">
-                            <img className="" src={getIcon} alt="" />
+                          <div className="w-[78px] h-[78px]  bg-slate-50 rounded-2xl justify-center items-center flex">
+                            <img className="w-[78px] h-[78px] object-cover rounded-2xl" src={getIcon} alt="" />
                           </div>
                           <div className="flex-col justify-start items-start gap-2 inline-flex">
                             <p className="text-white text-[24px] md:text-[32px] font-bold ">
@@ -135,7 +184,7 @@ const MerryMembership = () => {
                   </div>
                 )}
               </div>
-              <div className="flex-col justify-start items-start gap-6 flex w-full">
+              <div className="flex-col justify-start items-start gap-6 w-full hidden">
                 <p className="text-slate-800 text-xl md:text-2xl font-bold ">
                   Payment Method
                 </p>
@@ -168,25 +217,31 @@ const MerryMembership = () => {
                 <p className="w-full text-slate-800 text-xl md:text-2xl font-bold ">
                   Billing History
                 </p>
-                <div className="h-auto md:h-[470px] w-full px-4 md:px-8 pt-8 pb-6 bg-white rounded-[32px] border border-gray-300 flex-col justify-start items-end gap-4 flex">
-                  <div className="w-full py-2 border-b border-gray-200 gap-4 inline-flex">
+                <div className="h-auto md:h-[470px] w-full px-4 md:px-8 pt-8 pb-6 bg-white rounded-[32px] border border-gray-300 flex-col justify-start items-end gap-4 flex ">
+                  <div className="w-full py-2 border-b border-gray-200 gap-4  hidden">
                     <p className="grow shrink basis-0 text-slate-500 text-lg md:text-xl font-semibold ">
                       Next billing: 01/09/2022
                     </p>
-                  </div>
+                  </div> 
                   <div className="pb-6 border-b border-gray-200 flex-col w-full">
+                  {packageHistory.map((item, index) => {
+                    return (
                     <div className="w-full p-4 gap-24 flex flex-wrap">
                       <p className="w-[104px] text-slate-500 text-base font-normal ">
-                        01/08/2022
+                       {item.created_date}
                       </p>
                       <p className="grow shrink basis-0 text-slate-500 text-base font-normal ">
-                        Premium
+                        {item.packages_name}
                       </p>
                       <p className="text-slate-600 text-base font-normal ">
-                        THB 149.00
+                        THB {item.price}.00
                       </p>
                     </div>
-                    <div className="w-full p-4 bg-slate-50 rounded-lg gap-24 inline-flex">
+                    )
+                  })}
+                 
+                    
+                    {/* <div className="w-full p-4 bg-slate-50 rounded-lg gap-24 inline-flex">
                       <p className="w-[104px] text-slate-500 text-base font-normal ">
                         01/07/2022
                       </p>
@@ -196,8 +251,8 @@ const MerryMembership = () => {
                       <p className="text-slate-600 text-base font-normal ">
                         THB 149.00
                       </p>
-                    </div>
-                    <div className="w-full p-4 justify-start items-start gap-24 inline-flex">
+                    </div> */}
+                    {/* <div className="w-full p-4 justify-start items-start gap-24 inline-flex">
                       <p className="w-[104px] text-slate-500 text-base font-normal ">
                         01/06/2022
                       </p>
@@ -229,10 +284,10 @@ const MerryMembership = () => {
                       <p className="text-slate-600 text-base font-normal ">
                         THB 59.00
                       </p>
-                    </div>
+                    </div> */}
                   </div>
-                  <button className="px-2 py-1 rounded-2xl justify-center items-center gap-2 inline-flex">
-                    <p className="text-rose-700 text-base font-bold ">
+                  <button className="px-2 py-1 rounded-2xl justify-center items-center gap-2 inline-flex hidden">
+                    <p className="text-rose-700 text-base font-bold  ">
                       Request PDF
                     </p>
                   </button>
