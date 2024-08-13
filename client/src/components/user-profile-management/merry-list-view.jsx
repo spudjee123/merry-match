@@ -77,9 +77,9 @@ function MerryListView() {
     }
   };
 
-  const handleClickUnmarry = (user_id, friend_id) => {
-    deleteMerryList(user_id, friend_id);
-    location.reload();
+  const handleClickUnmarry = (user_id, friend_id,index) => {
+    deleteMerryList(user_id, friend_id,index);
+    // location.reload();
   };
 
   console.log("max", maxImage);
@@ -198,7 +198,7 @@ function MerryListView() {
                             className=" bg-red-500 shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                             id="un-marry-btn"
                             onClick={() => {
-                              handleClickUnmarry(user_id, friend_id);
+                              handleClickUnmarry(user_id, friend_id,index);
                             }}
                           >
                             <img src={merryWhiteIcon} className=" w-6 h-6" />

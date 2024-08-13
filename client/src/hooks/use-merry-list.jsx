@@ -20,7 +20,7 @@ const useMerryList = () => {
     }
   };
 
-  const deleteMerryList = async (user_id, friend_id) => {
+  const deleteMerryList = async (user_id, friend_id,index) => {
     try {
       const result = await axios.delete(`http://localhost:4001/merry-list/`, {
         data: {
@@ -28,7 +28,13 @@ const useMerryList = () => {
           friend_id: friend_id,
         },
       });
-      console.log("delete room", result.data.room_id);
+      const roomId = result.data.room_id;
+      console.log("roomid",roomId);
+      
+      const result2 = await axios.delete(`http://localhost:4001/chatroom/${roomId}`);
+      console.log("delete room", result2);
+      setMerryList(merryList.toSpliced(index,1))
+
     } catch (error) {
       console.log(error);
     }
