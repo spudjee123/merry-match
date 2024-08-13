@@ -48,7 +48,7 @@ const paymentIntent = await stripe.paymentIntents.create({
         },
         metadata: {
           order_id: orderId,
-          package_name: packageName.name,
+          packages_name: packageName.name,
           user_name: user, // Added 'user_name' for clarity
         },
       });
@@ -169,7 +169,7 @@ stripeRouter.put('/cancel/package', async (req, res) => {
     }
     return res.status(200).json({ message: 'Package name updated to NULL successfully' });
     } catch (error) {
-    console.error('Error updating package_name:', error);
+    console.error('Error updating packages_name:', error);
     return res.status(500).json({ message: 'Server error' });
   }
 });

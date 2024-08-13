@@ -62,7 +62,7 @@ function EditProfileForm() {
         formData.append(`oldImage`, JSON.stringify(image));
       }
     }
-    alert("putting");
+    alert("Updata Profile successfully");
     putUser(state.user.user_id, formData);
   };
 

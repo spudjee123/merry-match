@@ -90,8 +90,8 @@ function MerryListView() {
     }
   }, [profile]);
 
-  const handleClickChat = (id) => {
-    navigate(`/matchingchat/${id}`);
+  const handleClickChat = (id, name) => {
+    navigate(`/matchingchat/${id}`, {state:{ name: name}});
   };
 
   return (
@@ -178,7 +178,7 @@ function MerryListView() {
                               className=" bg-white shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                               id="chat-btn"
                               onClick={() => {
-                                handleClickChat(item.id);
+                                handleClickChat(item.id, item.name);
                               }}
                             >
                               <img src={chatIcon} className=" w-6 h-6" />
@@ -251,7 +251,7 @@ function MerryListView() {
                           className=" bg-white cursor-pointer hover:shadow-primary rounded-2xl w-12 h-12 flex justify-center items-center"
                           id="chat-btn"
                           onClick={() => {
-                            handleClickChat(item.id);
+                            handleClickChat(item.id, item.name);
                           }}
                         >
                           <img src={chatIcon} className=" w-6 h-6" />

@@ -13,10 +13,13 @@ import Chat from "./Chat";
 import axios from "axios";
 import { useAuth } from "../context/auth";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import useUsers from "../hooks/use-users";
 
 const socket = io.connect("http://localhost:4001");
 
 const MatchingChat = () => {
+  const location = useLocation()
   const navigate = useNavigate();
   const { matchId } = useParams();
   // const [username, setUsername] = useState("");
@@ -29,6 +32,10 @@ const MatchingChat = () => {
   const userId = state.user?.user_id;
   const username = userId;
   const [clickId, setClickId] = useState(matchId);
+  const [currentFriend, setCurrentFriend] = useState(location.state?.name)
+
+  
+  
 
   useEffect(() => {
     // เก็บข้อมูลทุกอย่าง
@@ -61,13 +68,13 @@ const MatchingChat = () => {
   //   }
   // };
 
-  const handleClickToChat = (id) => {
+  const handleClickToChat = (id, name) => {
     console.log(id);
 
     socket.emit("join_room", id);
     // Load previous messages for the room
     socket.emit("loadMessages", id);
-
+    setCurrentFriend(name)
     setClickId(id);
   };
 
@@ -201,11 +208,11 @@ const MatchingChat = () => {
                     key={index}
                     className={`lg:flex lg:mt-[15px] lg:gap-5 ${
                       item.id === clickId
-                        ? "cursor-pointer active:border active:border-purple-500 hover:bg-gray-100 p-2 rounded-xl"
-                        : "cursor-pointer active:border active:border-purple-500 hover:bg-gray-100 p-2 rounded-xl"
+                        ? "cursor-pointer border border-purple-500 hover:bg-gray-100 p-2 rounded-xl"
+                        : "cursor-pointer hover:bg-gray-100 p-2 rounded-xl"
                     }`}
                     onClick={() => {
-                      handleClickToChat(item.id);
+                      handleClickToChat(item.id, item.name);
                     }}
                   >
                     <img
@@ -242,7 +249,7 @@ const MatchingChat = () => {
                       : "bg-[#EFC4E2] text-black self-start"
                   }`}
                 >
-                  <div className="font-bold">{message.username}</div>
+                  <div className="font-bold">{message.username === userId ? "You" : currentFriend }</div>
                   <div>{message.message}</div>
                   {/* แปลงเวลาให้อ่านง่าย */}
                   <div className="text-xs text-black">

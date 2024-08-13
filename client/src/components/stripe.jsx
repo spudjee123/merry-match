@@ -70,15 +70,15 @@ console.log("1",clientSecret);
   // const paymentElementOptions = {
   //   layout: "tabs"
   // };
-  // const handleCancel = async (event) =>{
-  //   event.preventDefault();
-  //   try {
-  //     await axios.delete('http://localhost:4001/payments/cancel',{userName: userName})
-  //     navigate(`/membership`)
-  //   } catch (error) {
-  //     alert("cancel error")
-  //   }
-  // }
+  const handleCancel = async (event) =>{
+    event.preventDefault();
+    try {
+      await axios.delete('http://localhost:4001/payments/cancel',{userName: userName})
+      navigate(`/membership`)
+    } catch (error) {
+      alert("cancel error")
+    }
+  }
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>

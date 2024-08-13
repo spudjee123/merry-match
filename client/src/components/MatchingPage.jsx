@@ -65,8 +65,8 @@ const MatchingPage = () => {
 
   // console.log(matchInfo);
 
-  const handleClickToChatRoom = (id) => {
-    navigate(`/matchingchat/${id}`);
+  const handleClickToChatRoom = (id, name) => {
+    navigate(`/matchingchat/${id}`, {state:{name: name}});
   };
 
   return (
@@ -126,7 +126,7 @@ const MatchingPage = () => {
                     key={index}
                     className="lg:flex lg:mt-[15px] lg:gap-5 cursor-pointer active:border active:border-purple-500 hover:bg-gray-100 p-2 rounded-xl"
                     onClick={() => {
-                      handleClickToChatRoom(item.id);
+                      handleClickToChatRoom(item.id, item.name);
                     }}
                   >
                     <img
