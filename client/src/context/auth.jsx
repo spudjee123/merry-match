@@ -35,23 +35,17 @@ function AuthProvider(props) {
       localStorage.setItem("token", token);
       const user = jwtDecode(token);
       setState({ ...state, user: user, loading: false });
-      alert("Login successfully!");
-      console.log(user);
       if (user.role === "admin") {
         navigate("/package/view");
       } else {
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
       setState({
         ...state,
         error: error,
         loading: false,
       });
-      if (error.response.status === 404) {
-        alert("Username or password is invalid");
-      }
     }
   };
 
@@ -86,7 +80,7 @@ function AuthProvider(props) {
 
   return (
     <AuthContext.Provider
-      value={{ state, register, login, logout, isAuthenticated }}
+      value={{ state, setState, register, login, logout, isAuthenticated }}
     >
       {props.children}
     </AuthContext.Provider>

@@ -2,3 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* * {
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+} */
