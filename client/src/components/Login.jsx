@@ -123,10 +123,17 @@ const Login = () => {
             <div className="lg:flex lg:justify-center mt-[30px]">
               <button
                 id="login-btn"
-                className="text-white bg-red-500 hover:bg-red-400 active:bg-red-600 h-[48px] w-full text-[16px] rounded-full lg:mx-auto"
+                className=" text-white bg-red-500 hover:bg-red-400 active:bg-red-600 h-[48px] w-full text-[16px] rounded-full lg:mx-auto"
                 onClick={handleLogin}
               >
-                Log in
+                {state.loading ? (
+                  <p className="flex gap-4 pl-4">
+                    <span className="loading loading-spinner loading-sm"></span>
+                    Getting You Merry...
+                  </p>
+                ) : (
+                  "Log in"
+                )}
               </button>
             </div>
             <div>
@@ -142,8 +149,13 @@ const Login = () => {
       </form>
       <dialog id="invalid-username-popup" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">Press ESC key or click outside to close</p>
+          <h3 className=" text-body1 text-black">
+            Oops, Something's Not Right
+          </h3>
+          <p className="py-4 text-body2 text-black">
+            We couldn't match that username or password. <br />
+            Please try again.{" "}
+          </p>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

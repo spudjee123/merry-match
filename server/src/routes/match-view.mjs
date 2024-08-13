@@ -72,6 +72,8 @@ matchViewRouter.delete("/", async (req, res) => {
 
     const roomId = roomIdData.rows[0].id;
 
+    
+
     return res.status(200).json({
       message: "delete successfully",
       room_id: roomId,

@@ -35,8 +35,6 @@ function AuthProvider(props) {
       localStorage.setItem("token", token);
       const user = jwtDecode(token);
       setState({ ...state, user: user, loading: false });
-      alert("Login successfully!");
-      console.log(user);
       if (user.role === "admin") {
         navigate("/package/view");
       } else {
