@@ -56,7 +56,7 @@ const paymentIntent = await stripe.paymentIntents.create({
       // Insert the order data into the payment_test table
       const orderData = {
         name: user, // Ensure this matches your database schema
-        package_name: packageName.name,
+        packages_name: packageName.name,
         order_id: orderId,
         status: "pending",
         payment_intent_id: paymentIntent.id,
@@ -65,11 +65,11 @@ const paymentIntent = await stripe.paymentIntents.create({
       console.log(paymentIntent);
 
       await connectionPool.query(
-        `INSERT INTO payment_test (name, package_name, order_id,status, payment_intent_id, created_date) 
+        `INSERT INTO payment_test (name, packages_name, order_id,status, payment_intent_id, created_date) 
           VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           orderData.name,
-          orderData.package_name,
+          orderData.packages_name,
           orderData.order_id,
           orderData.status,
           orderData.payment_intent_id,
@@ -87,26 +87,10 @@ const paymentIntent = await stripe.paymentIntents.create({
       console.error("Error creating PaymentIntent:", error);
       res.status(500).json({ error: error.message });
     }
-  } else {
-    if (!clientSecret) {
-      return res.status(400).json({ error: 'Missing clientSecret.' });
-    }
-
-    const statusPayment = "complete"
-    try {
-      await connectionPool.query(
-        `UPDATE payment_test SET status = $1 WHERE payment_intent_id = $2`,
-        [statusPayment, paymentIntentId]
-      );
-      res.status(200).json({ message: 'Order status and clientSecret updated successfully.' });
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      res.status(500).json({ error: 'Failed to update order status.' });
-    }
-  }
+  } 
 });
 
-// //////////////////////////////////////////////////////////////////////
+// update status 
 stripeRouter.post('/status', express.json(), async (req, res) => {
   let { paymentIntentId } = req.body;
 
@@ -133,14 +117,16 @@ stripeRouter.post('/status', express.json(), async (req, res) => {
 
 });
 
-stripeRouter.get("/", express.json(), async (req, res) => {
-  const { userName } = req.body; // รับค่า id จาก params
-
+stripeRouter.post("/", express.json(), async (req, res) => {
+  const { userName } = req.body; 
   try {
-    // ดึง payment_intent_id จากฐานข้อมูล
+    const userData = {
+      user : userName
+    }
     const order = await connectionPool.query(
-      'select package_name from payment_test  WHERE name = $1',
-      [userName]
+      `select  packages_name, merry_limit, price, icons from payment_test pt inner join packages p using(packages_name) where pt.name = $1 
+       order by pt.created_date desc limit 1 `,
+      [userData.user]
     );
 
     if (!order.rows.length) {
@@ -158,7 +144,35 @@ stripeRouter.get("/", express.json(), async (req, res) => {
   }
 });
 
+stripeRouter.put('/cancel/package', async (req, res) => {
+  const { userName } = req.body; 
 
+  if (!userName) {
+    return res.status(400).json({ message: 'userName is required' });
+  }
+
+  try {
+    const result = await connectionPool.query(
+      `UPDATE payment_test 
+      SET packages_name = NULL 
+      WHERE ctid = (
+        SELECT ctid 
+        FROM payment_test 
+        WHERE name = $1
+        ORDER BY created_date DESC 
+        LIMIT 1
+      )`,
+     [userName]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'User not found' }); 
+    }
+    return res.status(200).json({ message: 'Package name updated to NULL successfully' });
+    } catch (error) {
+    console.error('Error updating package_name:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
 
 export default stripeRouter;
 

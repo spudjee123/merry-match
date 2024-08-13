@@ -4,40 +4,49 @@ import Footer from "./Footer.jsx";
 import premium from "../assets/icons/premium.png";
 import Frame from "../assets/icons/Frame.png";
 import { useAuth } from "../context/auth.jsx";
+import axios from "axios";
 
 const MerryMembership = () => {
   const {state} = useAuth()
   const userName = state.user?.username;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [hasPackage, setHasPackage] = useState(true);
-  const [data, setData] = useState(null);
+  const [getPackageName,setGetPackageName] = useState("")
+  const [getPrice,setGetPrice] = useState("")
+  const [getMerry,setGetMerry] = useState("")
+  const [getIcon,setGetIcon] = useState("")
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get('http://localhost:4001/payments', {
-          userName : userName
-        });
-        console.log("abc", result.data.package_name);
-        setData(result.data.package_name);
+        let result = await axios.post("http://localhost:4001/payments/", { userName: userName });
+        console.log("abc", result); 
+        setGetPackageName(result.data.data.packages_name)
+        setGetPrice(result.data.data.price)
+        setGetMerry(result.data.data.merry_limit)
+        setGetIcon(result.data.data.icons)
       } catch (error) {
-        setError(error.response ? error.response.data.message : 'Server error');
+        console.error("Error fetching data:", error.response ? error.response.data : error.message);
+        alert("Get error");
       }
     };
-
-    if (userName) {
-      fetchData();
-    }
+  
+    fetchData();
   }, [userName]);
 
   const handleCancelPackage = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    
-    setHasPackage(false);
-    setIsDeleteDialogOpen(false);
+  const handleConfirmDelete = async() => {
+    try {
+       await axios.put('http://localhost:4001/payments/cancel/package', { userName: userName });
+      setHasPackage(false); 
+      setIsDeleteDialogOpen(false); 
+    } catch (error) {
+      console.error('Error cancelling package:', error);
+      alert('Error cancelling package');
+    }
   };
 
   return (
@@ -74,15 +83,15 @@ const MerryMembership = () => {
                       <div className="justify-start items-center gap-6 flex flex-wrap">
                         <div className="w-full md:w-[319px] justify-start items-start gap-4 flex">
                           <div className="w-[78px] h-[78px] p-[21px] bg-slate-50 rounded-2xl justify-center items-center flex">
-                            <img src={premium} alt="" />
+                            <img className="" src={getIcon} alt="" />
                           </div>
                           <div className="flex-col justify-start items-start gap-2 inline-flex">
                             <p className="text-white text-[24px] md:text-[32px] font-bold ">
-                              Premium
+                              {getPackageName}
                             </p>
                             <div className="justify-start items-baseline gap-1.5 inline-flex">
                               <p className="text-pink-200 text-lg md:text-xl font-semibold ">
-                                THB 149.00
+                                THB {getPrice}.00
                               </p>
                               <p className="text-pink-200 text-base font-normal ">
                                 /Month
@@ -98,7 +107,7 @@ const MerryMembership = () => {
                           </div>
                           <div className="justify-start items-start gap-3 inline-flex">
                             <p className="grow shrink basis-0 text-pink-100 text-base font-normal ">
-                              Up to 50 Merry per day
+                              Up to {getMerry} Merry per day
                             </p>
                           </div>
                         </div>
