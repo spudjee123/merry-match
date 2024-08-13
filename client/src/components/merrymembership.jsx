@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import NavUser from "../pages/user-profile-management/navUser.jsx";
 import Footer from "./Footer.jsx";
 import premium from "../assets/icons/premium.png";
@@ -7,7 +7,7 @@ import { useAuth } from "../context/auth.jsx";
 import axios from "axios";
 
 const MerryMembership = () => {
-  const {state} = useAuth()
+  const { state } = useAuth();
   const userName = state.user?.username;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [hasPackage, setHasPackage] = useState(true);
@@ -33,6 +33,22 @@ const MerryMembership = () => {
   
     fetchData();
   }, [userName]);
+
+  const getData = async () => {
+    try {
+      console.log("name",userName);
+      
+      const result = await axios.get("http://localhost:4001/membership",{name: userName});
+      setPackages(result.data);
+      console.log("abc", result);
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const handleCancelPackage = () => {
     setIsDeleteDialogOpen(true);
